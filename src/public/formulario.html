@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<title>Gerador de PDF</title>
+<style>
+body{
+    font-family:Arial;
+    margin:40px;
+}
+
+label{
+    display:block;
+    margin-top:15px;
+}
+
+input{
+    width:300px;
+    padding:8px;
+}
+
+button{
+    margin-top:25px;
+    padding:10px 25px;
+    cursor:pointer;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Cadastro</h1>
+
+<form id="formulario">
+
+<label>Empresa</label>
+<input id="empresa">
+
+<label>Cliente</label>
+<input id="cliente">
+
+<label>CPF</label>
+<input id="cpf">
+
+<label>Cidade</label>
+<input id="cidade">
+
+<label>Valor</label>
+<input id="valor">
+
+<label>Data</label>
+<input id="data">
+
+<br>
+
+<button type="submit">
+
+Gerar PDF
+
+</button>
+
+</form>
+
+<script>
+
+document
+.getElementById("formulario")
+.addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    const dados = {
+        empresa: empresa.value,
+        cliente: cliente.value,
+        cpf: cpf.value,
+        cidade: cidade.value,
+        valor: valor.value,
+        data: data.value
+    };
+console.log("Cliquei em Gerar PDF 1");
+    const resposta = await fetch("/pdf/gerar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dados)
+    });
+console.log("Cliquei em Gerar PDF 2");
+    const blob = await resposta.blob();
+console.log("Cliquei em Gerar PDF 3");
+    const url = window.URL.createObjectURL(blob);
+console.log("Cliquei em Gerar PDF 4");
+    const link = document.createElement("a");
+
+    link.href = url;
+
+    link.download = "relatorio.pdf";
+
+    link.click();
+
+    window.URL.revokeObjectURL(url);
+
+});
+
+</script>
+
+</body>
+
+</html>

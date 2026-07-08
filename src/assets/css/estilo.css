@@ -1,0 +1,37 @@
+body{
+
+    font-family: Arial, sans-serif;
+
+    margin:40px;
+
+    color:#333;
+
+}
+
+.container{
+
+    border:1px solid #999;
+
+    padding:30px;
+
+    border-radius:8px;
+
+}
+
+h1{
+
+    color:#1E3A8A;
+
+}
+
+h2{
+
+    margin-top:25px;
+
+}
+
+p{
+
+    margin:10px 0;
+
+}
