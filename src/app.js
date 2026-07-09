@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
             __dirname,
             "public",
             "cotacaoForm",
-            "index.html"
+            "cotacaoForm.html"
         )
     );
 

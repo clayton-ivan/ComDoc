@@ -1,66 +1,97 @@
-body{
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    font-size:12pt;
-
-    color:#222;
-
-    line-height:1.5;
-
+@page {
+    size: A4;
+    margin: 20mm;
 }
 
-header{
-
-    text-align:center;
-
-    margin-bottom:40px;
-
+body {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #000;
 }
 
-h1{
-
-    font-size:22pt;
-
-    margin-bottom:10px;
-
+section:not(#capa) {
+    break-before: page;
 }
 
-h2{
-
-    margin-top:30px;
-
-    margin-bottom:10px;
-
-    border-bottom:1px solid #999;
-
-    padding-bottom:5px;
-
+h1 {
+    font-size: 20px;
+    margin-bottom: 30px;
 }
 
-table{
+h2 {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
 
-    width:100%;
+p {
+    margin-top: 0;
+}
 
-    border-collapse:collapse;
+#capa {
+    height: 240mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
+.numero-cotacao {
+    font-size: 18px;
+    margin-bottom: 40px;
+}
+
+.data-geracao {
+    text-align: right;
+    margin-bottom: 30px;
+}
+
+.campo {
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
 
 th,
-td{
-
-    border:1px solid #999;
-
-    padding:8px;
-
+td {
+    border: 1px solid #000;
+    padding: 8px;
+    text-align: left;
 }
 
-footer{
+.condicoes {
+    margin-top: 30px;
+}
 
-    margin-top:60px;
+#assinatura {
+    position: relative;
+    min-height: 240mm;
+    text-align: center;
+}
 
-    text-align:center;
+.rodape-final {
+    position: absolute;
+    bottom: 20mm;
+    left: 20mm;
+    right: 20mm;
 
-    font-size:10pt;
+    text-align: center;
+    font-size: 10px;
+}
 
+article p {
+    margin-bottom: 12px;
+    text-align: justify;
+}
+
+article ol {
+    margin-left: 20px;
+    margin-bottom: 12px;
+}
+
+article li {
+    margin-bottom: 6px;
 }

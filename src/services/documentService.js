@@ -4,34 +4,61 @@ const Handlebars = require("handlebars");
 const puppeteer = require("puppeteer");
 
 const gerar = async ({ template, contexto }) => {
-	
+
     const pastaTemplate = path.join(
-		__dirname,
-		"..",
-		"templates",
-		template
-	);
+        __dirname,
+        "..",
+        "templates",
+        template
+    );
+
+    const caminhoTemplate = path.join(
+        pastaTemplate,
+        "cotacao.html"
+    );
+
+    const caminhoCss = path.join(
+        pastaTemplate,
+        "cotacao.css"
+    );
+
+    const html = fs.readFileSync(
+        caminhoTemplate,
+        "utf8"
+    );
+
+    const css = fs.readFileSync(
+        caminhoCss,
+        "utf8"
+    );
 	
-	const caminhoTemplate = path.join(
+	const caminhoTextos = path.join(
 		pastaTemplate,
-		`${template}.html`
+		"textos"
 	);
 
-	const caminhoCss = path.join(
-		pastaTemplate,
-		`${template}.css`
+	const garantia = fs.readFileSync(
+		path.join(caminhoTextos, "garantia.html"),
+		"utf8"
 	);
-	
-	const html = fs.readFileSync(caminhoTemplate, "utf8");
 
-	const css = fs.readFileSync(caminhoCss, "utf8");
+	const importacao = fs.readFileSync(
+		path.join(caminhoTextos, "importacao.html"),
+		"utf8"
+	);
 
-	const Handlebars = require("handlebars");
+	const rodape = fs.readFileSync(
+		path.join(caminhoTextos, "rodape.html"),
+		"utf8"
+	);
 
-	const templateCompilado = Handlebars.compile(html);
+    const templateCompilado = Handlebars.compile(html);
 
-	const htmlFinal = templateCompilado({
-		...contexto.dados,
+    const htmlFinal = templateCompilado({
+		...contexto,
+		garantia,
+		importacao,
+		rodape,
 		css
 	});
 
@@ -42,38 +69,34 @@ const gerar = async ({ template, contexto }) => {
     await page.setContent(htmlFinal, {
         waitUntil: "networkidle0"
     });
+	
+	const pastaOutput = path.join(
+		__dirname,
+		"..",
+		"..",
+		"output"
+	);
 
-    await page.addStyleTag({
-        content: css
-    });
+	if (!fs.existsSync(pastaOutput)) {
+		fs.mkdirSync(pastaOutput);
+	}
 
-    const caminhoPdf = path.join(
-        __dirname,
-        "..",
-        "..",
-        "output",
-        "relatorio.pdf"
-    );
-
+	const caminhoPdf = path.join(
+		pastaOutput,
+		"cotacao.pdf"
+	);
+	
     await page.pdf({
         path: caminhoPdf,
         format: "A4",
-        printBackground: true,
-        margin: {
-            top: "20mm",
-            right: "20mm",
-            bottom: "20mm",
-            left: "20mm"
-        }
+        printBackground: true
     });
 
     await browser.close();
 
     return {
-		sucesso: true,
 		caminhoPdf
 	};
-
 };
 
 module.exports = {

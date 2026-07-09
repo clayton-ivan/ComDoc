@@ -1,36 +1,168 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
-
-<meta charset="UTF-8">
-
-<link rel="stylesheet" href="../css/estilo.css">
-
+    <meta charset="UTF-8">
+    <title>Cotação</title>
+    <style>
+        {{{css}}}
+    </style>
 </head>
 
 <body>
+    <!-- ===================================================== -->
+    <!-- CAPA -->
+    <!-- ===================================================== -->
+    <section id="capa">
+        <div class="numero-cotacao">
+            Cotação Nº {{numero}}
+        </div>
+        <div class="imagem-capa">
+            <!-- A imagem da capa será adicionada futuramente -->
+            <h1>CAPA DA COTAÇÃO</h1>
+        </div>
+    </section>
 
-<div class="container">
+    <!-- ===================================================== -->
+    <!-- DADOS DO CLIENTE -->
+    <!-- ===================================================== -->
 
-<h1>{{empresa}}</h1>
+    <section id="cliente">
+        <header>
+            <h1>Dados do Cliente</h1>
+            <div class="data-geracao">
+                Data: {{dataGeracao}}
+            </div>
+        </header>
+        <article class="campo">
+            <h2>Contato</h2>
+            <p>{{contato}}</p>
+        </article>
+        <article class="campo">
+            <h2>E-mail</h2>
+            <p>{{email}}</p>
+        </article>
+        <article class="campo">
+            <h2>Telefone</h2>
+            <p>{{telefone}}</p>
+        </article>
+        <article class="campo">
+            <h2>Endereço</h2>
+            <p>{{endereco}}</p>
+        </article>
+        <article class="campo">
+            <h2>CNPJ</h2>
+            <p>{{cnpj}}</p>
+        </article>
+    </section>
 
-<hr>
+    <!-- ===================================================== -->
+    <!-- PRODUTO -->
+    <!-- ===================================================== -->
 
-<h2>Relatório</h2>
+    <section id="produto">
+        <header>
+            <h1>Descrição do Produto</h1>
+        </header>
+        <article>
+            <p>
+                {{produto}}
+            </p>
+        </article>
+    </section>
 
-<p><strong>Cliente:</strong> {{cliente}}</p>
+    <!-- ===================================================== -->
+    <!-- VALORES -->
+    <!-- ===================================================== -->
 
-<p><strong>CPF:</strong> {{cpf}}</p>
+    <section id="valores">
+        <header>
+            <h1>Valores da Proposta</h1>
+        </header>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{produto}}</td>
+                    <td>{{valorTotal}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <article class="condicoes">
+           <h2>Prazo de Entrega</h2>
+            <p>{{prazoEntrega}}</p>
+            <h2>Forma de Pagamento</h2>
+            <p>{{pagamento}}</p>
+        </article>
+    </section>
 
-<p><strong>Cidade:</strong> {{cidade}}</p>
+    <!-- ===================================================== -->
+    <!-- GARANTIA E IMPORTAÇÃO -->
+    <!-- ===================================================== -->
 
-<p><strong>Valor:</strong> {{valor}}</p>
+    <section id="garantia">
+        <header>
+            <h1>Garantia</h1>
+        </header>
+        <article>
+            {{{garantia}}}
+        </article>
+        <header>
+            <h1>Importação</h1>
+        </header>
+        <article>
+            {{{importacao}}}
+        </article>
+    </section>
 
-<p><strong>Data:</strong> {{data}}</p>
+    <!-- ===================================================== -->
+    <!-- ASSINATURA -->
+    <!-- ===================================================== -->
 
-</div>
+    <section id="assinatura">
+        <header>
+            <h1>Validade da Proposta</h1>
+        </header>
+        <p>
+            {{validade}}
+        </p>
+
+        <br><br><br>
+        <p>
+            ________/________/________
+        </p>
+        <br><br><br>
+        <p>
+            ________________________________________________
+        </p>
+        <p>
+            Assinatura do Cliente
+        </p>
+        <br><br>
+        <p>
+            ________________________________________________
+        </p>
+        <p>
+            Alfa Gruas e Elevadores
+        </p>
+		
+		<div class="rodape-final">
+
+			{{{rodape}}}
+
+		</div>
+    </section>
+
+
+    <!-- ===================================================== -->
+    <!-- RODAPÉ -->
+    <!-- ===================================================== -->
+
 
 </body>
 

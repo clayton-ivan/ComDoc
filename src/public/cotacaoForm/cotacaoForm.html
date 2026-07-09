@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Cotação</title>
+
+    <link rel="stylesheet" href="/cotacaoForm/cotacaoForm.css">
+</head>
+
+<body>
+
+    <h1>Nova Cotação</h1>
+
+    <form id="formulario">
+
+        <fieldset>
+            <legend>Dados do Cliente</legend>
+
+            <label for="contato">Contato</label>
+            <input type="text" id="contato" required>
+
+            <label for="email">E-mail</label>
+            <input type="email" id="email">
+
+            <label for="telefone">Telefone</label>
+            <input type="text" id="telefone">
+
+            <label for="endereco">Endereço</label>
+            <input type="text" id="endereco">
+
+            <label for="cnpj">CNPJ</label>
+            <input type="text" id="cnpj">
+        </fieldset>
+
+        <fieldset>
+            <legend>Produto</legend>
+
+            <label for="produto">Produto</label>
+            <input type="text" id="produto" required>
+        </fieldset>
+
+        <fieldset>
+            <legend>Valores</legend>
+
+            <label for="valorTotal">Valor Total</label>
+            <input type="text" id="valorTotal">
+        </fieldset>
+
+        <fieldset>
+            <legend>Condições Comerciais</legend>
+
+            <label for="prazoEntrega">Prazo de Entrega</label>
+            <input type="text" id="prazoEntrega">
+
+            <label for="pagamento">Forma de Pagamento</label>
+            <input type="text" id="pagamento">
+        </fieldset>
+
+        <button type="submit">
+            Gerar Cotação
+        </button>
+
+    </form>
+
+    <script src="/cotacaoForm/cotacaoForm.js"></script>
+
+</body>
+
+</html>
