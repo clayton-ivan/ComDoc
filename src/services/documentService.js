@@ -3,32 +3,43 @@ const path = require("path");
 const Handlebars = require("handlebars");
 const puppeteer = require("puppeteer");
 
-const gerar = async ({ template, dados }) => {
+const gerar = async ({ template, contexto }) => {
 	
-    const caminhoTemplate = path.join(
+    const pastaTemplate = path.join(
 		__dirname,
 		"..",
 		"templates",
-		`${template}.html`
+		template
 	);
 	
-	const templateHtml = fs.readFileSync(
-		caminhoTemplate,
-		"utf8"
+	const caminhoTemplate = path.join(
+		pastaTemplate,
+		`${template}.html`
 	);
 
-    const html = Handlebars.compile(template)(dados);
+	const caminhoCss = path.join(
+		pastaTemplate,
+		`${template}.css`
+	);
+	
+	const html = fs.readFileSync(caminhoTemplate, "utf8");
 
-    const css = fs.readFileSync(
-        path.join(__dirname, "..", "assets", "css", "estilo.css"),
-        "utf8"
-    );
+	const css = fs.readFileSync(caminhoCss, "utf8");
+
+	const Handlebars = require("handlebars");
+
+	const templateCompilado = Handlebars.compile(html);
+
+	const htmlFinal = templateCompilado({
+		...contexto.dados,
+		css
+	});
 
     const browser = await puppeteer.launch();
 
     const page = await browser.newPage();
 
-    await page.setContent(html, {
+    await page.setContent(htmlFinal, {
         waitUntil: "networkidle0"
     });
 

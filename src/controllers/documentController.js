@@ -1,13 +1,22 @@
 const documentService = require("../services/documentService");
 
 const gerar = async (req, res) => {
+	
+	console.log("Recebi uma solicitação para gerar uma cotação.");
+	console.log(req.body);
+	
+	const dados = req.body;
+	
+	const contexto = {
+		dados
+	};
 
     try {
 
         const resultado = await documentService.gerar({
-										template: "cotacao",
-										dados: req.body
-									});
+			template: "cotacao",
+			contexto
+		});
 
         console.log(resultado);
 

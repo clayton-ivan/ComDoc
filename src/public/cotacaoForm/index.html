@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComDoc - Nova Cotação</title>
+
+    <link rel="stylesheet" href="./cotacaoForm.css">
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="logo">
+            ComDoc
+        </div>
+
+        <div class="version">
+            v0.1.0
+        </div>
+    </header>
+
+    <main class="container">
+
+        <h1>Nova Cotação Comercial</h1>
+
+        <form id="formCotacao">
+
+            <section class="card">
+
+                <h2>Dados do Cliente</h2>
+
+                <div class="grid">
+
+                    <div>
+                        <label>Empresa</label>
+                        <input id="empresa" required>
+                    </div>
+
+                    <div>
+                        <label>CNPJ</label>
+                        <input id="cnpj">
+                    </div>
+
+                    <div>
+                        <label>Cidade</label>
+                        <input id="cidade">
+                    </div>
+
+                    <div>
+                        <label>Contato</label>
+                        <input id="contato">
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="card">
+
+                <h2>Produto</h2>
+
+                <div class="grid">
+
+                    <div>
+                        <label>Descrição</label>
+                        <input id="produto">
+                    </div>
+
+                    <div>
+                        <label>Quantidade</label>
+                        <input id="quantidade" type="number" value="1">
+                    </div>
+
+                    <div>
+                        <label>Valor Unitário</label>
+                        <input id="valor">
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="card">
+
+                <h2>Condições Comerciais</h2>
+
+                <div class="grid">
+
+                    <div>
+                        <label>Validade</label>
+
+                        <select id="validade">
+                            <option>7 dias</option>
+                            <option selected>15 dias</option>
+                            <option>30 dias</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Pagamento</label>
+
+                        <select id="pagamento">
+                            <option>Pix</option>
+                            <option>Boleto</option>
+                            <option>Transferência</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Prazo de Entrega</label>
+
+                        <input id="entrega">
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="card">
+
+                <h2>Observações</h2>
+
+                <textarea id="observacoes"></textarea>
+
+            </section>
+
+            <button type="submit" class="btn-gerar">
+                Gerar Cotação
+            </button>
+
+        </form>
+
+    </main>
+
+    <script src="./cotacaoForm.js"></script>
+
+</body>
+
+</html>
