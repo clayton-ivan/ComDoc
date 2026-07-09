@@ -8,7 +8,9 @@ const gerar = async (req, res) => {
 	const dados = req.body;
 	
 	const contexto = {
-		dados
+		...dados,
+
+		numero: "001"
 	};
 
     try {
