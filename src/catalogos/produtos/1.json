@@ -1,0 +1,25 @@
+{
+    "codigo": 1,
+    "nome": "Grua Clayton 101",
+    "descricao": "Descrição de acordo com a vontade do usuário.",
+    "itens": [
+        {
+            "codigo": "1",
+            "descricao": "Lança",
+            "quantidade": 1,
+            "valorSugerido": 12000
+        },
+        {
+            "codigo": "2",
+            "descricao": "Mangote",
+            "quantidade": 1,
+            "valorSugerido": 10000
+        },
+        {
+            "codigo": "3",
+            "descricao": "Cabo",
+            "quantidade": 1,
+            "valorSugerido": 10000
+        }
+    ]
+}

@@ -1,59 +1,191 @@
-document
-    .getElementById("formulario")
-    .addEventListener("submit", async (e) => {
+import {
+    aplicarMascaraCnpj,
+    aplicarMascaraTelefone
+} from "./mascaras.js";
 
-        e.preventDefault();
+import {
+    buscarProdutoPorCodigo,
+    preencherComboProdutos
+} from "./produtos.js";
 
-        const dados = {
-            contato: document.getElementById("contato").value,
-            email: document.getElementById("email").value,
-            telefone: document.getElementById("telefone").value,
-            endereco: document.getElementById("endereco").value,
-            cnpj: document.getElementById("cnpj").value,
+import {
+    criarGerenciadorItens
+} from "./itens.js";
 
-            produto: document.getElementById("produto").value,
+const formulario =
+    document.getElementById("formulario");
 
-            valorTotal: document.getElementById("valorTotal").value,
+const campoProduto =
+    document.getElementById("produto");
 
-            prazoEntrega: document.getElementById("prazoEntrega").value,
-            pagamento: document.getElementById("pagamento").value,
+const campoTelefone =
+    document.getElementById("telefone");
 
-            dataGeracao: new Date().toLocaleDateString("pt-BR")
-        };
+const campoCnpj =
+    document.getElementById("cnpj");
 
-        try {
+const corpoItensProduto =
+    document.getElementById("itensProduto");
 
-            const resposta = await fetch("/documentos/gerar", {
+const campoValorTotal =
+    document.getElementById("valorTotal");
+
+const gerenciadorItens = criarGerenciadorItens(
+    corpoItensProduto,
+    campoValorTotal
+);
+
+let produtoSelecionado = null;
+
+aplicarMascaraTelefone(campoTelefone);
+aplicarMascaraCnpj(campoCnpj);
+
+async function carregarProdutoSelecionado() {
+    const codigoProduto = campoProduto.value;
+
+    if (!codigoProduto) {
+        produtoSelecionado = null;
+        gerenciadorItens.limparItens();
+        return;
+    }
+
+    try {
+        produtoSelecionado =
+            await buscarProdutoPorCodigo(codigoProduto);
+
+        gerenciadorItens.renderizarItens(
+            produtoSelecionado.itens
+        );
+    } catch (erro) {
+        console.error(
+            "Erro ao carregar produto:",
+            erro
+        );
+
+        produtoSelecionado = null;
+        gerenciadorItens.limparItens();
+
+        alert("Não foi possível carregar o produto.");
+    }
+}
+
+async function gerarCotacao(evento) {
+    evento.preventDefault();
+
+    if (!produtoSelecionado) {
+        alert("Selecione um produto.");
+        return;
+    }
+
+    const itens =
+        gerenciadorItens.obterItensPreenchidos();
+
+    const valorTotal = itens.reduce(
+        (total, item) => total + item.valorTotal,
+        0
+    );
+
+    const dados = {
+        contato:
+            document.getElementById("contato").value,
+
+        email:
+            document.getElementById("email").value,
+
+        telefone:
+            campoTelefone.value,
+
+        endereco:
+            document.getElementById("endereco").value,
+
+        cnpj:
+            campoCnpj.value,
+
+        produtoCodigo:
+            produtoSelecionado.codigo,
+
+        produtoNome:
+            produtoSelecionado.nome,
+
+        produtoDescricao:
+            produtoSelecionado.descricao,
+
+        itens,
+
+        valorTotal,
+
+        prazoEntrega:
+            document.getElementById("prazoEntrega").value,
+
+        pagamento:
+            document.getElementById("pagamento").value,
+
+        dataGeracao:
+            new Date().toLocaleDateString("pt-BR")
+    };
+
+    try {
+        const resposta = await fetch(
+            "/documentos/gerar",
+            {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify(dados)
-            });
-
-            if (!resposta.ok) {
-                throw new Error("Erro ao gerar documento.");
             }
+        );
 
-            const blob = await resposta.blob();
+        if (!resposta.ok) {
+            const mensagemErro =
+                await resposta.text();
 
-            const url = window.URL.createObjectURL(blob);
+            console.error(
+                "Erro retornado pelo servidor:",
+                mensagemErro
+            );
 
-            const link = document.createElement("a");
-
-            link.href = url;
-            link.download = "cotacao.pdf";
-
-            link.click();
-
-            window.URL.revokeObjectURL(url);
-
-        } catch (erro) {
-
-            console.error(erro);
-
-            alert("Erro ao gerar documento.");
-
+            throw new Error(
+                `Erro ao gerar documento. Status: ${resposta.status}`
+            );
         }
 
-    });
+        const arquivoPdf =
+            await resposta.blob();
+
+        const urlPdf =
+            window.URL.createObjectURL(arquivoPdf);
+
+        const linkDownload =
+            document.createElement("a");
+
+        linkDownload.href = urlPdf;
+        linkDownload.download = "cotacao.pdf";
+
+        document.body.appendChild(linkDownload);
+
+        linkDownload.click();
+        linkDownload.remove();
+
+        window.URL.revokeObjectURL(urlPdf);
+    } catch (erro) {
+        console.error(
+            "Erro ao gerar cotação:",
+            erro
+        );
+
+        alert("Erro ao gerar documento.");
+    }
+}
+
+campoProduto.addEventListener(
+    "change",
+    carregarProdutoSelecionado
+);
+
+formulario.addEventListener(
+    "submit",
+    gerarCotacao
+);
+
+preencherComboProdutos(campoProduto);

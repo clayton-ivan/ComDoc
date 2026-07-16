@@ -13,93 +13,138 @@
     <!-- ===================================================== -->
     <!-- CAPA -->
     <!-- ===================================================== -->
-    <section id="capa">
-        <div class="numero-cotacao">
-            Cotação Nº {{numero}}
-        </div>
-        <div class="imagem-capa">
-            <!-- A imagem da capa será adicionada futuramente -->
-            <h1>CAPA DA COTAÇÃO</h1>
-        </div>
-    </section>
+    <section id="capa" style="background-image: url('{{capa}}');">
+		<div class="overlay-capa">
+			<div class="titulo-capa">
+				<div class="titulo-linha">
+					PROPOSTA
+				</div>
+				<div class="titulo-linha">
+					COMERCIAL
+				</div>
+			</div>
+			<div class="numero-cotacao">
+				Proposta Comercial nº {{numero}}
+			</div>
+		</div>
+	</section>
 
     <!-- ===================================================== -->
     <!-- DADOS DO CLIENTE -->
     <!-- ===================================================== -->
 
     <section id="cliente">
-        <header>
-            <h1>Dados do Cliente</h1>
-            <div class="data-geracao">
-                Data: {{dataGeracao}}
-            </div>
-        </header>
-        <article class="campo">
-            <h2>Contato</h2>
-            <p>{{contato}}</p>
-        </article>
-        <article class="campo">
-            <h2>E-mail</h2>
-            <p>{{email}}</p>
-        </article>
-        <article class="campo">
-            <h2>Telefone</h2>
-            <p>{{telefone}}</p>
-        </article>
-        <article class="campo">
-            <h2>Endereço</h2>
-            <p>{{endereco}}</p>
-        </article>
-        <article class="campo">
-            <h2>CNPJ</h2>
-            <p>{{cnpj}}</p>
-        </article>
-    </section>
+		<header class="cabecalho-pagina">
+			<h1>Dados do Cliente</h1>
+			<div class="data-geracao">
+				{{dataGeracao}}
+			</div>
+		</header>
+
+		<div class="dados-cliente">
+			<div class="campo-cliente">
+				<span class="rotulo-cliente">Contato</span>
+				<span class="valor-cliente">{{contato}}</span>
+			</div>
+
+			<div class="campo-cliente">
+				<span class="rotulo-cliente">E-mail</span>
+				<span class="valor-cliente">{{email}}</span>
+			</div>
+
+			<div class="campo-cliente">
+				<span class="rotulo-cliente">Telefone</span>
+				<span class="valor-cliente">{{telefone}}</span>
+			</div>
+
+			<div class="campo-cliente campo-cliente-largo">
+				<span class="rotulo-cliente">Endereço</span>
+				<span class="valor-cliente">{{endereco}}</span>
+			</div>
+
+			<div class="campo-cliente">
+				<span class="rotulo-cliente">CNPJ</span>
+				<span class="valor-cliente">{{cnpj}}</span>
+			</div>
+		</div>
+	</section>
 
     <!-- ===================================================== -->
     <!-- PRODUTO -->
     <!-- ===================================================== -->
 
     <section id="produto">
-        <header>
-            <h1>Descrição do Produto</h1>
-        </header>
-        <article>
-            <p>
-                {{produto}}
-            </p>
-        </article>
-    </section>
+		<header class="cabecalho-pagina">
+			<h1>Descrição do Produto</h1>
+		</header>
+		<div class="produto-card">
+			<div class="produto-header">
+				<h2>{{produtoNome}}</h2>
+			</div>
+			<div class="produto-descricao">
+				<p>{{produtoDescricao}}</p>
+			</div>
+		</div>
+	</section>
 
     <!-- ===================================================== -->
     <!-- VALORES -->
     <!-- ===================================================== -->
 
     <section id="valores">
-        <header>
-            <h1>Valores da Proposta</h1>
-        </header>
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Valor</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{{produto}}</td>
-                    <td>{{valorTotal}}</td>
-                </tr>
-            </tbody>
-        </table>
-        <article class="condicoes">
-           <h2>Prazo de Entrega</h2>
-            <p>{{prazoEntrega}}</p>
-            <h2>Forma de Pagamento</h2>
-            <p>{{pagamento}}</p>
-        </article>
-    </section>
+		<header class="cabecalho-pagina">
+			<h1>Valores da Proposta</h1>
+		</header>
+
+		<table class="tabela-valores">
+			<thead>
+				<tr>
+					<th>Item</th>
+					<th>Qtd.</th>
+					<th>Valor Unitário</th>
+					<th>Total</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				{{#each itens}}
+					<tr>
+						<td>{{descricao}}</td>
+						<td>{{quantidade}}</td>
+						<td>{{moeda valorUnitario}}</td>
+						<td>{{moeda valorTotal}}</td>
+					</tr>
+				{{/each}}
+			</tbody>
+		</table>
+
+		<div class="informacoes-comerciais">
+			<div class="informacao">
+				<span class="titulo-info">
+					Prazo de Entrega
+				</span>
+
+				<span class="valor-info">
+					{{prazoEntrega}}
+				</span>
+			</div>
+
+			<div class="informacao">
+				<span class="titulo-info">
+					Forma de Pagamento
+				</span>
+
+				<span class="valor-info">
+					{{pagamento}}
+				</span>
+			</div>
+		</div>
+
+		<div class="total-proposta">
+			<span>Valor total da proposta</span>
+			<strong>{{moeda valorTotal}}</strong>
+		</div>
+	</section>
 
     <!-- ===================================================== -->
     <!-- GARANTIA E IMPORTAÇÃO -->
@@ -140,9 +185,11 @@
         <p>
             ________________________________________________
         </p>
-        <p>
-            Assinatura do Cliente
-        </p>
+        <p class="assinatura-cliente">
+			{{contato}}
+			<br>
+			<strong>CNPJ {{cnpj}}</strong>
+		</p>
         <br><br>
         <p>
             ________________________________________________

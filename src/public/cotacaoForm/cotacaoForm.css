@@ -98,3 +98,25 @@ textarea {
 .btn-gerar:hover {
     opacity: .9;
 }
+
+.tabela-itens-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabela-itens-form {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela-itens-form th,
+.tabela-itens-form td {
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    text-align: left;
+}
+
+.tabela-itens-form input {
+    width: 100%;
+    min-width: 100px;
+}
