@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComDoc - Produtos</title>
+    <link rel="stylesheet" href="/produtoAdmin/produtoAdmin.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="marca">ComDoc</div>
+        <a href="/cotacaoForm/cotacaoForm.html" class="link-voltar">
+            Nova cotação
+        </a>
+    </header>
+
+    <main class="container">
+        <div class="cabecalho-pagina">
+            <div>
+                <h1>Produtos</h1>
+                <p>Gerencie os produtos disponíveis para geração de cotações.</p>
+            </div>
+
+            <button id="botaoNovoProduto" type="button" class="botao-primario">
+                Novo produto
+            </button>
+        </div>
+
+        <section class="filtros">
+            <label for="pesquisaProduto">Pesquisar produto</label>
+            <input
+                type="search"
+                id="pesquisaProduto"
+                placeholder="Digite o nome ou código do produto">
+        </section>
+
+        <section class="lista-produtos">
+            <div id="mensagemLista" class="mensagem-lista">
+                Carregando produtos...
+            </div>
+
+            <div id="produtos" class="produtos"></div>
+        </section>
+    </main>
+
+    <dialog id="dialogProduto">
+        <form id="formProduto" method="dialog">
+            <div class="cabecalho-dialog">
+                <h2 id="tituloDialog">Novo produto</h2>
+
+                <button
+                    id="botaoFecharDialog"
+                    type="button"
+                    class="botao-fechar"
+                    aria-label="Fechar">
+                    ×
+                </button>
+            </div>
+
+            <div class="campo">
+                <label for="codigoProduto">Código</label>
+                <input
+                    type="text"
+                    id="codigoProduto"
+                    required>
+            </div>
+
+            <div class="campo">
+                <label for="nomeProduto">Nome</label>
+                <input
+                    type="text"
+                    id="nomeProduto"
+                    required>
+            </div>
+
+            <div class="campo">
+                <label for="descricaoProduto">Descrição</label>
+                <textarea
+                    id="descricaoProduto"
+                    rows="5"
+                    required></textarea>
+            </div>
+
+            <section class="secao-itens">
+				<div class="cabecalho-itens">
+					<h3>Itens do produto</h3>
+
+					<button
+						id="botaoAdicionarItem"
+						type="button"
+						class="botao-secundario">
+						Adicionar item
+					</button>
+				</div>
+
+				<div class="tabela-itens-container">
+					<table class="tabela-itens">
+						<thead>
+							<tr>
+								<th>Código</th>
+								<th>Descrição</th>
+								<th>Quantidade</th>
+								<th>Valor sugerido</th>
+								<th>Ação</th>
+							</tr>
+						</thead>
+
+						<tbody id="itensProduto"></tbody>
+					</table>
+				</div>
+			</section>
+
+            <div class="acoes-dialog">
+                <button
+                    id="botaoCancelar"
+                    type="button"
+                    class="botao-secundario">
+                    Cancelar
+                </button>
+
+                <button
+                    type="submit"
+                    class="botao-primario">
+                    Salvar produto
+                </button>
+            </div>
+        </form>
+    </dialog>
+
+    <script
+        type="module"
+        src="/produtoAdmin/produtoAdmin.js">
+    </script>
+</body>
+</html>

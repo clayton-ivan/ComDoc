@@ -1,0 +1,25 @@
+{
+    "codigo": 3,
+    "nome": "Grua QTZ40",
+    "descricao": "Descrição provisória da Grua QTZ40.",
+    "itens": [
+		{
+			"codigo": "equipamento",
+			"descricao": "Grua QTZ40",
+			"quantidade": 1,
+			"valorSugerido": 100000
+		},
+		{
+			"codigo": "frete",
+			"descricao": "Frete",
+			"quantidade": 1,
+			"valorSugerido": 12000
+		},
+		{
+			"codigo": "montagem",
+			"descricao": "Montagem e instalação",
+			"quantidade": 1,
+			"valorSugerido": 8000
+		}
+	]
+}

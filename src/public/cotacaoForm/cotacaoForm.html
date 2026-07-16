@@ -25,28 +25,66 @@
             <input type="email" id="email">
 
             <label for="telefone">Telefone</label>
-            <input type="text" id="telefone">
+            <input
+				type="text"
+				id="telefone"
+				inputmode="numeric"
+				maxlength="15"
+				required>
 
             <label for="endereco">Endereço</label>
             <input type="text" id="endereco">
 
             <label for="cnpj">CNPJ</label>
-            <input type="text" id="cnpj">
+            <input
+				type="text"
+				id="cnpj"
+				inputmode="numeric"
+				maxlength="18"
+				required>
         </fieldset>
 
         <fieldset>
-            <legend>Produto</legend>
+			<legend>Produto</legend>
 
-            <label for="produto">Produto</label>
-            <input type="text" id="produto" required>
-        </fieldset>
+			<label for="produto">Produto</label>
+
+			<select id="produto" required>
+				<option value="">Carregando produtos...</option>
+			</select>
+		</fieldset>
 
         <fieldset>
-            <legend>Valores</legend>
+			<legend>Itens da Proposta</legend>
 
-            <label for="valorTotal">Valor Total</label>
-            <input type="text" id="valorTotal">
-        </fieldset>
+			<div class="tabela-itens-container">
+				<table class="tabela-itens-form">
+					<thead>
+						<tr>
+							<th>Item</th>
+							<th>Quantidade</th>
+							<th>Valor Unitário</th>
+							<th>Total</th>
+						</tr>
+					</thead>
+
+					<tbody id="itensProduto">
+						<tr>
+							<td colspan="4">
+								Selecione um produto.
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<label for="valorTotal">Valor Total da Proposta</label>
+
+			<input
+				type="text"
+				id="valorTotal"
+				readonly>
+		</fieldset>
 
         <fieldset>
             <legend>Condições Comerciais</legend>
@@ -64,7 +102,10 @@
 
     </form>
 
-    <script src="/cotacaoForm/cotacaoForm.js"></script>
+    <script
+		type="module"
+		src="/cotacaoForm/cotacaoForm.js">
+	</script>
 
 </body>
 

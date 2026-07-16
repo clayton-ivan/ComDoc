@@ -9,7 +9,6 @@ const gerar = async (req, res) => {
 	
 	const contexto = {
 		...dados,
-
 		numero: "001"
 	};
 

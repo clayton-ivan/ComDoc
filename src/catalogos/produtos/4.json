@@ -1,0 +1,25 @@
+{
+    "codigo": 4,
+    "nome": "Grua QTZ100",
+    "descricao": "Descrição provisória da Grua QTZ100. É um ótimo equipamento.",
+    "itens": [
+        {
+            "codigo": "equipamento",
+            "descricao": "Grua QTZ100",
+            "quantidade": 1,
+            "valorSugerido": 134000
+        },
+        {
+            "codigo": "frete",
+            "descricao": "Fretes",
+            "quantidade": 1,
+            "valorSugerido": 13600
+        },
+        {
+            "codigo": "montagem",
+            "descricao": "Montagem",
+            "quantidade": 1,
+            "valorSugerido": 9022
+        }
+    ]
+}

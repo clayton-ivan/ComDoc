@@ -1,0 +1,283 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #f4f6f8;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #1f2937;
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 32px;
+    background: #1f2937;
+    color: white;
+}
+
+.marca {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.link-voltar {
+    color: white;
+    text-decoration: none;
+}
+
+.container {
+    width: min(1100px, calc(100% - 40px));
+    margin: 32px auto;
+}
+
+.cabecalho-pagina {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.cabecalho-pagina h1 {
+    margin: 0 0 8px;
+}
+
+.cabecalho-pagina p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.filtros {
+    padding: 20px;
+    margin-bottom: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.filtros label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.filtros input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+}
+
+.lista-produtos {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.mensagem-lista {
+    padding: 24px;
+    color: #6b7280;
+}
+
+.produto {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.produto:last-child {
+    border-bottom: 0;
+}
+
+.produto h2 {
+    margin: 0 0 6px;
+    font-size: 18px;
+}
+
+.produto p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.acoes-produto {
+    display: flex;
+    gap: 10px;
+}
+
+.botao-primario,
+.botao-secundario,
+.botao-perigo {
+    border: 0;
+    border-radius: 6px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.botao-primario {
+    background: #2563eb;
+    color: white;
+}
+
+.botao-secundario {
+    background: #e5e7eb;
+    color: #1f2937;
+}
+
+.botao-perigo {
+    background: #dc2626;
+    color: white;
+}
+
+dialog {
+    width: min(760px, calc(100% - 40px));
+    border: 0;
+    border-radius: 10px;
+    padding: 0;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.45);
+}
+
+#formProduto {
+    padding: 24px;
+}
+
+.cabecalho-dialog {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.cabecalho-dialog h2 {
+    margin: 0;
+}
+
+.botao-fechar {
+    border: 0;
+    background: transparent;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.campo {
+    margin-bottom: 18px;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 700;
+}
+
+.campo input,
+.campo textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+}
+
+.secao-itens {
+    margin-top: 24px;
+}
+
+.cabecalho-itens {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.cabecalho-itens h3 {
+    margin: 0;
+}
+
+.botao-remover-item {
+    border: 0;
+    border-radius: 6px;
+    padding: 11px 14px;
+    background: #fee2e2;
+    color: #991b1b;
+    cursor: pointer;
+}
+
+.acoes-dialog {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+@media (max-width: 760px) {
+    .cabecalho-pagina,
+    .produto {
+        flex-direction: column;
+    }
+}
+
+.tabela-itens-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabela-itens {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabela-itens th,
+.tabela-itens td {
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.tabela-itens th {
+    background: #f3f4f6;
+    font-size: 14px;
+}
+
+.tabela-itens input {
+    width: 100%;
+    min-width: 90px;
+    padding: 9px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+}
+
+.tabela-itens .coluna-codigo {
+    width: 18%;
+}
+
+.tabela-itens .coluna-descricao {
+    width: 35%;
+}
+
+.tabela-itens .coluna-quantidade {
+    width: 14%;
+}
+
+.tabela-itens .coluna-valor {
+    width: 20%;
+}
+
+.tabela-itens .coluna-acao {
+    width: 13%;
+}

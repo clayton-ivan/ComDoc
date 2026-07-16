@@ -51,11 +51,29 @@ const gerar = async ({ template, contexto }) => {
 		path.join(caminhoTextos, "rodape.html"),
 		"utf8"
 	);
+	
+	const caminhoCapa = path.join(
+		pastaTemplate,
+		"imagens",
+		"capa.png"
+	);
 
+	const capaBase64 = fs.readFileSync(caminhoCapa, "base64");
+
+	const capa = `data:image/png;base64,${capaBase64}`;
+	
+	Handlebars.registerHelper("moeda", (valor) => {
+		return Number(valor).toLocaleString("pt-BR", {
+			style: "currency",
+			currency: "BRL"
+		});
+	});
+	
     const templateCompilado = Handlebars.compile(html);
 
     const htmlFinal = templateCompilado({
 		...contexto,
+		capa,
 		garantia,
 		importacao,
 		rodape,
@@ -67,8 +85,8 @@ const gerar = async ({ template, contexto }) => {
     const page = await browser.newPage();
 
     await page.setContent(htmlFinal, {
-        waitUntil: "networkidle0"
-    });
+		waitUntil: "networkidle0"
+	});
 	
 	const pastaOutput = path.join(
 		__dirname,
@@ -87,10 +105,22 @@ const gerar = async ({ template, contexto }) => {
 	);
 	
     await page.pdf({
-        path: caminhoPdf,
-        format: "A4",
-        printBackground: true
-    });
+		path: caminhoPdf,
+
+		width: "210mm",
+		height: "297mm",
+
+		margin: {
+			top: "0mm",
+			right: "0mm",
+			bottom: "0mm",
+			left: "0mm"
+		},
+
+		printBackground: true,
+
+		preferCSSPageSize: true
+	});
 
     await browser.close();
 

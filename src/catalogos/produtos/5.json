@@ -1,0 +1,25 @@
+{
+    "codigo": 5,
+    "nome": "Grua QTZ200",
+    "descricao": "Descrição provisória da Grua QTZ200.",
+    "itens": [
+		{
+			"codigo": "equipamento",
+			"descricao": "Grua QTZ200",
+			"quantidade": 1,
+			"valorSugerido": 166000
+		},
+		{
+			"codigo": "frete",
+			"descricao": "Frete",
+			"quantidade": 1,
+			"valorSugerido": 15000
+		},
+		{
+			"codigo": "montagem",
+			"descricao": "Montagem e instalação",
+			"quantidade": 1,
+			"valorSugerido": 9500
+		}
+	]
+}

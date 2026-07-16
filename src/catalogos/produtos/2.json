@@ -1,0 +1,25 @@
+{
+    "codigo": 2,
+    "nome": "Elevador 1",
+    "descricao": "Descrição provisória de Elevador 1. Esse vale a pena.",
+    "itens": [
+        {
+            "codigo": "equipamento",
+            "descricao": "Elevador 2",
+            "quantidade": 1,
+            "valorSugerido": 61000
+        },
+        {
+            "codigo": "frete",
+            "descricao": "Frete",
+            "quantidade": 1,
+            "valorSugerido": 7030
+        },
+        {
+            "codigo": "montagem",
+            "descricao": "Montagem e instalação",
+            "quantidade": 1,
+            "valorSugerido": 4500
+        }
+    ]
+}

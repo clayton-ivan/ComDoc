@@ -1,16 +1,23 @@
 @page {
     size: A4;
-    margin: 20mm;
+    margin: 0;
 }
 
+html,
 body {
+    width: 210mm;
+    margin: 0;
+    padding: 0;
+
     font-family: Arial, sans-serif;
     font-size: 12px;
     color: #000;
 }
 
 section:not(#capa) {
+    padding: 20mm;
     break-before: page;
+    box-sizing: border-box;
 }
 
 h1 {
@@ -28,16 +35,57 @@ p {
 }
 
 #capa {
-    height: 240mm;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.imagem-capa {
+    display: none;
+}
+
+.overlay-capa {
+    position: absolute;
+    inset: 0;
+}
+
+.titulo-capa {
+    position: absolute;
+
+    left: 24mm;
+    bottom: 46mm;
+
+    color: white;
+
+    font-weight: 700;
+    line-height: .95;
+}
+
+.titulo-linha {
+    font-size: 18mm;
+    text-transform: uppercase;
 }
 
 .numero-cotacao {
-    font-size: 18px;
-    margin-bottom: 40px;
+    position: absolute;
+
+    left: 24mm;
+    bottom: 24mm;
+
+    color: white;
+    font-size: 6mm;
+    font-weight: 600;
+
+    background: rgba(0, 0, 0, .65);
+
+    letter-spacing: 0.2mm;
 }
 
 .data-geracao {
@@ -94,4 +142,161 @@ article ol {
 
 article li {
     margin-bottom: 6px;
+}
+
+#cliente {
+    min-height: 297mm;
+}
+
+.cabecalho-pagina {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24mm;
+}
+
+.cabecalho-pagina h1 {
+    margin: 0;
+    font-size: 9mm;
+    text-transform: uppercase;
+}
+
+.data-geracao {
+    margin: 0;
+    font-size: 4mm;
+    text-align: right;
+}
+
+.dados-cliente {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14mm 16mm;
+}
+
+.campo-cliente {
+    display: flex;
+    flex-direction: column;
+    gap: 3mm;
+    padding-bottom: 4mm;
+    border-bottom: 0.3mm solid #bdbdbd;
+}
+
+.campo-cliente-largo {
+    grid-column: 1 / -1;
+}
+
+.rotulo-cliente {
+    font-size: 3.5mm;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15mm;
+}
+
+.valor-cliente {
+    font-size: 4.5mm;
+    line-height: 1.4;
+}
+
+
+#produto {
+    min-height: 297mm;
+}
+
+.produto-card {
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.produto-header {
+    background: #f36b21;
+    color: white;
+    padding: 8mm 10mm;
+}
+
+.produto-header h2 {
+    margin: 0;
+    font-size: 7mm;
+    text-transform: uppercase;
+}
+
+.produto-descricao {
+    padding: 10mm;
+    font-size: 4.5mm;
+    line-height: 1.8;
+}
+
+.produto-descricao p {
+    margin: 0;
+    text-align: justify;
+}
+
+/* ===================================================== */
+/* VALORES                                               */
+/* ===================================================== */
+
+.tabela-valores {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12mm;
+}
+
+.tabela-valores thead {
+    background: #f36b21;
+    color: white;
+}
+
+.tabela-valores th {
+    padding: 4mm;
+    font-size: 4mm;
+}
+
+.tabela-valores td {
+    padding: 4mm;
+    border: 1px solid #d9d9d9;
+    font-size: 4mm;
+}
+
+.informacoes-comerciais {
+    margin-top: 15mm;
+}
+
+.informacao {
+    margin-bottom: 8mm;
+}
+
+.titulo-info {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 2mm;
+}
+
+.valor-info {
+    display: block;
+}
+
+.total-proposta {
+    margin-top: 20mm;
+
+    padding: 8mm;
+
+    background: #f36b21;
+
+    color: white;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: 6mm;
+
+    border-radius: 4px;
+}
+
+.total-proposta strong {
+    font-size: 8mm;
+}
+
+.assinatura-cliente {
+    line-height: 1.7;
 }
