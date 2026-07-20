@@ -1,122 +1,323 @@
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
 }
 
 body {
-    background: #f4f6f9;
+    margin: 0;
+    background: #f4f6f8;
     font-family: Arial, Helvetica, sans-serif;
-    color: #333;
+    color: #1f2937;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+    min-height: 44px;
+}
+
+button {
+    touch-action: manipulation;
 }
 
 .topbar {
-    background: #1f2937;
-    color: white;
-    padding: 18px 30px;
-
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 18px 32px;
+    background: #1f2937;
+    color: white;
 }
 
-.logo {
+.marca {
     font-size: 22px;
-    font-weight: bold;
+    font-weight: 700;
 }
 
-.version {
-    opacity: .8;
+.link-topbar {
+    color: white;
+    text-decoration: none;
 }
 
 .container {
-    max-width: 1100px;
-    margin: 30px auto;
-    padding: 0 20px;
+    width: min(1100px, calc(100% - 40px));
+    margin: 32px auto;
 }
 
-h1 {
-    margin-bottom: 25px;
+.cabecalho-pagina {
+    margin-bottom: 24px;
+}
+
+.cabecalho-pagina h1 {
+    margin: 0 0 8px;
+}
+
+.cabecalho-pagina p {
+    margin: 0;
+    color: #6b7280;
 }
 
 .card {
-    background: white;
-    border-radius: 8px;
     padding: 24px;
     margin-bottom: 20px;
-
-    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .card h2 {
-    margin-bottom: 20px;
+    margin: 0 0 20px;
+    font-size: 20px;
     color: #1f2937;
 }
 
 .grid {
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.campo {
+    min-width: 0;
+}
+
+.campo-largo {
+    grid-column: 1 / -1;
 }
 
 label {
     display: block;
-    margin-bottom: 6px;
-    font-weight: bold;
+    margin-bottom: 7px;
+    font-weight: 700;
 }
 
 input,
 select,
 textarea {
     width: 100%;
-    padding: 10px;
-
+    padding: 11px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
+    background: white;
+    color: #1f2937;
 }
 
-textarea {
-    min-height: 120px;
-    resize: vertical;
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #2563eb;
+    outline: 3px solid rgba(37, 99, 235, 0.15);
 }
 
-.btn-gerar {
+input[readonly] {
+    background: #f3f4f6;
+    color: #374151;
+    cursor: default;
+}
+
+.total-proposta {
+    max-width: 360px;
+    margin: 24px 0 0 auto;
+}
+
+.total-proposta input {
+    font-size: 18px;
+    font-weight: 700;
+    text-align: right;
+}
+
+.acoes-formulario {
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: 32px;
+}
+
+.botao-primario {
+    min-width: 180px;
+    border: 0;
+    border-radius: 6px;
+    padding: 12px 20px;
     background: #2563eb;
     color: white;
-
-    border: none;
-    border-radius: 6px;
-
-    padding: 14px 24px;
-
     cursor: pointer;
-
-    font-size: 16px;
-    font-weight: bold;
+    font-weight: 700;
 }
 
-.btn-gerar:hover {
-    opacity: .9;
+.botao-primario:hover {
+    background: #1d4ed8;
 }
 
-.tabela-itens-container {
-    width: 100%;
-    overflow-x: auto;
+.itens-proposta {
+    display: grid;
+    gap: 16px;
 }
 
-.tabela-itens-form {
-    width: 100%;
-    border-collapse: collapse;
+.mensagem-itens {
+    margin: 0;
+    padding: 24px;
+    border: 1px dashed #d1d5db;
+    border-radius: 8px;
+    background: #f9fafb;
+    color: #6b7280;
+    text-align: center;
 }
 
-.tabela-itens-form th,
-.tabela-itens-form td {
-    padding: 10px;
-    border: 1px solid #d1d5db;
-    text-align: left;
+.item-proposta {
+    padding: 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
 }
 
-.tabela-itens-form input {
-    width: 100%;
-    min-width: 100px;
+.item-proposta-identificacao {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.item-proposta-codigo {
+    flex: 0 0 auto;
+}
+
+.item-proposta-codigo label,
+.item-proposta-nome label,
+.item-proposta-campo label {
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: #4b5563;
+}
+
+.item-proposta-codigo input {
+    width: auto;
+    min-width: 54px;
+    max-width: 90px;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-color: #2563eb;
+    background: #2563eb;
+    color: white;
+    font-weight: 700;
+    text-align: center;
+}
+
+.item-proposta-codigo input:focus {
+    border-color: #2563eb;
+    outline: none;
+}
+
+.item-proposta-nome {
+    flex: 1;
+    min-width: 0;
+}
+
+.item-proposta-campos {
+    display: grid;
+    grid-template-columns:
+        minmax(100px, 140px)
+        minmax(160px, 1fr)
+        minmax(160px, 1fr);
+    gap: 16px;
+}
+
+.item-proposta-campo {
+    min-width: 0;
+}
+
+.item-proposta-quantidade input {
+    text-align: center;
+}
+
+.item-proposta-valor input,
+.item-proposta-total input {
+    text-align: right;
+}
+
+.item-proposta-total input {
+    background: #f3f4f6;
+    font-weight: 700;
+}
+
+@media (max-width: 760px) {
+    .topbar {
+        padding: 14px 16px;
+    }
+
+    .container {
+        width: min(100% - 24px, 1100px);
+        margin: 20px auto;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .campo-largo {
+        grid-column: 1;
+    }
+
+    .item-proposta {
+        padding: 16px;
+    }
+
+    .item-proposta-identificacao {
+        gap: 10px;
+    }
+
+    .item-proposta-campos {
+        grid-template-columns:
+            minmax(80px, 120px)
+            minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .item-proposta-quantidade {
+        grid-column: 1;
+    }
+
+    .item-proposta-valor {
+        grid-column: 2;
+    }
+
+    .item-proposta-total {
+        grid-column: 1 / -1;
+    }
+
+    .total-proposta {
+        max-width: none;
+        margin-top: 20px;
+    }
+
+    .acoes-formulario {
+        padding-bottom: 20px;
+    }
+
+    .botao-primario {
+        width: 100%;
+    }
+}
+
+@media (max-width: 420px) {
+    .item-proposta-codigo input {
+        min-width: 48px;
+        max-width: 60px;
+    }
+
+    .item-proposta-campos {
+        grid-template-columns:
+            minmax(70px, 100px)
+            minmax(0, 1fr);
+    }
 }

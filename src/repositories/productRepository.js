@@ -116,10 +116,29 @@ function excluir(codigo) {
     return true;
 }
 
+function obterProximoCodigo() {
+    const produtos = listar();
+
+    const codigosNumericos = produtos
+        .map((produto) => Number(produto.codigo))
+        .filter((codigo) =>
+            Number.isInteger(codigo) && codigo > 0
+        );
+
+    if (codigosNumericos.length === 0) {
+        return "1";
+    }
+
+    const maiorCodigo = Math.max(...codigosNumericos);
+
+    return String(maiorCodigo + 1);
+}
+
 module.exports = {
     listar,
     buscarPorCodigo,
     criar,
     atualizar,
-    excluir
+    excluir,
+	obterProximoCodigo
 };

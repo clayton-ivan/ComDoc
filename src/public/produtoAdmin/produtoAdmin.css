@@ -11,7 +11,8 @@ body {
 
 button,
 input,
-textarea {
+textarea,
+select {
     font: inherit;
 }
 
@@ -143,10 +144,12 @@ textarea {
 }
 
 dialog {
-    width: min(760px, calc(100% - 40px));
+    width: min(760px, calc(100% - 24px));
+    max-height: calc(100vh - 24px);
     border: 0;
     border-radius: 10px;
     padding: 0;
+    overflow-y: auto;
 }
 
 dialog::backdrop {
@@ -208,15 +211,6 @@ dialog::backdrop {
     margin: 0;
 }
 
-.botao-remover-item {
-    border: 0;
-    border-radius: 6px;
-    padding: 11px 14px;
-    background: #fee2e2;
-    color: #991b1b;
-    cursor: pointer;
-}
-
 .acoes-dialog {
     display: flex;
     justify-content: flex-end;
@@ -224,60 +218,202 @@ dialog::backdrop {
     margin-top: 28px;
 }
 
-@media (max-width: 760px) {
-    .cabecalho-pagina,
-    .produto {
-        flex-direction: column;
-    }
+
+button,
+input,
+textarea,
+select {
+    min-height: 44px;
 }
 
-.tabela-itens-container {
-    width: 100%;
-    overflow-x: auto;
+button {
+    touch-action: manipulation;
 }
 
-.tabela-itens {
-    width: 100%;
-    border-collapse: collapse;
+.itens-produto {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
-.tabela-itens th,
-.tabela-itens td {
-    padding: 10px;
+.item-produto {
+    padding: 18px;
     border: 1px solid #e5e7eb;
-    text-align: left;
-    vertical-align: middle;
+    border-radius: 10px;
+    background: #fff;
 }
 
-.tabela-itens th {
-    background: #f3f4f6;
-    font-size: 14px;
+.item-produto-cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
 }
 
-.tabela-itens input {
+.item-produto-numero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 7px;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 700;
+}
+
+.item-produto-campos {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 110px 190px;
+    gap: 14px;
+    align-items: end;
+}
+
+.campo-item-descricao {
+    grid-column: 1;
+}
+
+.campo-item-quantidade {
+    grid-column: 2;
+}
+
+.campo-item-valor {
+    grid-column: 3;
+}
+
+.campo-item label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 700;
+}
+
+.campo-item input,
+.campo-item textarea {
     width: 100%;
-    min-width: 90px;
-    padding: 9px;
+    min-height: 44px;
+    padding: 10px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
 }
 
-.tabela-itens .coluna-codigo {
-    width: 18%;
+.campo-item textarea {
+    min-height: 68px;
+    resize: vertical;
+    line-height: 1.4;
 }
 
-.tabela-itens .coluna-descricao {
-    width: 35%;
+.botao-remover-item {
+    min-height: 44px;
+    border: 1px solid #fca5a5;
+    border-radius: 6px;
+    padding: 10px 16px;
+    background: #fff5f5;
+    color: #dc2626;
+    cursor: pointer;
+    font-weight: 700;
 }
 
-.tabela-itens .coluna-quantidade {
-    width: 14%;
+.botao-adicionar-item {
+    display: block;
+    width: auto;
+    min-width: 180px;
+    margin: 28px auto 0;
 }
 
-.tabela-itens .coluna-valor {
-    width: 20%;
+@media (max-width: 760px) {
+    .topbar {
+        padding: 14px 16px;
+    }
+
+    .container {
+        width: min(100% - 24px, 1100px);
+        margin: 20px auto;
+    }
+
+    .cabecalho-pagina,
+    .produto {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .acoes-produto {
+        width: 100%;
+    }
+
+    .acoes-produto button {
+        flex: 1;
+    }
+
+    dialog {
+        width: 100%;
+        max-width: none;
+        height: 100%;
+        max-height: none;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    #formProduto {
+        padding: 14px;
+    }
+
+    .cabecalho-dialog {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        padding: 4px 0 14px;
+        background: white;
+    }
+
+    .item-produto {
+        padding: 14px;
+    }
+
+    .item-produto-campos {
+		grid-template-columns: 1fr 1fr;
+		gap: 14px 12px;
+	}
+
+	.campo-item-descricao {
+		grid-column: 1 / -1;
+	}
+
+	.campo-item-quantidade {
+		grid-column: 1;
+	}
+
+	.campo-item-valor {
+		grid-column: 2;
+	}
+
+    .acoes-dialog {
+        position: sticky;
+        bottom: 0;
+        z-index: 2;
+        padding: 14px 0 4px;
+        background: white;
+    }
+
+    .acoes-dialog button {
+        flex: 1;
+    }
+	
 }
 
-.tabela-itens .coluna-acao {
-    width: 13%;
+@media (max-width: 420px) {
+    .item-produto-campos {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .campo-item-descricao {
+        grid-column: 1 / -1;
+    }
+
+    .campo-item-quantidade {
+        grid-column: 1;
+    }
+
+    .campo-item-valor {
+        grid-column: 2;
+    }
 }

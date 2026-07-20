@@ -69,6 +69,51 @@ function permitirSomenteInteiros(campo) {
 
 permitirSomenteInteiros(campoCodigoProduto);
 
+function somenteDigitos(valor) {
+    return String(valor ?? "").replace(/\D/g, "");
+}
+
+function formatarMoeda(valor) {
+    const numero = Number(valor) || 0;
+
+    return numero.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
+}
+
+function moedaParaNumero(valor) {
+    const digitos = somenteDigitos(valor);
+
+    if (!digitos) {
+        return 0;
+    }
+
+    return Number(digitos) / 100;
+}
+
+function aplicarMascaraMoeda(campo) {
+    campo.addEventListener("beforeinput", (evento) => {
+        const operacaoPermitida =
+            evento.inputType.startsWith("delete") ||
+            evento.inputType === "insertFromPaste" ||
+            evento.inputType === "insertFromDrop";
+
+        if (operacaoPermitida) {
+            return;
+        }
+
+        if (evento.data && !/^\d+$/.test(evento.data)) {
+            evento.preventDefault();
+        }
+    });
+
+    campo.addEventListener("input", () => {
+        campo.value = formatarMoeda(
+            moedaParaNumero(campo.value)
+        );
+    });
+}
 
 function escaparHtml(valor) {
     return String(valor ?? "")
@@ -79,75 +124,96 @@ function escaparHtml(valor) {
         .replaceAll("'", "&#039;");
 }
 
+function atualizarNumeracaoItens() {
+    const itens =
+        containerItens.querySelectorAll(".item-produto");
+
+    itens.forEach((item, indice) => {
+        const codigo = String(indice + 1);
+
+        item.dataset.codigo = codigo;
+
+        item
+            .querySelector(".item-produto-numero")
+            .textContent = codigo;
+    });
+}
+
 function criarItemProduto(item = {}) {
-    const linha = document.createElement("tr");
+    const itemCard = document.createElement("article");
 
-    linha.className = "item-produto";
+    itemCard.className = "item-produto";
 
-    linha.innerHTML = `
-        <td class="coluna-codigo">
-            <input
-                type="text"
-                inputmode="numeric"
-                class="item-codigo"
-                value="${escaparHtml(item.codigo || "")}"
-                required>
-        </td>
+    const numeroItem =
+        containerItens.querySelectorAll(".item-produto").length + 1;
 
-        <td class="coluna-descricao">
-            <input
-                type="text"
-                class="item-descricao"
-                value="${escaparHtml(item.descricao || "")}"
-                required>
-        </td>
+    itemCard.dataset.codigo = String(
+        item.codigo || numeroItem
+    );
 
-        <td class="coluna-quantidade">
-            <input
-                type="text"
-                inputmode="numeric"
-                class="item-quantidade"
-                value="${item.quantidade || 1}"
-                required>
-        </td>
+    itemCard.innerHTML = `
+        <div class="item-produto-cabecalho">
+            <span class="item-produto-numero">
+                ${numeroItem}
+            </span>
 
-        <td class="coluna-valor">
-            <input
-                type="text"
-                inputmode="numeric"
-                class="item-valor"
-                value="${item.valorSugerido ?? 0}"
-                required>
-        </td>
-
-        <td class="coluna-acao">
             <button
                 type="button"
                 class="botao-remover-item">
                 Remover
             </button>
-        </td>
+        </div>
+
+        <div class="item-produto-campos">
+            <div class="campo-item campo-item-descricao">
+                <label>Descrição</label>
+
+                <textarea
+                    class="item-descricao"
+                    rows="2"
+                    required>${escaparHtml(item.descricao || "")}</textarea>
+            </div>
+
+            <div class="campo-item campo-item-quantidade">
+                <label>Qtde.</label>
+
+                <input
+                    type="text"
+                    inputmode="numeric"
+                    class="item-quantidade"
+                    value="${item.quantidade || 1}"
+                    maxlength="6"
+                    required>
+            </div>
+
+            <div class="campo-item campo-item-valor">
+                <label>Valor sugerido</label>
+
+                <input
+                    type="text"
+                    inputmode="numeric"
+                    class="item-valor"
+                    value="${formatarMoeda(item.valorSugerido ?? 0)}"
+                    required>
+            </div>
+        </div>
     `;
 
-    containerItens.appendChild(linha);
-
-    const campoCodigoItem =
-        linha.querySelector(".item-codigo");
+    containerItens.appendChild(itemCard);
 
     const campoQuantidadeItem =
-        linha.querySelector(".item-quantidade");
+        itemCard.querySelector(".item-quantidade");
 
     const campoValorItem =
-        linha.querySelector(".item-valor");
+        itemCard.querySelector(".item-valor");
 
-    permitirSomenteInteiros(campoCodigoItem);
     permitirSomenteInteiros(campoQuantidadeItem);
-    permitirSomenteInteiros(campoValorItem);
+    aplicarMascaraMoeda(campoValorItem);
 
-    linha
+    itemCard
         .querySelector(".botao-remover-item")
         .addEventListener("click", () => {
-            linha.remove();
+            itemCard.remove();
 
             if (
                 containerItens.querySelectorAll(".item-produto")
@@ -155,36 +221,37 @@ function criarItemProduto(item = {}) {
             ) {
                 criarItemProduto();
             }
+
+            atualizarNumeracaoItens();
         });
 }
+
 
 function obterItensFormulario() {
     return Array
         .from(
             containerItens.querySelectorAll(".item-produto")
         )
-        .map((linha) => ({
-            codigo:
-                linha
-                    .querySelector(".item-codigo")
-                    .value
-                    .trim(),
+        .map((itemCard, indice) => ({
+            codigo: String(indice + 1),
 
             descricao:
-                linha
+                itemCard
                     .querySelector(".item-descricao")
                     .value
                     .trim(),
 
             quantidade:
                 Number(
-                    linha.querySelector(".item-quantidade")
+                    itemCard
+                        .querySelector(".item-quantidade")
                         .value
                 ),
 
             valorSugerido:
-                Number(
-                    linha.querySelector(".item-valor")
+                moedaParaNumero(
+                    itemCard
+                        .querySelector(".item-valor")
                         .value
                 )
         }));
@@ -194,17 +261,50 @@ function limparFormularioProduto() {
     formProduto.reset();
     containerItens.innerHTML = "";
     codigoProdutoEmEdicao = null;
-    campoCodigoProduto.disabled = false;
+    campoCodigoProduto.disabled = true;
 }
 
-function abrirNovoProduto() {
+async function buscarProximoCodigoProduto() {
+    const resposta = await fetch(
+        "/produtos/proximo-codigo"
+    );
+
+    if (!resposta.ok) {
+        throw new Error(
+            `Erro ao gerar código. Status: ${resposta.status}`
+        );
+    }
+
+    const resultado = await resposta.json();
+
+    return resultado.codigo;
+}
+
+async function abrirNovoProduto() {
     limparFormularioProduto();
 
     tituloDialog.textContent = "Novo produto";
 
-    criarItemProduto();
+    campoCodigoProduto.disabled = true;
 
-    dialogProduto.showModal();
+    try {
+        campoCodigoProduto.value =
+            await buscarProximoCodigoProduto();
+
+        criarItemProduto();
+
+        dialogProduto.showModal();
+		dialogProduto.scrollTop = 0;
+    } catch (erro) {
+        console.error(
+            "Erro ao preparar novo produto:",
+            erro
+        );
+
+        alert(
+            "Não foi possível gerar o código do produto."
+        );
+    }
 }
 
 async function abrirEdicaoProduto(codigo) {
@@ -238,6 +338,7 @@ async function abrirEdicaoProduto(codigo) {
         });
 
         dialogProduto.showModal();
+		dialogProduto.scrollTop = 0;
     } catch (erro) {
         console.error("Erro ao abrir produto:", erro);
         alert("Não foi possível carregar o produto.");
