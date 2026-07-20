@@ -133,10 +133,33 @@ function excluir(req, res) {
     }
 }
 
+function obterProximoCodigo(req, res) {
+    try {
+        const codigo =
+            productService.obterProximoCodigo();
+
+        return res.json({
+            codigo
+        });
+    } catch (erro) {
+        console.error(
+            "Erro ao gerar próximo código:",
+            erro
+        );
+
+        return res.status(500).json({
+            sucesso: false,
+            mensagem:
+                "Não foi possível gerar o próximo código."
+        });
+    }
+}
+
 module.exports = {
     listar,
     buscarPorCodigo,
     criar,
     atualizar,
-    excluir
+    excluir,
+	obterProximoCodigo
 };

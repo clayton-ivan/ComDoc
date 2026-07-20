@@ -62,6 +62,8 @@
                 <input
                     type="text"
                     id="codigoProduto"
+					inputmode="numeric"
+					disabled
                     required>
             </div>
 
@@ -84,30 +86,16 @@
             <section class="secao-itens">
 				<div class="cabecalho-itens">
 					<h3>Itens do produto</h3>
-
-					<button
-						id="botaoAdicionarItem"
-						type="button"
-						class="botao-secundario">
-						Adicionar item
-					</button>
 				</div>
 
-				<div class="tabela-itens-container">
-					<table class="tabela-itens">
-						<thead>
-							<tr>
-								<th>Código</th>
-								<th>Descrição</th>
-								<th>Quantidade</th>
-								<th>Valor sugerido</th>
-								<th>Ação</th>
-							</tr>
-						</thead>
-
-						<tbody id="itensProduto"></tbody>
-					</table>
-				</div>
+				<div id="itensProduto" class="itens-produto"></div>
+				
+				<button
+					id="botaoAdicionarItem"
+					type="button"
+					class="botao-secundario botao-adicionar-item">
+					+ Adicionar item
+				</button>
 			</section>
 
             <div class="acoes-dialog">
@@ -121,7 +109,7 @@
                 <button
                     type="submit"
                     class="botao-primario">
-                    Salvar produto
+                    Salvar
                 </button>
             </div>
         </form>

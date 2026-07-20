@@ -12,6 +12,11 @@ router.get(
 );
 
 router.get(
+    "/proximo-codigo",
+    productController.obterProximoCodigo
+);
+
+router.get(
     "/:codigo",
     productController.buscarPorCodigo
 );

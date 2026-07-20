@@ -10,20 +10,22 @@ export function criarGerenciadorItens(
     campoValorTotal
 ) {
     function atualizarTotais() {
-        const linhas =
-            corpoItensProduto.querySelectorAll("tr[data-codigo]");
+        const cards =
+            corpoItensProduto.querySelectorAll(
+                ".item-proposta[data-codigo]"
+            );
 
         let valorTotalProposta = 0;
 
-        linhas.forEach((linha) => {
+        cards.forEach((card) => {
             const campoQuantidade =
-                linha.querySelector(".item-quantidade");
+                card.querySelector(".item-quantidade");
 
             const campoValorUnitario =
-                linha.querySelector(".item-valor-unitario");
+                card.querySelector(".item-valor-unitario");
 
             const campoTotal =
-                linha.querySelector(".item-total");
+                card.querySelector(".item-total");
 
             const quantidade =
                 Number(campoQuantidade.value) || 0;
@@ -47,48 +49,123 @@ export function criarGerenciadorItens(
     function renderizarItens(itens) {
         corpoItensProduto.innerHTML = "";
 
-        itens.forEach((item) => {
-            const linha = document.createElement("tr");
-
-            linha.dataset.codigo = item.codigo;
-            linha.dataset.descricao = item.descricao;
-
-            linha.innerHTML = `
-                <td>${item.descricao}</td>
-
-                <td>
-                    <input
-                        type="text"
-                        inputmode="numeric"
-                        class="item-quantidade"
-                        value="${item.quantidade}"
-                        required>
-                </td>
-
-                <td>
-                    <input
-                        type="text"
-                        inputmode="numeric"
-                        class="item-valor-unitario"
-                        value="${formatarMoeda(item.valorSugerido)}"
-                        required>
-                </td>
-
-                <td>
-                    <input
-                        type="text"
-                        class="item-total"
-                        readonly>
-                </td>
+        if (!Array.isArray(itens) || itens.length === 0) {
+            corpoItensProduto.innerHTML = `
+                <p class="mensagem-itens">
+                    Este produto não possui itens cadastrados.
+                </p>
             `;
 
-            corpoItensProduto.appendChild(linha);
+            campoValorTotal.value =
+                formatarMoeda(0);
+
+            return;
+        }
+
+        itens.forEach((item, indice) => {
+            const card =
+                document.createElement("article");
+
+            card.classList.add("item-proposta");
+
+            card.dataset.codigo = item.codigo;
+
+            card.innerHTML = `
+                <div class="item-proposta-identificacao">
+                    <div class="item-proposta-codigo">
+                        <label for="item-codigo-${indice}">
+                            Código
+                        </label>
+
+                        <input
+                            type="text"
+                            id="item-codigo-${indice}"
+                            class="item-codigo"
+                            value="${item.codigo}"
+                            readonly>
+                    </div>
+
+                    <div class="item-proposta-nome">
+                        <label for="item-descricao-${indice}">
+                            Item
+                        </label>
+
+                        <input
+                            type="text"
+                            id="item-descricao-${indice}"
+                            class="item-descricao"
+                            value="${item.descricao}"
+                            required>
+                    </div>
+                </div>
+
+                <div class="item-proposta-campos">
+                    <div
+                        class="
+                            item-proposta-campo
+                            item-proposta-quantidade
+                        ">
+
+                        <label for="item-quantidade-${indice}">
+                            Qtde.
+                        </label>
+
+                        <input
+                            type="text"
+                            id="item-quantidade-${indice}"
+                            inputmode="numeric"
+                            class="item-quantidade"
+                            value="${item.quantidade}"
+                            required>
+                    </div>
+
+                    <div
+                        class="
+                            item-proposta-campo
+                            item-proposta-valor
+                        ">
+
+                        <label for="item-valor-${indice}">
+                            Valor unit.
+                        </label>
+
+                        <input
+                            type="text"
+                            id="item-valor-${indice}"
+                            inputmode="numeric"
+                            class="item-valor-unitario"
+                            value="${formatarMoeda(
+                                item.valorSugerido
+                            )}"
+                            required>
+                    </div>
+
+                    <div
+                        class="
+                            item-proposta-campo
+                            item-proposta-total
+                        ">
+
+                        <label for="item-total-${indice}">
+                            Total
+                        </label>
+
+                        <input
+                            type="text"
+                            id="item-total-${indice}"
+                            class="item-total"
+                            readonly>
+                    </div>
+                </div>
+            `;
+
+            corpoItensProduto.appendChild(card);
 
             const campoQuantidade =
-                linha.querySelector(".item-quantidade");
+                card.querySelector(".item-quantidade");
 
             const campoValorUnitario =
-                linha.querySelector(".item-valor-unitario");
+                card.querySelector(".item-valor-unitario");
 
             permitirSomenteInteiros(
                 campoQuantidade,
@@ -105,15 +182,20 @@ export function criarGerenciadorItens(
     }
 
     function obterItensPreenchidos() {
-        const linhas =
-            corpoItensProduto.querySelectorAll("tr[data-codigo]");
+        const cards =
+            corpoItensProduto.querySelectorAll(
+                ".item-proposta[data-codigo]"
+            );
 
-        return Array.from(linhas).map((linha) => {
+        return Array.from(cards).map((card) => {
+            const campoDescricao =
+                card.querySelector(".item-descricao");
+
             const campoQuantidade =
-                linha.querySelector(".item-quantidade");
+                card.querySelector(".item-quantidade");
 
             const campoValorUnitario =
-                linha.querySelector(".item-valor-unitario");
+                card.querySelector(".item-valor-unitario");
 
             const quantidade =
                 Number(campoQuantidade.value) || 0;
@@ -122,22 +204,21 @@ export function criarGerenciadorItens(
                 moedaParaNumero(campoValorUnitario.value);
 
             return {
-                codigo: linha.dataset.codigo,
-                descricao: linha.dataset.descricao,
+                codigo: card.dataset.codigo,
+                descricao: campoDescricao.value.trim(),
                 quantidade,
                 valorUnitario,
-                valorTotal: quantidade * valorUnitario
+                valorTotal:
+                    quantidade * valorUnitario
             };
         });
     }
 
     function limparItens() {
         corpoItensProduto.innerHTML = `
-            <tr>
-                <td colspan="4">
-                    Selecione um produto.
-                </td>
-            </tr>
+            <p class="mensagem-itens">
+                Selecione um produto.
+            </p>
         `;
 
         campoValorTotal.value = "";

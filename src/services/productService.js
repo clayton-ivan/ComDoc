@@ -177,10 +177,15 @@ function excluir(codigo) {
     );
 }
 
+function obterProximoCodigo() {
+    return productRepository.obterProximoCodigo();
+}
+
 module.exports = {
     listar,
     buscarPorCodigo,
     criar,
     atualizar,
-    excluir
+    excluir,
+	obterProximoCodigo
 };

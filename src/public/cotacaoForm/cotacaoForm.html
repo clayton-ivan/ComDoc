@@ -1,112 +1,179 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova Cotação</title>
 
-    <link rel="stylesheet" href="/cotacaoForm/cotacaoForm.css">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>ComDoc - Nova Cotação</title>
+
+    <link
+        rel="stylesheet"
+        href="/cotacaoForm/cotacaoForm.css">
 </head>
 
 <body>
+    <header class="topbar">
+        <div class="marca">ComDoc</div>
 
-    <h1>Nova Cotação</h1>
+        <a
+            href="/admin/produtos"
+            class="link-topbar">
+            Produtos
+        </a>
+    </header>
 
-    <form id="formulario">
+    <main class="container">
+        <header class="cabecalho-pagina">
+            <div>
+                <h1>Nova cotação</h1>
 
-        <fieldset>
-            <legend>Dados do Cliente</legend>
+                <p>
+                    Preencha os dados para gerar uma proposta comercial.
+                </p>
+            </div>
+        </header>
 
-            <label for="contato">Contato</label>
-            <input type="text" id="contato" required>
+        <form id="formulario">
+            <section class="card">
+                <h2>Dados do cliente</h2>
 
-            <label for="email">E-mail</label>
-            <input type="email" id="email">
+                <div class="grid">
+                    <div class="campo">
+                        <label for="contato">Contato</label>
 
-            <label for="telefone">Telefone</label>
-            <input
-				type="text"
-				id="telefone"
-				inputmode="numeric"
-				maxlength="15"
-				required>
+                        <input
+                            type="text"
+                            id="contato"
+                            autocomplete="name"
+                            required>
+                    </div>
 
-            <label for="endereco">Endereço</label>
-            <input type="text" id="endereco">
+                    <div class="campo">
+                        <label for="email">E-mail</label>
 
-            <label for="cnpj">CNPJ</label>
-            <input
-				type="text"
-				id="cnpj"
-				inputmode="numeric"
-				maxlength="18"
-				required>
-        </fieldset>
+                        <input
+                            type="email"
+                            id="email"
+                            inputmode="email"
+                            autocomplete="email">
+                    </div>
 
-        <fieldset>
-			<legend>Produto</legend>
+                    <div class="campo">
+                        <label for="telefone">Telefone</label>
 
-			<label for="produto">Produto</label>
+                        <input
+                            type="text"
+                            id="telefone"
+                            inputmode="numeric"
+                            autocomplete="tel"
+                            maxlength="15"
+                            required>
+                    </div>
 
-			<select id="produto" required>
-				<option value="">Carregando produtos...</option>
-			</select>
-		</fieldset>
+                    <div class="campo">
+                        <label for="cnpj">CNPJ</label>
 
-        <fieldset>
-			<legend>Itens da Proposta</legend>
+                        <input
+                            type="text"
+                            id="cnpj"
+                            inputmode="numeric"
+                            maxlength="18"
+                            required>
+                    </div>
 
-			<div class="tabela-itens-container">
-				<table class="tabela-itens-form">
-					<thead>
-						<tr>
-							<th>Item</th>
-							<th>Quantidade</th>
-							<th>Valor Unitário</th>
-							<th>Total</th>
-						</tr>
-					</thead>
+                    <div class="campo campo-largo">
+                        <label for="endereco">Endereço</label>
 
-					<tbody id="itensProduto">
-						<tr>
-							<td colspan="4">
-								Selecione um produto.
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+                        <input
+                            type="text"
+                            id="endereco"
+                            autocomplete="street-address">
+                    </div>
+                </div>
+            </section>
 
-			<label for="valorTotal">Valor Total da Proposta</label>
+            <section class="card">
+                <h2>Produto</h2>
 
-			<input
-				type="text"
-				id="valorTotal"
-				readonly>
-		</fieldset>
+                <div class="campo">
+                    <label for="produto">Produto</label>
 
-        <fieldset>
-            <legend>Condições Comerciais</legend>
+                    <select
+                        id="produto"
+                        required>
+                        <option value="">
+                            Carregando produtos...
+                        </option>
+                    </select>
+                </div>
+            </section>
 
-            <label for="prazoEntrega">Prazo de Entrega</label>
-            <input type="text" id="prazoEntrega">
+            <section class="card">
+                <h2>Itens da proposta</h2>
 
-            <label for="pagamento">Forma de Pagamento</label>
-            <input type="text" id="pagamento">
-        </fieldset>
+                <div
+					id="itensProduto"
+					class="itens-proposta">
 
-        <button type="submit">
-            Gerar Cotação
-        </button>
+					<p class="mensagem-itens">
+						Selecione um produto.
+					</p>
+				</div>
 
-    </form>
+                <div class="total-proposta">
+                    <label for="valorTotal">
+                        Valor total da proposta
+                    </label>
+
+                    <input
+                        type="text"
+                        id="valorTotal"
+                        readonly>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Condições comerciais</h2>
+
+                <div class="grid">
+                    <div class="campo">
+                        <label for="prazoEntrega">
+                            Prazo de entrega
+                        </label>
+
+                        <input
+                            type="text"
+                            id="prazoEntrega">
+                    </div>
+
+                    <div class="campo">
+                        <label for="pagamento">
+                            Forma de pagamento
+                        </label>
+
+                        <input
+                            type="text"
+                            id="pagamento">
+                    </div>
+                </div>
+            </section>
+
+            <div class="acoes-formulario">
+                <button
+                    type="submit"
+                    class="botao-primario">
+                    Gerar cotação
+                </button>
+            </div>
+        </form>
+    </main>
 
     <script
-		type="module"
-		src="/cotacaoForm/cotacaoForm.js">
-	</script>
-
+        type="module"
+        src="/cotacaoForm/cotacaoForm.js">
+    </script>
 </body>
-
 </html>

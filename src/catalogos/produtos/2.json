@@ -1,25 +1,31 @@
 {
-    "codigo": 2,
+    "codigo": "2",
     "nome": "Elevador 1",
     "descricao": "Descrição provisória de Elevador 1. Esse vale a pena.",
     "itens": [
         {
-            "codigo": "equipamento",
+            "codigo": "1",
             "descricao": "Elevador 2",
             "quantidade": 1,
             "valorSugerido": 61000
         },
         {
-            "codigo": "frete",
+            "codigo": "2",
             "descricao": "Frete",
             "quantidade": 1,
             "valorSugerido": 7030
         },
         {
-            "codigo": "montagem",
+            "codigo": "3",
             "descricao": "Montagem e instalação",
             "quantidade": 1,
-            "valorSugerido": 4500
+            "valorSugerido": 1233.12
+        },
+        {
+            "codigo": "4",
+            "descricao": "Mais um item",
+            "quantidade": 2,
+            "valorSugerido": 1500
         }
     ]
 }
