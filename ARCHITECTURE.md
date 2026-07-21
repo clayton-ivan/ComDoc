@@ -22,23 +22,30 @@ Depois abstrair.
 
 ---
 
-# Arquitetura
+# Arquitetura 
 
-O sistema utiliza uma arquitetura em camadas.
+O ComDoc utiliza uma arquitetura em camadas para separar interface, regras de negócio, acesso a dados e geração de documentos.
 
-```
+```text
 Frontend
-        ↓
+   │
+   ▼
+Routes
+   │
+   ▼
 Controllers
-        ↓
+   │
+   ▼
 Services
-        ↓
+   │
+   ▼
 Repositories
-        ↓
-Persistência
-```
-
-Cada camada possui uma única responsabilidade.
+   │
+   ▼
+DatabaseRepository
+   │
+   ▼
+SQLite
 
 ---
 
