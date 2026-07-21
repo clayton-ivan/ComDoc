@@ -1,12 +1,33 @@
 const express = require("express");
 const path = require("path");
 
-const productRoutes = require("./routes/productRoutes");
-const documentRoutes = require("./routes/documentRoutes");
+const productRoutes =
+    require("./routes/productRoutes");
+
+const documentRoutes =
+    require("./routes/documentRoutes");
+
+const {
+    inicializarDatabase
+} = require("./database/database");
 
 const app = express();
 
+/*
+|--------------------------------------------------------------------------
+| Middlewares
+|--------------------------------------------------------------------------
+*/
+
 app.use(express.json());
+
+/*
+|--------------------------------------------------------------------------
+| Banco de dados
+|--------------------------------------------------------------------------
+*/
+
+inicializarDatabase();
 
 /*
 |--------------------------------------------------------------------------
@@ -14,16 +35,19 @@ app.use(express.json());
 |--------------------------------------------------------------------------
 */
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(
+    express.static(
+        path.join(__dirname, "public")
+    )
+);
 
 /*
 |--------------------------------------------------------------------------
-| Página inicial
+| Páginas
 |--------------------------------------------------------------------------
 */
 
 app.get("/", (req, res) => {
-
     res.sendFile(
         path.join(
             __dirname,
@@ -32,7 +56,6 @@ app.get("/", (req, res) => {
             "cotacaoForm.html"
         )
     );
-
 });
 
 app.get("/admin/produtos", (req, res) => {
@@ -57,14 +80,14 @@ app.use("/produtos", productRoutes);
 
 /*
 |--------------------------------------------------------------------------
-| Inicialização
+| Inicialização do servidor
 |--------------------------------------------------------------------------
 */
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-
-    console.log(`ComDoc iniciado em http://localhost:${PORT}`);
-
+    console.log(
+        `ComDoc iniciado em http://localhost:${PORT}`
+    );
 });

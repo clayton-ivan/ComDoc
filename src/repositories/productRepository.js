@@ -1,137 +1,310 @@
-const fs = require("fs");
-const path = require("path");
+const databaseRepository =
+    require("../database/databaseRepository");
 
-const pastaProdutos = path.join(
-    __dirname,
-    "..",
-    "catalogos",
-    "produtos"
-);
+/*
+|--------------------------------------------------------------------------
+| Mapeamento
+|--------------------------------------------------------------------------
+*/
 
-function garantirPastaProdutos() {
-    if (!fs.existsSync(pastaProdutos)) {
-        fs.mkdirSync(pastaProdutos, {
-            recursive: true
-        });
-    }
+function mapearItem(registro) {
+    return {
+        codigo: registro.codigo,
+        descricao: registro.descricao,
+        quantidade: registro.quantidade,
+        valorSugerido: registro.valor_sugerido
+    };
 }
 
-function obterCaminhoProduto(codigo) {
-    return path.join(
-        pastaProdutos,
-        `${codigo}.json`
+function mapearProduto(registro, itens = []) {
+    return {
+        codigo: registro.codigo,
+        nome: registro.nome,
+        descricao: registro.descricao,
+        itens
+    };
+}
+
+function organizarProdutosComItens(
+    registrosProdutos,
+    registrosItens
+) {
+    const itensPorProduto = new Map();
+
+    registrosItens.forEach((registroItem) => {
+        const codigoProduto =
+            registroItem.produto_codigo;
+
+        if (!itensPorProduto.has(codigoProduto)) {
+            itensPorProduto.set(codigoProduto, []);
+        }
+
+        itensPorProduto
+            .get(codigoProduto)
+            .push(mapearItem(registroItem));
+    });
+
+    return registrosProdutos.map((registroProduto) => {
+        const itens =
+            itensPorProduto.get(registroProduto.codigo) || [];
+
+        return mapearProduto(
+            registroProduto,
+            itens
+        );
+    });
+}
+
+/*
+|--------------------------------------------------------------------------
+| Itens
+|--------------------------------------------------------------------------
+*/
+
+function inserirItensProduto(
+    produtoCodigo,
+    itens = []
+) {
+    itens.forEach((item, indice) => {
+        databaseRepository.executar(
+            `
+                INSERT INTO produto_itens (
+                    produto_codigo,
+                    codigo,
+                    descricao,
+                    quantidade,
+                    valor_sugerido
+                )
+                VALUES (?, ?, ?, ?, ?)
+            `,
+            [
+                produtoCodigo,
+                String(item.codigo || indice + 1),
+                item.descricao || "",
+                Number(item.quantidade) || 0,
+                Number(item.valorSugerido) || 0
+            ]
+        );
+    });
+}
+
+function excluirItensProduto(produtoCodigo) {
+    databaseRepository.executar(
+        `
+            DELETE FROM produto_itens
+            WHERE produto_codigo = ?
+        `,
+        [produtoCodigo]
     );
 }
 
+/*
+|--------------------------------------------------------------------------
+| Consultas
+|--------------------------------------------------------------------------
+*/
+
 function listar() {
-    garantirPastaProdutos();
+    const produtos =
+        databaseRepository.buscarTodos(
+            `
+                SELECT
+                    codigo,
+                    nome,
+                    descricao
+                FROM produtos
+                ORDER BY CAST(codigo AS INTEGER), codigo
+            `
+        );
 
-    const arquivos = fs.readdirSync(pastaProdutos);
+    if (produtos.length === 0) {
+        return [];
+    }
 
-    return arquivos
-        .filter((arquivo) => arquivo.endsWith(".json"))
-        .map((arquivo) => {
-            const caminhoArquivo = path.join(
-                pastaProdutos,
-                arquivo
-            );
+    const itens =
+        databaseRepository.buscarTodos(
+            `
+                SELECT
+                    produto_codigo,
+                    codigo,
+                    descricao,
+                    quantidade,
+                    valor_sugerido
+                FROM produto_itens
+                ORDER BY
+                    CAST(produto_codigo AS INTEGER),
+                    produto_codigo,
+                    CAST(codigo AS INTEGER),
+                    codigo
+            `
+        );
 
-            const conteudo = fs.readFileSync(
-                caminhoArquivo,
-                "utf8"
-            );
-
-            return JSON.parse(conteudo);
-        });
+    return organizarProdutosComItens(
+        produtos,
+        itens
+    );
 }
 
 function buscarPorCodigo(codigo) {
-    garantirPastaProdutos();
+    const produto =
+        databaseRepository.buscarUm(
+            `
+                SELECT
+                    codigo,
+                    nome,
+                    descricao
+                FROM produtos
+                WHERE codigo = ?
+            `,
+            [String(codigo)]
+        );
 
-    const caminhoArquivo = obterCaminhoProduto(codigo);
-
-    if (!fs.existsSync(caminhoArquivo)) {
+    if (!produto) {
         return null;
     }
 
-    const conteudo = fs.readFileSync(
-        caminhoArquivo,
-        "utf8"
-    );
+    const itens =
+        databaseRepository.buscarTodos(
+            `
+                SELECT
+                    produto_codigo,
+                    codigo,
+                    descricao,
+                    quantidade,
+                    valor_sugerido
+                FROM produto_itens
+                WHERE produto_codigo = ?
+                ORDER BY
+                    CAST(codigo AS INTEGER),
+                    codigo
+            `,
+            [String(codigo)]
+        );
 
-    return JSON.parse(conteudo);
+    return mapearProduto(
+        produto,
+        itens.map(mapearItem)
+    );
 }
 
+/*
+|--------------------------------------------------------------------------
+| Escrita
+|--------------------------------------------------------------------------
+*/
+
 function criar(produto) {
-    garantirPastaProdutos();
+    const codigo = String(produto.codigo);
 
-    const caminhoArquivo = obterCaminhoProduto(
-        produto.codigo
-    );
-
-    if (fs.existsSync(caminhoArquivo)) {
-        throw new Error(
-            `Já existe um produto com o código "${produto.codigo}".`
+    return databaseRepository.executarTransacao(() => {
+        databaseRepository.executar(
+            `
+                INSERT INTO produtos (
+                    codigo,
+                    nome,
+                    descricao
+                )
+                VALUES (?, ?, ?)
+            `,
+            [
+                codigo,
+                produto.nome,
+                produto.descricao || ""
+            ]
         );
-    }
 
-    fs.writeFileSync(
-        caminhoArquivo,
-        JSON.stringify(produto, null, 4),
-        "utf8"
-    );
+        inserirItensProduto(
+            codigo,
+            produto.itens
+        );
 
-    return produto;
+        return buscarPorCodigo(codigo);
+    });
 }
 
 function atualizar(codigo, produto) {
-    garantirPastaProdutos();
+    const codigoProduto = String(codigo);
 
-    const caminhoArquivo = obterCaminhoProduto(codigo);
+    return databaseRepository.executarTransacao(() => {
+        const produtoExistente =
+            databaseRepository.buscarUm(
+                `
+                    SELECT codigo
+                    FROM produtos
+                    WHERE codigo = ?
+                `,
+                [codigoProduto]
+            );
 
-    if (!fs.existsSync(caminhoArquivo)) {
-        return null;
-    }
+        if (!produtoExistente) {
+            return null;
+        }
 
-    fs.writeFileSync(
-        caminhoArquivo,
-        JSON.stringify(produto, null, 4),
-        "utf8"
-    );
+        databaseRepository.executar(
+            `
+                UPDATE produtos
+                SET
+                    nome = ?,
+                    descricao = ?
+                WHERE codigo = ?
+            `,
+            [
+                produto.nome,
+                produto.descricao || "",
+                codigoProduto
+            ]
+        );
 
-    return produto;
+        excluirItensProduto(codigoProduto);
+
+        inserirItensProduto(
+            codigoProduto,
+            produto.itens
+        );
+
+        return buscarPorCodigo(codigoProduto);
+    });
 }
 
 function excluir(codigo) {
-    garantirPastaProdutos();
-
-    const caminhoArquivo = obterCaminhoProduto(codigo);
-
-    if (!fs.existsSync(caminhoArquivo)) {
-        return false;
-    }
-
-    fs.unlinkSync(caminhoArquivo);
-
-    return true;
-}
-
-function obterProximoCodigo() {
-    const produtos = listar();
-
-    const codigosNumericos = produtos
-        .map((produto) => Number(produto.codigo))
-        .filter((codigo) =>
-            Number.isInteger(codigo) && codigo > 0
+    const resultado =
+        databaseRepository.executar(
+            `
+                DELETE FROM produtos
+                WHERE codigo = ?
+            `,
+            [String(codigo)]
         );
 
-    if (codigosNumericos.length === 0) {
-        return "1";
-    }
+    return Number(resultado.changes) > 0;
+}
 
-    const maiorCodigo = Math.max(...codigosNumericos);
+/*
+|--------------------------------------------------------------------------
+| Próximo código
+|--------------------------------------------------------------------------
+*/
 
-    return String(maiorCodigo + 1);
+function obterProximoCodigo() {
+    const resultado =
+        databaseRepository.buscarUm(
+            `
+                SELECT
+                    COALESCE(
+                        MAX(
+                            CASE
+                                WHEN codigo GLOB '[0-9]*'
+                                THEN CAST(codigo AS INTEGER)
+                                ELSE 0
+                            END
+                        ),
+                        0
+                    ) + 1 AS proximo_codigo
+                FROM produtos
+            `
+        );
+
+    return String(resultado.proximo_codigo);
 }
 
 module.exports = {
@@ -140,5 +313,5 @@ module.exports = {
     criar,
     atualizar,
     excluir,
-	obterProximoCodigo
+    obterProximoCodigo
 };
