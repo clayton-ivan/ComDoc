@@ -4,6 +4,9 @@ const path = require("path");
 const productRoutes =
     require("./routes/productRoutes");
 
+const clientRoutes =
+    require("./routes/clientRoutes");
+
 const documentRoutes =
     require("./routes/documentRoutes");
 
@@ -77,6 +80,7 @@ app.get("/admin/produtos", (req, res) => {
 
 app.use("/documentos", documentRoutes);
 app.use("/produtos", productRoutes);
+app.use("/clientes", clientRoutes);
 
 /*
 |--------------------------------------------------------------------------
