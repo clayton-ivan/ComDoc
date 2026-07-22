@@ -9,18 +9,35 @@ const databaseRepository =
 
 function mapearItem(registro) {
     return {
-        codigo: registro.codigo,
-        descricao: registro.descricao,
-        quantidade: registro.quantidade,
-        valorSugerido: registro.valor_sugerido
+        codigo: String(
+            registro.id_produto_item
+        ),
+
+        descricao:
+            registro.des_item,
+
+        quantidade:
+            registro.num_quantidade,
+
+        valorSugerido:
+            registro.val_unitario
     };
 }
 
-function mapearProduto(registro, itens = []) {
+function mapearProduto(
+    registro,
+    itens = []
+) {
     return {
-        codigo: registro.codigo,
-        nome: registro.nome,
-        descricao: registro.descricao,
+        codigo:
+            registro.cod_produto,
+
+        nome:
+            registro.nom_produto,
+
+        descricao:
+            registro.des_produto,
+
         itens
     };
 }
@@ -32,27 +49,60 @@ function organizarProdutosComItens(
     const itensPorProduto = new Map();
 
     registrosItens.forEach((registroItem) => {
-        const codigoProduto =
-            registroItem.produto_codigo;
+        const idProduto =
+            registroItem.id_produto;
 
-        if (!itensPorProduto.has(codigoProduto)) {
-            itensPorProduto.set(codigoProduto, []);
+        if (!itensPorProduto.has(idProduto)) {
+            itensPorProduto.set(
+                idProduto,
+                []
+            );
         }
 
         itensPorProduto
-            .get(codigoProduto)
-            .push(mapearItem(registroItem));
+            .get(idProduto)
+            .push(
+                mapearItem(registroItem)
+            );
     });
 
-    return registrosProdutos.map((registroProduto) => {
-        const itens =
-            itensPorProduto.get(registroProduto.codigo) || [];
+    return registrosProdutos.map(
+        (registroProduto) => {
+            const itens =
+                itensPorProduto.get(
+                    registroProduto.id_produto
+                ) || [];
 
-        return mapearProduto(
-            registroProduto,
-            itens
-        );
-    });
+            return mapearProduto(
+                registroProduto,
+                itens
+            );
+        }
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Consultas internas
+|--------------------------------------------------------------------------
+*/
+
+function buscarRegistroPorCodigo(codigo) {
+    return databaseRepository.buscarUm(
+        `
+            SELECT
+                id_produto,
+                cod_produto,
+                nom_produto,
+                des_produto,
+                dt_criacao,
+                dt_edicao,
+                cod_usu_edicao
+            FROM produto
+            WHERE cod_produto = ?
+        `,
+        [String(codigo)]
+    );
 }
 
 /*
@@ -62,24 +112,39 @@ function organizarProdutosComItens(
 */
 
 function inserirItensProduto(
-    produtoCodigo,
+    idProduto,
     itens = []
 ) {
     itens.forEach((item, indice) => {
         databaseRepository.executar(
             `
-                INSERT INTO produto_itens (
-                    produto_codigo,
-                    codigo,
-                    descricao,
-                    quantidade,
-                    valor_sugerido
+                INSERT INTO produto_item (
+                    id_produto,
+                    id_produto_item,
+                    des_item,
+                    num_quantidade,
+                    val_unitario,
+                    dt_criacao,
+                    dt_edicao,
+                    cod_usu_edicao
                 )
-                VALUES (?, ?, ?, ?, ?)
+                VALUES (
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    strftime(
+                        '%Y-%m-%dT%H:%M:%fZ',
+                        'now'
+                    ),
+                    NULL,
+                    NULL
+                )
             `,
             [
-                produtoCodigo,
-                String(item.codigo || indice + 1),
+                idProduto,
+                indice + 1,
                 item.descricao || "",
                 Number(item.quantidade) || 0,
                 Number(item.valorSugerido) || 0
@@ -88,19 +153,19 @@ function inserirItensProduto(
     });
 }
 
-function excluirItensProduto(produtoCodigo) {
+function excluirItensProduto(idProduto) {
     databaseRepository.executar(
         `
-            DELETE FROM produto_itens
-            WHERE produto_codigo = ?
+            DELETE FROM produto_item
+            WHERE id_produto = ?
         `,
-        [produtoCodigo]
+        [idProduto]
     );
 }
 
 /*
 |--------------------------------------------------------------------------
-| Consultas
+| Consultas públicas
 |--------------------------------------------------------------------------
 */
 
@@ -109,11 +174,14 @@ function listar() {
         databaseRepository.buscarTodos(
             `
                 SELECT
-                    codigo,
-                    nome,
-                    descricao
-                FROM produtos
-                ORDER BY CAST(codigo AS INTEGER), codigo
+                    id_produto,
+                    cod_produto,
+                    nom_produto,
+                    des_produto
+                FROM produto
+                ORDER BY
+                    CAST(cod_produto AS INTEGER),
+                    cod_produto
             `
         );
 
@@ -125,17 +193,15 @@ function listar() {
         databaseRepository.buscarTodos(
             `
                 SELECT
-                    produto_codigo,
-                    codigo,
-                    descricao,
-                    quantidade,
-                    valor_sugerido
-                FROM produto_itens
+                    id_produto,
+                    id_produto_item,
+                    des_item,
+                    num_quantidade,
+                    val_unitario
+                FROM produto_item
                 ORDER BY
-                    CAST(produto_codigo AS INTEGER),
-                    produto_codigo,
-                    CAST(codigo AS INTEGER),
-                    codigo
+                    id_produto,
+                    id_produto_item
             `
         );
 
@@ -147,17 +213,7 @@ function listar() {
 
 function buscarPorCodigo(codigo) {
     const produto =
-        databaseRepository.buscarUm(
-            `
-                SELECT
-                    codigo,
-                    nome,
-                    descricao
-                FROM produtos
-                WHERE codigo = ?
-            `,
-            [String(codigo)]
-        );
+        buscarRegistroPorCodigo(codigo);
 
     if (!produto) {
         return null;
@@ -167,18 +223,16 @@ function buscarPorCodigo(codigo) {
         databaseRepository.buscarTodos(
             `
                 SELECT
-                    produto_codigo,
-                    codigo,
-                    descricao,
-                    quantidade,
-                    valor_sugerido
-                FROM produto_itens
-                WHERE produto_codigo = ?
-                ORDER BY
-                    CAST(codigo AS INTEGER),
-                    codigo
+                    id_produto,
+                    id_produto_item,
+                    des_item,
+                    num_quantidade,
+                    val_unitario
+                FROM produto_item
+                WHERE id_produto = ?
+                ORDER BY id_produto_item
             `,
-            [String(codigo)]
+            [produto.id_produto]
         );
 
     return mapearProduto(
@@ -189,89 +243,128 @@ function buscarPorCodigo(codigo) {
 
 /*
 |--------------------------------------------------------------------------
-| Escrita
+| Criação
 |--------------------------------------------------------------------------
 */
 
 function criar(produto) {
-    const codigo = String(produto.codigo);
+    const codigoProduto =
+        String(produto.codigo);
 
-    return databaseRepository.executarTransacao(() => {
-        databaseRepository.executar(
-            `
-                INSERT INTO produtos (
-                    codigo,
-                    nome,
-                    descricao
-                )
-                VALUES (?, ?, ?)
-            `,
-            [
-                codigo,
-                produto.nome,
-                produto.descricao || ""
-            ]
-        );
+    return databaseRepository
+        .executarTransacao(() => {
+            const resultado =
+                databaseRepository.executar(
+                    `
+                        INSERT INTO produto (
+                            cod_produto,
+                            nom_produto,
+                            des_produto,
+                            dt_criacao,
+                            dt_edicao,
+                            cod_usu_edicao
+                        )
+                        VALUES (
+                            ?,
+                            ?,
+                            ?,
+                            strftime(
+                                '%Y-%m-%dT%H:%M:%fZ',
+                                'now'
+                            ),
+                            NULL,
+                            NULL
+                        )
+                    `,
+                    [
+                        codigoProduto,
+                        produto.nome,
+                        produto.descricao || ""
+                    ]
+                );
 
-        inserirItensProduto(
-            codigo,
-            produto.itens
-        );
+            const idProduto =
+                Number(resultado.lastInsertRowid);
 
-        return buscarPorCodigo(codigo);
-    });
-}
-
-function atualizar(codigo, produto) {
-    const codigoProduto = String(codigo);
-
-    return databaseRepository.executarTransacao(() => {
-        const produtoExistente =
-            databaseRepository.buscarUm(
-                `
-                    SELECT codigo
-                    FROM produtos
-                    WHERE codigo = ?
-                `,
-                [codigoProduto]
+            inserirItensProduto(
+                idProduto,
+                produto.itens
             );
 
-        if (!produtoExistente) {
-            return null;
-        }
-
-        databaseRepository.executar(
-            `
-                UPDATE produtos
-                SET
-                    nome = ?,
-                    descricao = ?
-                WHERE codigo = ?
-            `,
-            [
-                produto.nome,
-                produto.descricao || "",
+            return buscarPorCodigo(
                 codigoProduto
-            ]
-        );
-
-        excluirItensProduto(codigoProduto);
-
-        inserirItensProduto(
-            codigoProduto,
-            produto.itens
-        );
-
-        return buscarPorCodigo(codigoProduto);
-    });
+            );
+        });
 }
+
+/*
+|--------------------------------------------------------------------------
+| Atualização
+|--------------------------------------------------------------------------
+*/
+
+function atualizar(codigo, produto) {
+    const codigoProduto =
+        String(codigo);
+
+    return databaseRepository
+        .executarTransacao(() => {
+            const produtoExistente =
+                buscarRegistroPorCodigo(
+                    codigoProduto
+                );
+
+            if (!produtoExistente) {
+                return null;
+            }
+
+            databaseRepository.executar(
+                `
+                    UPDATE produto
+                    SET
+                        nom_produto = ?,
+                        des_produto = ?,
+                        dt_edicao = strftime(
+                            '%Y-%m-%dT%H:%M:%fZ',
+                            'now'
+                        ),
+                        cod_usu_edicao = NULL
+                    WHERE id_produto = ?
+                `,
+                [
+                    produto.nome,
+                    produto.descricao || "",
+                    produtoExistente.id_produto
+                ]
+            );
+
+            excluirItensProduto(
+                produtoExistente.id_produto
+            );
+
+            inserirItensProduto(
+                produtoExistente.id_produto,
+                produto.itens
+            );
+
+            return buscarPorCodigo(
+                codigoProduto
+            );
+        });
+}
+
+/*
+|--------------------------------------------------------------------------
+| Exclusão
+|--------------------------------------------------------------------------
+*/
 
 function excluir(codigo) {
     const resultado =
         databaseRepository.executar(
             `
-                DELETE FROM produtos
-                WHERE codigo = ?
+                DELETE FROM produto
+                WHERE cod_produto = ?
             `,
             [String(codigo)]
         );
@@ -293,18 +386,23 @@ function obterProximoCodigo() {
                     COALESCE(
                         MAX(
                             CASE
-                                WHEN codigo GLOB '[0-9]*'
-                                THEN CAST(codigo AS INTEGER)
+                                WHEN cod_produto
+                                    GLOB '[0-9]*'
+                                THEN CAST(
+                                    cod_produto AS INTEGER
+                                )
                                 ELSE 0
                             END
                         ),
                         0
                     ) + 1 AS proximo_codigo
-                FROM produtos
+                FROM produto
             `
         );
 
-    return String(resultado.proximo_codigo);
+    return String(
+        resultado.proximo_codigo
+    );
 }
 
 module.exports = {

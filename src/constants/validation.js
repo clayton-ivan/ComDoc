@@ -1,0 +1,7 @@
+module.exports = {
+    CPF_DIGITOS: 11,
+    CNPJ_DIGITOS: 14,
+    TELEFONE_MIN_DIGITOS: 10,
+    TELEFONE_MAX_DIGITOS: 11,
+    UF_DIGITOS: 2
+};

@@ -2,6 +2,8 @@ const productService = require(
     "../services/productService"
 );
 
+const HTTP = require("../constants/httpStatus");
+
 function listar(req, res) {
     try {
         const produtos = productService.listar();
@@ -13,7 +15,7 @@ function listar(req, res) {
             erro
         );
 
-        return res.status(500).json({
+        return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
             sucesso: false,
             mensagem:
                 "Não foi possível listar os produtos."
@@ -29,7 +31,7 @@ function buscarPorCodigo(req, res) {
             );
 
         if (!produto) {
-            return res.status(404).json({
+            return res.status(HTTP.BAD_REQUEST).json({
                 sucesso: false,
                 mensagem: "Produto não encontrado."
             });
@@ -42,7 +44,7 @@ function buscarPorCodigo(req, res) {
             erro
         );
 
-        return res.status(500).json({
+        return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
             sucesso: false,
             mensagem:
                 "Não foi possível buscar o produto."
@@ -55,7 +57,7 @@ function criar(req, res) {
         const produto =
             productService.criar(req.body);
 
-        return res.status(201).json({
+        return res.status(HTTP.CREATED).json({
             sucesso: true,
             produto
         });
@@ -65,7 +67,7 @@ function criar(req, res) {
             erro
         );
 
-        return res.status(400).json({
+        return res.status(HTTP.BAD_REQUEST).json({
             sucesso: false,
             mensagem: erro.message
         });
@@ -81,7 +83,7 @@ function atualizar(req, res) {
             );
 
         if (!produto) {
-            return res.status(404).json({
+            return res.status(HTTP.NOT_FOUND).json({
                 sucesso: false,
                 mensagem: "Produto não encontrado."
             });
@@ -97,7 +99,7 @@ function atualizar(req, res) {
             erro
         );
 
-        return res.status(400).json({
+        return res.status(HTTP.BAD_REQUEST).json({
             sucesso: false,
             mensagem: erro.message
         });
@@ -112,20 +114,20 @@ function excluir(req, res) {
             );
 
         if (!produtoExcluido) {
-            return res.status(404).json({
+            return res.status(HTTP.NOT_FOUND).json({
                 sucesso: false,
                 mensagem: "Produto não encontrado."
             });
         }
 
-        return res.status(204).send();
+        return res.status(HTTP.NO_CONTENT).send();
     } catch (erro) {
         console.error(
             "Erro ao excluir produto:",
             erro
         );
 
-        return res.status(500).json({
+        return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
             sucesso: false,
             mensagem:
                 "Não foi possível excluir o produto."
@@ -147,7 +149,7 @@ function obterProximoCodigo(req, res) {
             erro
         );
 
-        return res.status(500).json({
+        return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
             sucesso: false,
             mensagem:
                 "Não foi possível gerar o próximo código."

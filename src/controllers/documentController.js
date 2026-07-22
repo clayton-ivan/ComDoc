@@ -1,5 +1,7 @@
 const documentService = require("../services/documentService");
 
+const HTTP = require("../constants/httpStatus");
+
 const gerar = async (req, res) => {
 	
 	console.log("Recebi uma solicitação para gerar uma cotação.");
@@ -28,7 +30,7 @@ const gerar = async (req, res) => {
         console.error("ERRO NO CONTROLLER:");
         console.error(erro);
 
-        res.status(500).json({
+        res.status(HTTP.INTERNAL_SERVER_ERROR).json({
             sucesso: false,
             mensagem: erro.message
         });
