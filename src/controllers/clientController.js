@@ -1,14 +1,9 @@
-const clientService = require(
-    "../services/clientService"
-);
+const clientService =
+    require("../services/clientService");
 
-const HTTP = require(
-    "../constants/httpStatus"
-);
+const HTTP = require("../constants/httpStatus");
 
-const MESSAGES = require(
-    "../constants/messages"
-);
+const MESSAGES = require("../constants/messages");
 
 /*
 |--------------------------------------------------------------------------
@@ -23,11 +18,9 @@ function enviarErro(
 ) {
     console.error(erro);
 
-    return res
-        .status(status)
-        .json({
-            erro: erro.message
-        });
+    return res.status(status).json({
+        erro: erro.message
+    });
 }
 
 /*
@@ -41,47 +34,14 @@ function listar(req, res) {
         const clientes =
             clientService.listar();
 
-        return res
-            .status(HTTP.OK)
-            .json(clientes);
+        return res.status(HTTP.OK).json(
+            clientes
+        );
     } catch (erro) {
         return enviarErro(
             res,
             erro,
             HTTP.INTERNAL_SERVER_ERROR
-        );
-    }
-}
-
-/*
-|--------------------------------------------------------------------------
-| Busca por CNPJ
-|--------------------------------------------------------------------------
-*/
-
-function buscarPorCnpj(req, res) {
-    try {
-        const cliente =
-            clientService.buscarPorCnpj(
-                req.params.cnpj
-            );
-
-        if (!cliente) {
-            return res
-                .status(HTTP.NOT_FOUND)
-                .json({
-                    erro:
-                        MESSAGES.CLIENTE_NAO_ENCONTRADO
-                });
-        }
-
-        return res
-            .status(HTTP.OK)
-            .json(cliente);
-    } catch (erro) {
-        return enviarErro(
-            res,
-            erro
         );
     }
 }
@@ -100,22 +60,16 @@ function buscarPorId(req, res) {
             );
 
         if (!cliente) {
-            return res
-                .status(HTTP.NOT_FOUND)
-                .json({
-                    erro:
-                        MESSAGES.CLIENTE_NAO_ENCONTRADO
-                });
+            return res.status(HTTP.NOT_FOUND).json({
+                erro: MESSAGES.CLIENTE_NAO_ENCONTRADO
+            });
         }
 
-        return res
-            .status(HTTP.OK)
-            .json(cliente);
-    } catch (erro) {
-        return enviarErro(
-            res,
-            erro
+        return res.status(HTTP.OK).json(
+            cliente
         );
+    } catch (erro) {
+        return enviarErro(res, erro);
     }
 }
 
@@ -132,14 +86,11 @@ function criar(req, res) {
                 req.body
             );
 
-        return res
-            .status(HTTP.CREATED)
-            .json(cliente);
-    } catch (erro) {
-        return enviarErro(
-            res,
-            erro
+        return res.status(HTTP.CREATED).json(
+            cliente
         );
+    } catch (erro) {
+        return enviarErro(res, erro);
     }
 }
 
@@ -158,22 +109,16 @@ function atualizar(req, res) {
             );
 
         if (!cliente) {
-            return res
-                .status(HTTP.NOT_FOUND)
-                .json({
-                    erro:
-                        MESSAGES.CLIENTE_NAO_ENCONTRADO
-                });
+            return res.status(HTTP.NOT_FOUND).json({
+                erro: MESSAGES.CLIENTE_NAO_ENCONTRADO
+            });
         }
 
-        return res
-            .status(HTTP.OK)
-            .json(cliente);
-    } catch (erro) {
-        return enviarErro(
-            res,
-            erro
+        return res.status(HTTP.OK).json(
+            cliente
         );
+    } catch (erro) {
+        return enviarErro(res, erro);
     }
 }
 
@@ -191,28 +136,19 @@ function excluir(req, res) {
             );
 
         if (!excluido) {
-            return res
-                .status(HTTP.NOT_FOUND)
-                .json({
-                    erro:
-                        MESSAGES.CLIENTE_NAO_ENCONTRADO
-                });
+            return res.status(HTTP.NOT_FOUND).json({
+                erro: MESSAGES.CLIENTE_NAO_ENCONTRADO
+            });
         }
 
-        return res
-            .status(HTTP.NO_CONTENT)
-            .send();
+        return res.status(HTTP.NO_CONTENT).send();
     } catch (erro) {
-        return enviarErro(
-            res,
-            erro
-        );
+        return enviarErro(res, erro);
     }
 }
 
 module.exports = {
     listar,
-    buscarPorCnpj,
     buscarPorId,
     criar,
     atualizar,

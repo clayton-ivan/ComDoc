@@ -1,30 +1,5 @@
-const databaseRepository = require(
-    "../database/databaseRepository"
-);
-
-/*
-|--------------------------------------------------------------------------
-| Campos de consulta
-|--------------------------------------------------------------------------
-*/
-
-const CAMPOS_CLIENTE = `
-    id_cliente,
-    id_empresa,
-    nom_cliente,
-    end_email,
-    num_telefone,
-    num_cpf,
-    num_cnpj,
-    nom_logradouro,
-    num_endereco,
-    nom_complem,
-    nom_cidade,
-    sg_uf,
-    dt_criacao,
-    dt_edicao,
-    cod_usu_edicao
-`;
+const databaseRepository =
+    require("../database/databaseRepository");
 
 /*
 |--------------------------------------------------------------------------
@@ -39,13 +14,6 @@ function mapearCliente(registro) {
 
     return {
         idCliente: registro.id_cliente,
-
-        /*
-         * O id da empresa é mantido no objeto interno.
-         * O frontend não precisa enviá-lo em nenhuma operação.
-         */
-        idEmpresa: registro.id_empresa,
-
         nome: registro.nom_cliente,
         email: registro.end_email,
         telefone: registro.num_telefone,
@@ -68,50 +36,64 @@ function mapearCliente(registro) {
 |--------------------------------------------------------------------------
 */
 
-function listar(idEmpresa) {
+function listar() {
     const registros =
         databaseRepository.buscarTodos(
             `
                 SELECT
-                    ${CAMPOS_CLIENTE}
+                    id_cliente,
+                    nom_cliente,
+                    end_email,
+                    num_telefone,
+                    num_cpf,
+                    num_cnpj,
+                    nom_logradouro,
+                    num_endereco,
+                    nom_complem,
+                    nom_cidade,
+                    sg_uf,
+                    dt_criacao,
+                    dt_edicao,
+                    cod_usu_edicao
                 FROM cliente
-                WHERE id_empresa = ?
                 ORDER BY
                     nom_cliente,
                     id_cliente
-            `,
-            [idEmpresa]
+            `
         );
 
     return registros.map(mapearCliente);
 }
 
-function buscarPorId(
-    idEmpresa,
-    idCliente
-) {
+function buscarPorId(idCliente) {
     const registro =
         databaseRepository.buscarUm(
             `
                 SELECT
-                    ${CAMPOS_CLIENTE}
+                    id_cliente,
+                    nom_cliente,
+                    end_email,
+                    num_telefone,
+                    num_cpf,
+                    num_cnpj,
+                    nom_logradouro,
+                    num_endereco,
+                    nom_complem,
+                    nom_cidade,
+                    sg_uf,
+                    dt_criacao,
+                    dt_edicao,
+                    cod_usu_edicao
                 FROM cliente
-                WHERE id_empresa = ?
-                  AND id_cliente = ?
+                WHERE id_cliente = ?
             `,
-            [
-                idEmpresa,
-                idCliente
-            ]
+            [idCliente]
         );
 
     return mapearCliente(registro);
 }
 
-function buscarPorCpf(
-    idEmpresa,
-    cpf
-) {
+function buscarPorCpf(cpf) {
     if (!cpf) {
         return null;
     }
@@ -120,24 +102,30 @@ function buscarPorCpf(
         databaseRepository.buscarUm(
             `
                 SELECT
-                    ${CAMPOS_CLIENTE}
+                    id_cliente,
+                    nom_cliente,
+                    end_email,
+                    num_telefone,
+                    num_cpf,
+                    num_cnpj,
+                    nom_logradouro,
+                    num_endereco,
+                    nom_complem,
+                    nom_cidade,
+                    sg_uf,
+                    dt_criacao,
+                    dt_edicao,
+                    cod_usu_edicao
                 FROM cliente
-                WHERE id_empresa = ?
-                  AND num_cpf = ?
+                WHERE num_cpf = ?
             `,
-            [
-                idEmpresa,
-                cpf
-            ]
+            [cpf]
         );
 
     return mapearCliente(registro);
 }
 
-function buscarPorCnpj(
-    idEmpresa,
-    cnpj
-) {
+function buscarPorCnpj(cnpj) {
     if (!cnpj) {
         return null;
     }
@@ -146,15 +134,24 @@ function buscarPorCnpj(
         databaseRepository.buscarUm(
             `
                 SELECT
-                    ${CAMPOS_CLIENTE}
+                    id_cliente,
+                    nom_cliente,
+                    end_email,
+                    num_telefone,
+                    num_cpf,
+                    num_cnpj,
+                    nom_logradouro,
+                    num_endereco,
+                    nom_complem,
+                    nom_cidade,
+                    sg_uf,
+                    dt_criacao,
+                    dt_edicao,
+                    cod_usu_edicao
                 FROM cliente
-                WHERE id_empresa = ?
-                  AND num_cnpj = ?
+                WHERE num_cnpj = ?
             `,
-            [
-                idEmpresa,
-                cnpj
-            ]
+            [cnpj]
         );
 
     return mapearCliente(registro);
@@ -166,16 +163,11 @@ function buscarPorCnpj(
 |--------------------------------------------------------------------------
 */
 
-function criar(
-    idEmpresa,
-    cliente,
-    codUsuarioEdicao = null
-) {
+function criar(cliente) {
     const resultado =
         databaseRepository.executar(
             `
                 INSERT INTO cliente (
-                    id_empresa,
                     nom_cliente,
                     end_email,
                     num_telefone,
@@ -201,17 +193,15 @@ function criar(
                     ?,
                     ?,
                     ?,
-                    ?,
                     strftime(
                         '%Y-%m-%dT%H:%M:%fZ',
                         'now'
                     ),
                     NULL,
-                    ?
+                    NULL
                 )
             `,
             [
-                idEmpresa,
                 cliente.nome,
                 cliente.email,
                 cliente.telefone,
@@ -221,19 +211,14 @@ function criar(
                 cliente.numeroEndereco,
                 cliente.complemento,
                 cliente.cidade,
-                cliente.uf,
-                codUsuarioEdicao
+                cliente.uf
             ]
         );
 
-    const idCliente = Number(
-        resultado.lastInsertRowid
-    );
+    const idCliente =
+        Number(resultado.lastInsertRowid);
 
-    return buscarPorId(
-        idEmpresa,
-        idCliente
-    );
+    return buscarPorId(idCliente);
 }
 
 /*
@@ -242,12 +227,7 @@ function criar(
 |--------------------------------------------------------------------------
 */
 
-function atualizar(
-    idEmpresa,
-    idCliente,
-    cliente,
-    codUsuarioEdicao = null
-) {
+function atualizar(idCliente, cliente) {
     const resultado =
         databaseRepository.executar(
             `
@@ -267,9 +247,8 @@ function atualizar(
                         '%Y-%m-%dT%H:%M:%fZ',
                         'now'
                     ),
-                    cod_usu_edicao = ?
-                WHERE id_empresa = ?
-                  AND id_cliente = ?
+                    cod_usu_edicao = NULL
+                WHERE id_cliente = ?
             `,
             [
                 cliente.nome,
@@ -282,22 +261,15 @@ function atualizar(
                 cliente.complemento,
                 cliente.cidade,
                 cliente.uf,
-                codUsuarioEdicao,
-                idEmpresa,
                 idCliente
             ]
         );
 
-    if (
-        Number(resultado.changes) === 0
-    ) {
+    if (Number(resultado.changes) === 0) {
         return null;
     }
 
-    return buscarPorId(
-        idEmpresa,
-        idCliente
-    );
+    return buscarPorId(idCliente);
 }
 
 /*
@@ -306,26 +278,17 @@ function atualizar(
 |--------------------------------------------------------------------------
 */
 
-function excluir(
-    idEmpresa,
-    idCliente
-) {
+function excluir(idCliente) {
     const resultado =
         databaseRepository.executar(
             `
                 DELETE FROM cliente
-                WHERE id_empresa = ?
-                  AND id_cliente = ?
+                WHERE id_cliente = ?
             `,
-            [
-                idEmpresa,
-                idCliente
-            ]
+            [idCliente]
         );
 
-    return (
-        Number(resultado.changes) > 0
-    );
+    return Number(resultado.changes) > 0;
 }
 
 module.exports = {
