@@ -1,0 +1,421 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #f4f6f8;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #1f2937;
+}
+
+button,
+input,
+textarea,
+select {
+    min-height: 44px;
+    font: inherit;
+}
+
+button {
+    touch-action: manipulation;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Cabeçalho
+|--------------------------------------------------------------------------
+*/
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 18px 32px;
+    background: #1f2937;
+    color: white;
+}
+
+.marca {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.navegacao-topo {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.link-topo {
+    color: white;
+    text-decoration: none;
+}
+
+.link-topo:hover {
+    text-decoration: underline;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Conteúdo principal
+|--------------------------------------------------------------------------
+*/
+
+.container {
+    width: min(1100px, calc(100% - 40px));
+    margin: 32px auto;
+}
+
+.cabecalho-pagina {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.cabecalho-pagina h1 {
+    margin: 0 0 8px;
+}
+
+.cabecalho-pagina p {
+    margin: 0;
+    color: #6b7280;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Filtros
+|--------------------------------------------------------------------------
+*/
+
+.filtros {
+    padding: 20px;
+    margin-bottom: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.filtros label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.filtros input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Lista de clientes
+|--------------------------------------------------------------------------
+*/
+
+.lista-clientes {
+    overflow: hidden;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.mensagem-lista {
+    padding: 24px;
+    margin: 0;
+    color: #6b7280;
+}
+
+.cliente {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.cliente:last-child {
+    border-bottom: 0;
+}
+
+.cliente-informacoes {
+    min-width: 0;
+}
+
+.cliente h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+}
+
+.cliente-detalhes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+}
+
+.cliente-detalhes p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.acoes-cliente {
+    display: flex;
+    flex-shrink: 0;
+    gap: 10px;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Botões
+|--------------------------------------------------------------------------
+*/
+
+.botao-primario,
+.botao-secundario,
+.botao-perigo {
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.botao-primario {
+    background: #2563eb;
+    color: white;
+}
+
+.botao-secundario {
+    background: #e5e7eb;
+    color: #1f2937;
+}
+
+.botao-perigo {
+    background: #dc2626;
+    color: white;
+}
+
+.botao-primario:disabled,
+.botao-secundario:disabled,
+.botao-perigo:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Dialog
+|--------------------------------------------------------------------------
+*/
+
+dialog {
+    width: min(760px, calc(100% - 24px));
+    max-height: calc(100vh - 24px);
+    padding: 0;
+    overflow-y: auto;
+    border: 0;
+    border-radius: 10px;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.45);
+}
+
+#formCliente {
+    padding: 24px;
+}
+
+.cabecalho-dialog {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.cabecalho-dialog h2 {
+    margin: 0;
+}
+
+.botao-fechar {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Formulário
+|--------------------------------------------------------------------------
+*/
+
+.campo {
+    min-width: 0;
+    margin-bottom: 18px;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 700;
+}
+
+.campo input,
+.campo textarea,
+.campo select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+}
+
+.campo input:focus,
+.campo textarea:focus,
+.campo select:focus,
+.filtros input:focus {
+    border-color: #2563eb;
+    outline: 2px solid rgba(37, 99, 235, 0.15);
+}
+
+.grade-campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.secao-endereco {
+    padding-top: 6px;
+    margin-top: 8px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.secao-endereco h3 {
+    margin: 20px 0;
+}
+
+.grade-numero-complemento {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 16px;
+}
+
+.grade-cidade-uf {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 72px;
+    gap: 16px;
+}
+
+#ufCliente {
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.acoes-dialog {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Mobile
+|--------------------------------------------------------------------------
+*/
+
+@media (max-width: 760px) {
+    .topbar {
+        align-items: flex-start;
+        padding: 14px 16px;
+    }
+
+    .navegacao-topo {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+    }
+
+    .container {
+        width: min(100% - 24px, 1100px);
+        margin: 20px auto;
+    }
+
+    .cabecalho-pagina,
+    .cliente {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .acoes-cliente {
+        width: 100%;
+    }
+
+    .acoes-cliente button {
+        flex: 1;
+    }
+
+    dialog {
+        width: 100%;
+        max-width: none;
+        height: 100%;
+        max-height: none;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    #formCliente {
+        padding: 14px;
+    }
+
+    .cabecalho-dialog {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        padding: 4px 0 14px;
+        background: white;
+    }
+
+    .acoes-dialog {
+        position: sticky;
+        bottom: 0;
+        z-index: 2;
+        padding: 14px 0 4px;
+        background: white;
+    }
+
+    .acoes-dialog button {
+        flex: 1;
+    }
+}
+
+@media (max-width: 560px) {
+    .grade-campos {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .grade-numero-complemento {
+        grid-template-columns: 76px minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .grade-cidade-uf {
+        grid-template-columns: minmax(0, 1fr) 66px;
+        gap: 10px;
+    }
+
+    .topbar {
+        gap: 12px;
+    }
+
+    .link-topo {
+        font-size: 14px;
+    }
+}

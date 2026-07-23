@@ -14,7 +14,7 @@ const MESSAGES = require("../constants/messages");
 function enviarErro(
     res,
     erro,
-    status = BAD_REQUEST
+    status = HTTP.BAD_REQUEST
 ) {
     console.error(erro);
 
@@ -65,7 +65,7 @@ function buscarPorId(req, res) {
             });
         }
 
-        return res.status(OK).json(
+        return res.status(HTTP.OK).json(
             cliente
         );
     } catch (erro) {
@@ -114,7 +114,7 @@ function atualizar(req, res) {
             });
         }
 
-        return res.status(OK).json(
+        return res.status(HTTP.OK).json(
             cliente
         );
     } catch (erro) {
@@ -141,7 +141,7 @@ function excluir(req, res) {
             });
         }
 
-        return res.status(NO_CONTENT).send();
+        return res.status(HTTP.NO_CONTENT).send();
     } catch (erro) {
         return enviarErro(res, erro);
     }

@@ -72,6 +72,17 @@ app.get("/admin/produtos", (req, res) => {
     );
 });
 
+app.get("/admin/clientes", (req, res) => {
+    res.sendFile(
+        path.join(
+            __dirname,
+            "public",
+            "clienteAdmin",
+            "clienteAdmin.html"
+        )
+    );
+});
+
 /*
 |--------------------------------------------------------------------------
 | Rotas da aplicação
