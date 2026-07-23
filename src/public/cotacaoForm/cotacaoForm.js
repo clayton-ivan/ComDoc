@@ -1,6 +1,8 @@
 import {
-    aplicarMascaraCnpj,
-    aplicarMascaraTelefone
+    aplicarMascaraTelefone,
+    formatarCpf,
+    formatarCnpj,
+    somenteDigitos
 } from "./mascaras.js";
 
 import {
@@ -21,8 +23,17 @@ const campoProduto =
 const campoTelefone =
     document.getElementById("telefone");
 
-const campoCnpj =
-    document.getElementById("cnpj");
+const campoDocumento =
+    document.getElementById("documento");
+
+const labelDocumento =
+    document.getElementById("labelDocumento");
+
+const tipoDocumentoCnpj =
+    document.getElementById("tipoDocumentoCnpj");
+
+const tipoDocumentoCpf =
+    document.getElementById("tipoDocumentoCpf");
 
 const corpoItensProduto =
     document.getElementById("itensProduto");
@@ -37,8 +48,73 @@ const gerenciadorItens = criarGerenciadorItens(
 
 let produtoSelecionado = null;
 
+/*
+|--------------------------------------------------------------------------
+| Documento do cliente
+|--------------------------------------------------------------------------
+*/
+
+function obterTipoDocumentoSelecionado() {
+    return tipoDocumentoCpf.checked
+        ? "cpf"
+        : "cnpj";
+}
+
+function configurarCampoDocumento() {
+    const tipoDocumento =
+        obterTipoDocumentoSelecionado();
+
+    campoDocumento.value = "";
+
+    if (tipoDocumento === "cpf") {
+        labelDocumento.textContent = "CPF";
+        campoDocumento.maxLength = 14;
+        campoDocumento.placeholder = "000.000.000-00";
+    } else {
+        labelDocumento.textContent = "CNPJ";
+        campoDocumento.maxLength = 18;
+        campoDocumento.placeholder = "00.000.000/0000-00";
+    }
+
+    campoDocumento.focus();
+}
+
+function formatarCampoDocumento() {
+    const tipoDocumento =
+        obterTipoDocumentoSelecionado();
+
+    if (tipoDocumento === "cpf") {
+        campoDocumento.value =
+            formatarCpf(campoDocumento.value);
+
+        return;
+    }
+
+    campoDocumento.value =
+        formatarCnpj(campoDocumento.value);
+}
+
+function obterDocumentoCliente() {
+    const tipoDocumento =
+        obterTipoDocumentoSelecionado();
+
+    const documento =
+        somenteDigitos(campoDocumento.value);
+
+    return {
+        tipoDocumento,
+        cpf:
+            tipoDocumento === "cpf"
+                ? documento
+                : "",
+        cnpj:
+            tipoDocumento === "cnpj"
+                ? documento
+                : ""
+    };
+}
+
 aplicarMascaraTelefone(campoTelefone);
-aplicarMascaraCnpj(campoCnpj);
 
 async function carregarProdutoSelecionado() {
     const codigoProduto = campoProduto.value;
@@ -84,6 +160,8 @@ async function gerarCotacao(evento) {
         (total, item) => total + item.valorTotal,
         0
     );
+	
+	const documentoCliente = obterDocumentoCliente();
 
     const dados = {
         contato:
@@ -97,10 +175,16 @@ async function gerarCotacao(evento) {
 
         endereco:
             document.getElementById("endereco").value,
+		
+		tipoDocumento:
+			documentoCliente.tipoDocumento,
 
-        cnpj:
-            campoCnpj.value,
+		cpf:
+			documentoCliente.cpf,
 
+		cnpj:
+			documentoCliente.cnpj,
+			
         produtoCodigo:
             produtoSelecionado.codigo,
 
@@ -177,6 +261,21 @@ async function gerarCotacao(evento) {
         alert("Erro ao gerar documento.");
     }
 }
+
+tipoDocumentoCnpj.addEventListener(
+    "change",
+    configurarCampoDocumento
+);
+
+tipoDocumentoCpf.addEventListener(
+    "change",
+    configurarCampoDocumento
+);
+
+campoDocumento.addEventListener(
+    "input",
+    formatarCampoDocumento
+);
 
 campoProduto.addEventListener(
     "change",

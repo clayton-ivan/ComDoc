@@ -216,6 +216,31 @@ function buscarPorId(idCliente) {
 
 /*
 |--------------------------------------------------------------------------
+| Busca por CPF
+|--------------------------------------------------------------------------
+*/
+
+function buscarPorCpf(cpf) {
+    const idEmpresa = obterIdEmpresaAtual();
+
+    const cpfNormalizado =
+        normalizarSomenteNumeros(cpf);
+
+    validarCampoObrigatorio(
+        cpfNormalizado,
+        "O CPF"
+    );
+
+    validarCpf(cpfNormalizado);
+
+    return clientRepository.buscarPorCpf(
+        idEmpresa,
+        cpfNormalizado
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
 | Busca por CNPJ
 |--------------------------------------------------------------------------
 */
@@ -275,46 +300,52 @@ function criar(
 | Obtenção ou criação
 |--------------------------------------------------------------------------
 |
-| Este método será chamado internamente pela geração da proposta.
+| Este método resolve o cliente durante o preenchimento da cotação.
 |
 | Regra:
-|
-| - se o CNPJ já existir, retorna o cadastro existente;
+| - aceita CPF ou CNPJ;
+| - se o documento já existir, retorna o cadastro existente;
 | - se não existir, cadastra o cliente;
 | - não atualiza automaticamente um cliente existente;
-| - os dados específicos da proposta continuam sendo os dados enviados
-|   no formulário da cotação.
+| - os dados específicos da proposta permanecem no formulário.
 |
 */
 
 function obterOuCriarCliente(
     dadosCliente,
-    codUsuarioEdicao =
-        COD_USUARIO_SISTEMA
+    codUsuarioEdicao = COD_USUARIO_SISTEMA
 ) {
-    const idEmpresa =
-        obterIdEmpresaAtual();
+    const idEmpresa = obterIdEmpresaAtual();
 
-    const cliente =
-        normalizarCliente(dadosCliente);
+    const cliente = normalizarCliente(
+        dadosCliente
+    );
 
     validarCliente(cliente);
 
-    if (!cliente.cnpj) {
+    if (!cliente.cpf && !cliente.cnpj) {
         throw new Error(
-            [
-                "O CNPJ é obrigatório",
-                "para obter ou criar o cliente",
-                "durante a geração da proposta."
-            ].join(" ")
+            "Informe o CPF ou o CNPJ do cliente."
         );
     }
 
-    const clienteExistente =
-        clientRepository.buscarPorCnpj(
-            idEmpresa,
-            cliente.cnpj
-        );
+    let clienteExistente = null;
+
+    if (cliente.cpf) {
+        clienteExistente =
+            clientRepository.buscarPorCpf(
+                idEmpresa,
+                cliente.cpf
+            );
+    }
+
+    if (cliente.cnpj) {
+        clienteExistente =
+            clientRepository.buscarPorCnpj(
+                idEmpresa,
+                cliente.cnpj
+            );
+    }
 
     if (clienteExistente) {
         return {
@@ -413,6 +444,7 @@ function excluir(idCliente) {
 module.exports = {
     listar,
     buscarPorId,
+    buscarPorCpf,
     buscarPorCnpj,
     criar,
     obterOuCriarCliente,
