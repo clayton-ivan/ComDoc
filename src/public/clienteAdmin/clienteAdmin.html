@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ComDoc - Clientes</title>
+
+    <link
+        rel="stylesheet"
+        href="/clienteAdmin/clienteAdmin.css"
+    >
+</head>
+
+<body>
+    <header class="topbar">
+        <div class="marca">
+            ComDoc
+        </div>
+
+        <nav class="navegacao-topo">
+            <a
+                class="link-topo"
+                href="/admin/produtos"
+            >
+                Produtos
+            </a>
+
+            <a
+                class="link-topo"
+                href="/"
+            >
+                Nova cotação
+            </a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="cabecalho-pagina">
+            <div>
+                <h1>Clientes</h1>
+
+                <p>
+                    Gerencie os clientes disponíveis para geração
+                    de cotações.
+                </p>
+            </div>
+
+            <button
+                id="botaoNovoCliente"
+                class="botao-primario"
+                type="button"
+            >
+                Novo cliente
+            </button>
+        </section>
+
+        <section class="filtros">
+            <label for="pesquisaCliente">
+                Pesquisar cliente
+            </label>
+
+            <input
+                id="pesquisaCliente"
+                type="search"
+                placeholder="Nome, CPF, CNPJ, cidade ou e-mail"
+                autocomplete="off"
+            >
+        </section>
+
+        <section
+            id="clientes"
+            class="lista-clientes"
+        >
+            <p
+                id="mensagemLista"
+                class="mensagem-lista"
+            >
+                Carregando clientes...
+            </p>
+        </section>
+    </main>
+
+    <dialog id="dialogCliente">
+        <form id="formCliente">
+            <header class="cabecalho-dialog">
+                <h2 id="tituloDialog">
+                    Novo cliente
+                </h2>
+
+                <button
+                    id="botaoFecharDialog"
+                    class="botao-fechar"
+                    type="button"
+                    aria-label="Fechar"
+                >
+                    ×
+                </button>
+            </header>
+
+            <div class="campo">
+                <label for="nomeCliente">
+                    Nome
+                </label>
+
+                <input
+                    id="nomeCliente"
+                    name="nome"
+                    type="text"
+                    maxlength="150"
+                    required
+                    autocomplete="name"
+                >
+            </div>
+
+            <div class="grade-campos">
+                <div class="campo">
+                    <label for="cpfCliente">
+                        CPF
+                    </label>
+
+                    <input
+                        id="cpfCliente"
+                        name="cpf"
+                        type="text"
+                        inputmode="numeric"
+                        maxlength="11"
+                        autocomplete="off"
+                        placeholder="Somente números"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="cnpjCliente">
+                        CNPJ
+                    </label>
+
+                    <input
+                        id="cnpjCliente"
+                        name="cnpj"
+                        type="text"
+                        inputmode="numeric"
+                        maxlength="14"
+                        autocomplete="off"
+                        placeholder="Somente números"
+                    >
+                </div>
+            </div>
+
+            <div class="grade-campos">
+                <div class="campo">
+                    <label for="telefoneCliente">
+                        Telefone
+                    </label>
+
+                    <input
+                        id="telefoneCliente"
+                        name="telefone"
+                        type="text"
+                        inputmode="numeric"
+                        maxlength="11"
+                        autocomplete="tel"
+                        placeholder="DDD e número"
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="emailCliente">
+                        E-mail
+                    </label>
+
+                    <input
+                        id="emailCliente"
+                        name="email"
+                        type="email"
+                        maxlength="150"
+                        autocomplete="email"
+                    >
+                </div>
+            </div>
+
+            <section class="secao-endereco">
+                <h3>Endereço</h3>
+
+                <div class="campo">
+                    <label for="logradouroCliente">
+                        Logradouro
+                    </label>
+
+                    <input
+                        id="logradouroCliente"
+                        name="logradouro"
+                        type="text"
+                        maxlength="150"
+                        autocomplete="street-address"
+                    >
+                </div>
+
+                <div class="grade-numero-complemento">
+                    <div class="campo">
+                        <label for="numeroEnderecoCliente">
+                            Nro.
+                        </label>
+
+                        <input
+                            id="numeroEnderecoCliente"
+                            name="numeroEndereco"
+                            type="text"
+                            inputmode="numeric"
+                            maxlength="10"
+                            autocomplete="off"
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="complementoCliente">
+                            Complemento
+                        </label>
+
+                        <input
+                            id="complementoCliente"
+                            name="complemento"
+                            type="text"
+                            maxlength="100"
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+
+                <div class="grade-cidade-uf">
+                    <div class="campo">
+                        <label for="cidadeCliente">
+                            Cidade
+                        </label>
+
+                        <input
+                            id="cidadeCliente"
+                            name="cidade"
+                            type="text"
+                            maxlength="100"
+                            autocomplete="address-level2"
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="ufCliente">
+                            UF
+                        </label>
+
+                        <input
+                            id="ufCliente"
+                            name="uf"
+                            type="text"
+                            maxlength="2"
+                            autocomplete="address-level1"
+                            placeholder="SP"
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <div class="acoes-dialog">
+                <button
+                    id="botaoCancelar"
+                    class="botao-secundario"
+                    type="button"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    id="botaoSalvar"
+                    class="botao-primario"
+                    type="submit"
+                >
+                    Salvar
+                </button>
+            </div>
+        </form>
+    </dialog>
+
+    <script src="/clienteAdmin/clienteAdmin.js"></script>
+</body>
+</html>
