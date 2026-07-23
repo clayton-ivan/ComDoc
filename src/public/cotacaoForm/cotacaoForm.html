@@ -38,62 +38,101 @@
 
         <form id="formulario">
             <section class="card">
-                <h2>Dados do cliente</h2>
+				<h2>Dados do cliente</h2>
 
-                <div class="grid">
-                    <div class="campo">
-                        <label for="contato">Contato</label>
+				<div class="grid">
+					<div class="campo campo-largo">
+						<span class="rotulo-campo">
+							Tipo de documento
+						</span>
 
-                        <input
-                            type="text"
-                            id="contato"
-                            autocomplete="name"
-                            required>
-                    </div>
+						<div
+							class="seletor-documento"
+							role="radiogroup"
+							aria-label="Tipo de documento">
 
-                    <div class="campo">
-                        <label for="email">E-mail</label>
+							<input
+								type="radio"
+								id="tipoDocumentoCnpj"
+								name="tipoDocumento"
+								value="cnpj"
+								checked>
 
-                        <input
-                            type="email"
-                            id="email"
-                            inputmode="email"
-                            autocomplete="email">
-                    </div>
+							<label for="tipoDocumentoCnpj">
+								CNPJ
+							</label>
 
-                    <div class="campo">
-                        <label for="telefone">Telefone</label>
+							<input
+								type="radio"
+								id="tipoDocumentoCpf"
+								name="tipoDocumento"
+								value="cpf">
 
-                        <input
-                            type="text"
-                            id="telefone"
-                            inputmode="numeric"
-                            autocomplete="tel"
-                            maxlength="15"
-                            required>
-                    </div>
+							<label for="tipoDocumentoCpf">
+								CPF
+							</label>
+						</div>
 
-                    <div class="campo">
-                        <label for="cnpj">CNPJ</label>
+						<label
+							id="labelDocumento"
+							for="documento"
+							class="label-documento">
+							CNPJ
+						</label>
 
-                        <input
-                            type="text"
-                            id="cnpj"
-                            inputmode="numeric"
-                            maxlength="18"
-                            required>
-                    </div>
+						<input
+							type="text"
+							id="documento"
+							name="documento"
+							inputmode="numeric"
+							autocomplete="off"
+							maxlength="18"
+							placeholder="00.000.000/0000-00"
+							required>
+					</div>
 
-                    <div class="campo campo-largo">
-                        <label for="endereco">Endereço</label>
+					<div class="campo">
+						<label for="contato">Contato</label>
 
-                        <input
-                            type="text"
-                            id="endereco"
-                            autocomplete="street-address">
-                    </div>
-                </div>
-            </section>
+						<input
+							type="text"
+							id="contato"
+							autocomplete="name"
+							required>
+					</div>
+
+					<div class="campo">
+						<label for="email">E-mail</label>
+
+						<input
+							type="email"
+							id="email"
+							inputmode="email"
+							autocomplete="email">
+					</div>
+
+					<div class="campo">
+						<label for="telefone">Telefone</label>
+
+						<input
+							type="text"
+							id="telefone"
+							inputmode="numeric"
+							autocomplete="tel"
+							maxlength="15"
+							required>
+					</div>
+
+					<div class="campo campo-largo">
+						<label for="endereco">Endereço</label>
+
+						<input
+							type="text"
+							id="endereco"
+							autocomplete="street-address">
+					</div>
+				</div>
+			</section>
 
             <section class="card">
                 <h2>Produto</h2>

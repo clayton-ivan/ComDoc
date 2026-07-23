@@ -20,6 +20,16 @@ export function formatarTelefone(valor) {
     return `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
 }
 
+export function formatarCpf(valor) {
+    const digitos =
+        somenteDigitos(valor).slice(0, 11);
+
+    return digitos
+        .replace(/^(\d{3})(\d)/, "$1.$2")
+        .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+        .replace(/\.(\d{3})(\d)/, ".$1-$2");
+}
+
 export function formatarCnpj(valor) {
     const digitos = somenteDigitos(valor).slice(0, 14);
 
