@@ -1,0 +1,8 @@
+const ID_EMPRESA_PADRAO = 1;
+
+const COD_USUARIO_SISTEMA = "SISTEMA";
+
+module.exports = {
+    ID_EMPRESA_PADRAO,
+    COD_USUARIO_SISTEMA
+};
