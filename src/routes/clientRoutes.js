@@ -18,11 +18,17 @@ router.get(
 );
 
 /*
- * Esta rota precisa ficar antes de "/:id".
+ * Estas rotas precisam ficar antes de "/:id".
  *
  * Caso contrário, o Express pode interpretar
- * a palavra "cnpj" como o valor do parâmetro "id".
+ * "cpf" ou "cnpj" como o valor do parâmetro "id".
  */
+
+router.get(
+    "/cpf/:cpf",
+    clientController.buscarPorCpf
+);
+
 router.get(
     "/cnpj/:cnpj",
     clientController.buscarPorCnpj
@@ -38,6 +44,11 @@ router.get(
 | Alterações
 |--------------------------------------------------------------------------
 */
+
+router.post(
+    "/obter-ou-criar",
+    clientController.obterOuCriarCliente
+);
 
 router.post(
     "/",

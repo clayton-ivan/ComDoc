@@ -55,6 +55,39 @@ function listar(req, res) {
 
 /*
 |--------------------------------------------------------------------------
+| Busca por CPF
+|--------------------------------------------------------------------------
+*/
+
+function buscarPorCpf(req, res) {
+    try {
+        const cliente =
+            clientService.buscarPorCpf(
+                req.params.cpf
+            );
+
+        if (!cliente) {
+            return res
+                .status(HTTP.NOT_FOUND)
+                .json({
+                    erro:
+                        MESSAGES.CLIENTE_NAO_ENCONTRADO
+                });
+        }
+
+        return res
+            .status(HTTP.OK)
+            .json(cliente);
+    } catch (erro) {
+        return enviarErro(
+            res,
+            erro
+        );
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
 | Busca por CNPJ
 |--------------------------------------------------------------------------
 */
@@ -145,6 +178,34 @@ function criar(req, res) {
 
 /*
 |--------------------------------------------------------------------------
+| Obtenção ou criação
+|--------------------------------------------------------------------------
+*/
+
+function obterOuCriarCliente(req, res) {
+    try {
+        const resultado =
+            clientService.obterOuCriarCliente(
+                req.body
+            );
+
+        const status = resultado.criado
+            ? HTTP.CREATED
+            : HTTP.OK;
+
+        return res
+            .status(status)
+            .json(resultado);
+    } catch (erro) {
+        return enviarErro(
+            res,
+            erro
+        );
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
 | Atualização
 |--------------------------------------------------------------------------
 */
@@ -212,9 +273,11 @@ function excluir(req, res) {
 
 module.exports = {
     listar,
+    buscarPorCpf,
     buscarPorCnpj,
     buscarPorId,
     criar,
+    obterOuCriarCliente,
     atualizar,
     excluir
 };
