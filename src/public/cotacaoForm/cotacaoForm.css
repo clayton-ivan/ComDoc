@@ -301,6 +301,39 @@ input[readonly] {
     color: #4b5563;
 }
 
+.status-cliente {
+    min-height: 20px;
+    margin: 7px 0 0;
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.status-cliente.visivel {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.status-cliente.consultando {
+    color: #6b7280;
+}
+
+.status-cliente.encontrado {
+    color: #15803d;
+}
+
+.status-cliente.novo {
+    color: #1d4ed8;
+}
+
+.status-cliente.erro {
+    color: #b91c1c;
+}
+
 @media (max-width: 760px) {
     .topbar {
         padding: 14px 16px;
