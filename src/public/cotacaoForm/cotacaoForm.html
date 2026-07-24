@@ -129,12 +129,56 @@
 					</div>
 
 					<div class="campo campo-largo">
-						<label for="endereco">Endereço</label>
+						<label for="logradouro">Logradouro</label>
 
 						<input
 							type="text"
-							id="endereco"
-							autocomplete="street-address">
+							id="logradouro"
+							autocomplete="address-line1">
+					</div>
+
+					<div class="linha-numero-complemento">
+						<div class="campo campo-numero">
+							<label for="numeroEndereco">Nro.</label>
+
+							<input
+								type="text"
+								id="numeroEndereco"
+								inputmode="numeric"
+								autocomplete="address-line2"
+								maxlength="10">
+						</div>
+
+						<div class="campo campo-complemento">
+							<label for="complemento">Complemento</label>
+
+							<input
+								type="text"
+								id="complemento"
+								autocomplete="address-line2"
+								maxlength="100">
+						</div>
+					</div>
+
+					<div class="campo">
+						<label for="cidade">Cidade</label>
+
+						<input
+							type="text"
+							id="cidade"
+							autocomplete="address-level2"
+							maxlength="100">
+					</div>
+
+					<div class="campo campo-uf">
+						<label for="uf">UF</label>
+
+						<input
+							type="text"
+							id="uf"
+							autocomplete="address-level1"
+							maxlength="2"
+							placeholder="SP">
 					</div>
 				</div>
 			</section>

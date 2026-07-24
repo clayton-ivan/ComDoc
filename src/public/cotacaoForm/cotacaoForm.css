@@ -334,6 +334,28 @@ input[readonly] {
     color: #b91c1c;
 }
 
+.campo-uf input {
+    max-width: 120px;
+}
+
+.linha-numero-complemento {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 16px;
+    align-items: end;
+}
+
+.campo-numero,
+.campo-complemento {
+    min-width: 0;
+}
+
+.campo-numero input,
+.campo-complemento input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 @media (max-width: 760px) {
     .topbar {
         padding: 14px 16px;
@@ -409,4 +431,9 @@ input[readonly] {
             minmax(70px, 100px)
             minmax(0, 1fr);
     }
+	
+	.linha-numero-complemento {
+		grid-template-columns: 100px minmax(0, 1fr);
+		gap: 12px;
+	}
 }
