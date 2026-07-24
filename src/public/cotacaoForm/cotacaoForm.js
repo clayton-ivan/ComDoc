@@ -14,6 +14,12 @@ import {
     criarGerenciadorItens
 } from "./itens.js";
 
+import {
+    buscarClientePorCpf,
+    buscarClientePorCnpj,
+    obterOuCriarCliente
+} from "./clientes.js";
+
 /*
 |--------------------------------------------------------------------------
 | Elementos do formulário
@@ -346,10 +352,6 @@ async function buscarClientePorDocumento() {
     const quantidadeEsperada =
         obterQuantidadeDocumento();
 
-    /*
-     * O cliente anteriormente resolvido deixa de ser
-     * válido assim que o documento é alterado.
-     */
     if (
         documento !==
         documentoClienteResolvido
@@ -363,37 +365,30 @@ async function buscarClientePorDocumento() {
         quantidadeEsperada
     ) {
         numeroBuscaCliente += 1;
+        limparStatusCliente();
         return;
     }
-	
-	definirStatusCliente(
-		"consultando",
-		"Consultando cliente..."
-	);
+
+    definirStatusCliente(
+        "consultando",
+        "Consultando cliente..."
+    );
 
     const numeroBuscaAtual =
         ++numeroBuscaCliente;
 
-    const url =
-        `/clientes/${tipoDocumento}/` +
-        encodeURIComponent(documento);
-
     try {
-        const resposta =
-            await fetch(url);
-
-        let resultado = null;
-
-        try {
-            resultado =
-                await resposta.json();
-        } catch {
-            resultado = null;
-        }
+        const cliente =
+            tipoDocumento === "cpf"
+                ? await buscarClientePorCpf(
+                    documento
+                )
+                : await buscarClientePorCnpj(
+                    documento
+                );
 
         /*
-         * O usuário pode ter alterado o documento
-         * enquanto a consulta estava em andamento.
+         * Ignora respostas de consultas antigas.
          */
         if (
             numeroBuscaAtual !==
@@ -402,41 +397,32 @@ async function buscarClientePorDocumento() {
             return;
         }
 
-        if (resposta.status === 404) {
-			idCliente = null;
-			documentoClienteResolvido = "";
+        if (!cliente) {
+            idCliente = null;
+            documentoClienteResolvido = "";
 
-			limparDadosCliente();
+            limparDadosCliente();
 
-			definirStatusCliente(
-				"novo",
-				"Cliente novo. Ele será cadastrado ao gerar a cotação."
-			);
+            definirStatusCliente(
+                "novo",
+                "Cliente novo. Ele será cadastrado ao gerar a cotação."
+            );
 
-			return;
-		}
-
-        if (!resposta.ok) {
-            const mensagem =
-                resultado?.erro ||
-                resultado?.mensagem ||
-                `Não foi possível consultar o ${tipoDocumento.toUpperCase()}.`;
-
-            throw new Error(mensagem);
+            return;
         }
 
         idCliente =
-            resultado.idCliente;
+            cliente.idCliente;
 
         documentoClienteResolvido =
             documento;
 
-        preencherDadosCliente(resultado);
-		
-		definirStatusCliente(
-			"encontrado",
-			"Cliente encontrado!"
-		);
+        preencherDadosCliente(cliente);
+
+        definirStatusCliente(
+            "encontrado",
+            "Cliente encontrado!"
+        );
     } catch (erro) {
         if (
             numeroBuscaAtual !==
@@ -452,13 +438,13 @@ async function buscarClientePorDocumento() {
 
         idCliente = null;
         documentoClienteResolvido = "";
-		
-		definirStatusCliente(
-			"erro",
-			"Não foi possível consultar o cliente."
-		);
-        
-		campoDocumento.setCustomValidity(
+
+        definirStatusCliente(
+            "erro",
+            "Não foi possível consultar o cliente."
+        );
+
+        campoDocumento.setCustomValidity(
             erro.message
         );
 
@@ -544,6 +530,102 @@ async function carregarProdutoSelecionado() {
 
 /*
 |--------------------------------------------------------------------------
+| Dados cadastrais do cliente
+|--------------------------------------------------------------------------
+*/
+
+function obterDadosCadastraisCliente() {
+    const documentoCliente =
+        obterDocumentoCliente();
+
+    return {
+        nome:
+            campoContato.value.trim(),
+
+        email:
+            campoEmail.value.trim(),
+
+        telefone:
+            somenteDigitos(
+                campoTelefone.value
+            ),
+
+        cpf:
+            documentoCliente.cpf,
+
+        cnpj:
+            documentoCliente.cnpj,
+
+        /*
+         * O formulário atual possui somente um campo
+         * de endereço. Enquanto não separarmos os seus
+         * componentes, o conteúdo completo será salvo
+         * como logradouro.
+         */
+        logradouro:
+            campoEndereco.value.trim(),
+
+        numeroEndereco: null,
+        complemento: "",
+        cidade: "",
+        uf: ""
+    };
+}
+
+/*
+|--------------------------------------------------------------------------
+| Resolução do cliente
+|--------------------------------------------------------------------------
+*/
+
+async function resolverClienteAntesDaCotacao() {
+    if (idCliente) {
+        return idCliente;
+    }
+	
+	if (!campoContato.value.trim()) {
+		campoContato.focus();
+
+		throw new Error(
+			"Informe o nome do cliente."
+		);
+	}
+
+    definirStatusCliente(
+        "consultando",
+        "Cadastrando cliente..."
+    );
+
+    const dadosCliente =
+        obterDadosCadastraisCliente();
+
+    const resultado =
+        await obterOuCriarCliente(
+            dadosCliente
+        );
+
+    idCliente =
+        resultado.cliente.idCliente;
+
+    documentoClienteResolvido =
+        obterDocumentoAtual();
+
+    preencherDadosCliente(
+        resultado.cliente
+    );
+
+    definirStatusCliente(
+        "encontrado",
+        resultado.criado
+            ? "Cliente cadastrado!"
+            : "Cliente encontrado!"
+    );
+
+    return idCliente;
+}
+
+/*
+|--------------------------------------------------------------------------
 | Geração da cotação
 |--------------------------------------------------------------------------
 */
@@ -555,7 +637,28 @@ async function gerarCotacao(evento) {
         alert("Selecione um produto.");
         return;
     }
+	
+	let idClienteResolvido;
 
+	try {
+		idClienteResolvido =
+			await resolverClienteAntesDaCotacao();
+	} catch (erro) {
+		console.error(
+			"Erro ao resolver cliente:",
+			erro
+		);
+
+		definirStatusCliente(
+			"erro",
+			"Não foi possível cadastrar o cliente."
+		);
+
+		alert(erro.message);
+
+		return;
+	}
+	
     const itens =
         gerenciadorItens
             .obterItensPreenchidos();
@@ -576,7 +679,7 @@ async function gerarCotacao(evento) {
          * no frontend. Ele será usado efetivamente
          * na v0.6.3.
          */
-        idCliente,
+        idCliente: idClienteResolvido,
 
         contato:
             campoContato.value,
