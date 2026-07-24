@@ -41,8 +41,20 @@ const campoEmail =
 const campoTelefone =
     document.getElementById("telefone");
 
-const campoEndereco =
-    document.getElementById("endereco");
+const campoLogradouro =
+    document.getElementById("logradouro");
+
+const campoNumeroEndereco =
+    document.getElementById("numeroEndereco");
+
+const campoComplemento =
+    document.getElementById("complemento");
+
+const campoCidade =
+    document.getElementById("cidade");
+
+const campoUf =
+    document.getElementById("uf");
 
 const campoDocumento =
     document.getElementById("documento");
@@ -168,7 +180,12 @@ function limparDadosCliente() {
     campoContato.value = "";
     campoEmail.value = "";
     campoTelefone.value = "";
-    campoEndereco.value = "";
+
+    campoLogradouro.value = "";
+    campoNumeroEndereco.value = "";
+    campoComplemento.value = "";
+    campoCidade.value = "";
+    campoUf.value = "";
 }
 
 function invalidarClienteResolvido({
@@ -248,63 +265,6 @@ function formatarCampoDocumento() {
 
 /*
 |--------------------------------------------------------------------------
-| Endereço do cliente
-|--------------------------------------------------------------------------
-*/
-
-function montarEnderecoCliente(cliente) {
-    const logradouro =
-        String(
-            cliente.logradouro ?? ""
-        ).trim();
-
-    const numeroEndereco =
-        cliente.numeroEndereco !== null &&
-        cliente.numeroEndereco !== undefined &&
-        String(cliente.numeroEndereco).trim() !== ""
-            ? String(cliente.numeroEndereco).trim()
-            : "";
-
-    const complemento =
-        String(
-            cliente.complemento ?? ""
-        ).trim();
-
-    const cidade =
-        String(
-            cliente.cidade ?? ""
-        ).trim();
-
-    const uf =
-        String(
-            cliente.uf ?? ""
-        ).trim();
-
-    const enderecoPrincipal = [
-        logradouro,
-        numeroEndereco
-    ]
-        .filter(Boolean)
-        .join(", ");
-
-    const cidadeUf = [
-        cidade,
-        uf
-    ]
-        .filter(Boolean)
-        .join(" - ");
-
-    return [
-        enderecoPrincipal,
-        complemento,
-        cidadeUf
-    ]
-        .filter(Boolean)
-        .join(" - ");
-}
-
-/*
-|--------------------------------------------------------------------------
 | Preenchimento do cliente
 |--------------------------------------------------------------------------
 */
@@ -319,10 +279,6 @@ function preencherDadosCliente(cliente) {
     campoTelefone.value =
         cliente.telefone ?? "";
 
-    /*
-     * Dispara o evento já utilizado pela máscara
-     * existente do telefone.
-     */
     campoTelefone.dispatchEvent(
         new Event(
             "input",
@@ -332,8 +288,20 @@ function preencherDadosCliente(cliente) {
         )
     );
 
-    campoEndereco.value =
-        montarEnderecoCliente(cliente);
+    campoLogradouro.value =
+        cliente.logradouro ?? "";
+
+    campoNumeroEndereco.value =
+        cliente.numeroEndereco ?? "";
+
+    campoComplemento.value =
+        cliente.complemento ?? "";
+
+    campoCidade.value =
+        cliente.cidade ?? "";
+
+    campoUf.value =
+        cliente.uf ?? "";
 }
 
 /*
@@ -556,19 +524,85 @@ function obterDadosCadastraisCliente() {
         cnpj:
             documentoCliente.cnpj,
 
-        /*
-         * O formulário atual possui somente um campo
-         * de endereço. Enquanto não separarmos os seus
-         * componentes, o conteúdo completo será salvo
-         * como logradouro.
-         */
         logradouro:
-            campoEndereco.value.trim(),
+            campoLogradouro.value.trim(),
 
-        numeroEndereco: null,
-        complemento: "",
-        cidade: "",
-        uf: ""
+        numeroEndereco:
+            campoNumeroEndereco.value.trim(),
+
+        complemento:
+            campoComplemento.value.trim(),
+
+        cidade:
+            campoCidade.value.trim(),
+
+        uf:
+            campoUf.value
+                .trim()
+                .toUpperCase()
+    };
+}
+
+function montarEnderecoParaCotacao() {
+    const logradouro =
+        campoLogradouro.value.trim();
+
+    const numeroEndereco =
+        campoNumeroEndereco.value.trim();
+
+    const complemento =
+        campoComplemento.value.trim();
+
+    const cidade =
+        campoCidade.value.trim();
+
+    const uf =
+        campoUf.value
+            .trim()
+            .toUpperCase();
+
+    const enderecoPrincipal = [
+        logradouro,
+        numeroEndereco
+    ]
+        .filter(Boolean)
+        .join(", ");
+
+    const cidadeUf = [
+        cidade,
+        uf
+    ]
+        .filter(Boolean)
+        .join(" - ");
+
+    return [
+        enderecoPrincipal,
+        complemento,
+        cidadeUf
+    ]
+        .filter(Boolean)
+        .join(" - ");
+}
+
+function obterDocumentoFormatadoCliente() {
+    const tipoDocumento =
+        obterTipoDocumentoSelecionado();
+
+    const documento =
+        obterDocumentoAtual();
+
+    if (tipoDocumento === "cpf") {
+        return {
+            tipoDocumentoLabel: "CPF",
+            documentoFormatado:
+                formatarCpf(documento)
+        };
+    }
+
+    return {
+        tipoDocumentoLabel: "CNPJ",
+        documentoFormatado:
+            formatarCnpj(documento)
     };
 }
 
@@ -672,6 +706,9 @@ async function gerarCotacao(evento) {
 
     const documentoCliente =
         obterDocumentoCliente();
+		
+	const documentoFormatadoCliente =
+		obterDocumentoFormatadoCliente();
 
     const dados = {
         /*
@@ -690,11 +727,36 @@ async function gerarCotacao(evento) {
         telefone:
             campoTelefone.value,
 
-        endereco:
-            campoEndereco.value,
+        logradouro:
+			campoLogradouro.value.trim(),
+
+		numeroEndereco:
+			campoNumeroEndereco.value.trim(),
+
+		complemento:
+			campoComplemento.value.trim(),
+
+		cidade:
+			campoCidade.value.trim(),
+
+		uf:
+			campoUf.value
+				.trim()
+				.toUpperCase(),
+
+		endereco:
+			montarEnderecoParaCotacao(),
 
         tipoDocumento:
             documentoCliente.tipoDocumento,
+		
+		tipoDocumentoLabel:
+			documentoFormatadoCliente
+				.tipoDocumentoLabel,
+
+		documentoFormatado:
+			documentoFormatadoCliente
+				.documentoFormatado,
 
         cpf:
             documentoCliente.cpf,
@@ -809,6 +871,27 @@ Status: ${resposta.status}`
 | Eventos
 |--------------------------------------------------------------------------
 */
+
+campoNumeroEndereco.addEventListener(
+    "input",
+    () => {
+        campoNumeroEndereco.value =
+            somenteDigitos(
+                campoNumeroEndereco.value
+            );
+    }
+);
+
+campoUf.addEventListener(
+    "input",
+    () => {
+        campoUf.value =
+            campoUf.value
+                .replace(/[^a-zA-Z]/g, "")
+                .slice(0, 2)
+                .toUpperCase();
+    }
+);
 
 tipoDocumentoCnpj.addEventListener(
     "change",

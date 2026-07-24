@@ -63,8 +63,13 @@
 			</div>
 
 			<div class="campo-cliente">
-				<span class="rotulo-cliente">CNPJ</span>
-				<span class="valor-cliente">{{cnpj}}</span>
+				<span class="rotulo-cliente">
+					{{tipoDocumentoLabel}}
+				</span>
+
+				<span class="valor-cliente">
+					{{documentoFormatado}}
+				</span>
 			</div>
 		</div>
 	</section>
@@ -188,7 +193,7 @@
         <p class="assinatura-cliente">
 			{{contato}}
 			<br>
-			<strong>CNPJ {{cnpj}}</strong>
+			<strong>{{tipoDocumentoLabel}} {{documentoFormatado}}</strong>
 		</p>
         <br><br>
         <p>
