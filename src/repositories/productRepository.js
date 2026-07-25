@@ -241,6 +241,21 @@ function buscarPorCodigo(codigo) {
     );
 }
 
+
+function buscarIdPorCodigo(codigo) {
+    const registro =
+        buscarRegistroPorCodigo(codigo);
+
+    if (!registro) {
+        return null;
+    }
+
+    return Number(
+        registro.id_produto
+    );
+}
+
+
 /*
 |--------------------------------------------------------------------------
 | Criação
@@ -408,6 +423,7 @@ function obterProximoCodigo() {
 module.exports = {
     listar,
     buscarPorCodigo,
+	buscarIdPorCodigo,
     criar,
     atualizar,
     excluir,
