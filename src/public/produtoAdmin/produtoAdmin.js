@@ -334,10 +334,10 @@ async function abrirEdicaoProduto(codigo) {
         campoDescricaoProduto.value = produto.descricao;
 
         produto.itens.forEach((item) => {
-            criarItemProduto(item);
-        });
+			criarItemProduto(item);
+		});
 
-        dialogProduto.showModal();
+		dialogProduto.showModal();
 		dialogProduto.scrollTop = 0;
     } catch (erro) {
         console.error("Erro ao abrir produto:", erro);
@@ -380,7 +380,13 @@ function renderizarProdutos(lista) {
                 <button
                     type="button"
                     class="botao-secundario botao-editar">
-                    Editar
+                    Dados gerais
+                </button>
+
+                <button
+                    type="button"
+                    class="botao-secundario botao-descricao">
+                    Descrição detalhada
                 </button>
 
                 <button
@@ -395,6 +401,15 @@ function renderizarProdutos(lista) {
             .querySelector(".botao-editar")
             .addEventListener("click", () => {
                 abrirEdicaoProduto(produto.codigo);
+            });
+
+        elemento
+            .querySelector(".botao-descricao")
+            .addEventListener("click", () => {
+                window.location.href =
+                    `/admin/produtos/${encodeURIComponent(
+                        produto.codigo
+                    )}/descricao`;
             });
 
         elemento

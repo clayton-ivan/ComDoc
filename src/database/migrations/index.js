@@ -22,7 +22,10 @@ const migration003Empresas =
 const migration004Cotacoes =
     require("./migration004Cotacoes");
 
-const VERSAO_ATUAL_DATABASE = 4;
+const migration005BlocosProduto =
+    require("./migration005BlocosProduto");
+
+const VERSAO_ATUAL_DATABASE = 5;
 
 const migrations = [
     {
@@ -40,6 +43,10 @@ const migrations = [
     {
         versao: 4,
         executar: migration004Cotacoes
+    },
+    {
+        versao: 5,
+        executar: migration005BlocosProduto
     }
 ];
 
