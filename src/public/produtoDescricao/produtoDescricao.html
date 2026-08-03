@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>ComDoc - Descrição detalhada</title>
+
+    <link
+        rel="stylesheet"
+        href="/produtoDescricao/produtoDescricao.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="marca">ComDoc</div>
+
+        <a
+            href="/admin/produtos"
+            class="link-voltar">
+            Voltar aos produtos
+        </a>
+    </header>
+
+    <main class="container">
+        <section class="cabecalho-pagina">
+            <div>
+                <span class="rotulo-pagina">
+                    Descrição detalhada
+                </span>
+
+                <h1 id="nomeProduto">
+                    Carregando produto...
+                </h1>
+
+                <p id="identificacaoProduto"></p>
+            </div>
+
+            <div class="acoes-pagina">
+                <a
+                    href="/admin/produtos"
+                    class="botao botao-secundario">
+                    Voltar
+                </a>
+
+                <button
+                    id="botaoSalvar"
+                    type="button"
+                    class="botao botao-primario">
+                    Salvar descrição
+                </button>
+            </div>
+        </section>
+
+        <div
+            id="mensagemPagina"
+            class="mensagem mensagem-carregando">
+            Carregando descrição detalhada...
+        </div>
+
+        <section
+            id="editorBlocos"
+            class="editor-blocos"
+            hidden>
+
+            <div
+                id="mensagemSemBlocos"
+                class="mensagem">
+                Este produto ainda não possui uma descrição
+                detalhada. Adicione o primeiro bloco abaixo.
+            </div>
+
+            <div
+                id="blocosProduto"
+                class="blocos-produto">
+            </div>
+
+            <section class="painel-adicionar">
+                <div>
+                    <h2>Adicionar bloco</h2>
+
+                    <p>
+                        Organize textos, listas, tabelas e imagens
+                        na ordem em que aparecerão no documento.
+                    </p>
+                </div>
+
+                <div class="controles-adicionar">
+                    <label for="tipoNovoBloco">
+                        Tipo
+                    </label>
+
+                    <select id="tipoNovoBloco" disabled>
+                        <option value="">
+                            Carregando tipos...
+                        </option>
+                    </select>
+
+                    <button
+                        id="botaoAdicionarBloco"
+                        type="button"
+                        class="botao botao-secundario"
+                        disabled>
+                        + Adicionar
+                    </button>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <div
+        id="avisoSalvamento"
+        class="aviso-salvamento"
+        role="status"
+        aria-live="polite">
+    </div>
+
+    <script
+        type="module"
+        src="/produtoDescricao/produtoDescricao.js">
+    </script>
+</body>
+</html>

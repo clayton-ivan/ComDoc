@@ -3,13 +3,15 @@ const productRepository = require(
 );
 
 function listar() {
-    const produtos = productRepository.listar();
+    const produtos =
+        productRepository.listar();
 
-    return produtos.sort((produtoA, produtoB) =>
-        produtoA.nome.localeCompare(
-            produtoB.nome,
-            "pt-BR"
-        )
+    return produtos.sort(
+        (produtoA, produtoB) =>
+            produtoA.nome.localeCompare(
+                produtoB.nome,
+                "pt-BR"
+            )
     );
 }
 
@@ -18,11 +20,15 @@ function buscarPorCodigo(codigo) {
         return null;
     }
 
-    return productRepository.buscarPorCodigo(codigo);
+    return productRepository
+        .buscarPorCodigo(codigo);
 }
 
 function validarItens(itens) {
-    if (!Array.isArray(itens) || itens.length === 0) {
+    if (
+        !Array.isArray(itens) ||
+        itens.length === 0
+    ) {
         throw new Error(
             "O produto deve possuir ao menos um item."
         );
@@ -37,8 +43,11 @@ function validarItens(itens) {
             item.descricao || ""
         ).trim();
 
-        const quantidade = Number(item.quantidade);
-        const valorSugerido = Number(item.valorSugerido);
+        const quantidade =
+            Number(item.quantidade);
+
+        const valorSugerido =
+            Number(item.valorSugerido);
 
         if (!codigo) {
             throw new Error(
@@ -79,7 +88,10 @@ function validarItens(itens) {
     });
 }
 
-function montarProduto(codigo, dadosProduto) {
+function montarProduto(
+    codigo,
+    dadosProduto
+) {
     const nome = String(
         dadosProduto.nome || ""
     ).trim();
@@ -106,7 +118,10 @@ function montarProduto(codigo, dadosProduto) {
         );
     }
 
-    const itens = validarItens(dadosProduto.itens);
+    const itens =
+        validarItens(
+            dadosProduto.itens
+        );
 
     return {
         codigo,
@@ -122,7 +137,8 @@ function criar(dadosProduto) {
     ).trim();
 
     const produtoExistente =
-        productRepository.buscarPorCodigo(codigo);
+        productRepository
+            .buscarPorCodigo(codigo);
 
     if (produtoExistente) {
         throw new Error(
@@ -135,18 +151,23 @@ function criar(dadosProduto) {
         dadosProduto
     );
 
-    return productRepository.criar(produto);
+    return productRepository
+        .criar(produto);
 }
 
-function atualizar(codigo, dadosProduto) {
+function atualizar(
+    codigo,
+    dadosProduto
+) {
     const codigoNormalizado = String(
         codigo || ""
     ).trim();
 
     const produtoExistente =
-        productRepository.buscarPorCodigo(
-            codigoNormalizado
-        );
+        productRepository
+            .buscarPorCodigo(
+                codigoNormalizado
+            );
 
     if (!produtoExistente) {
         return null;
@@ -157,10 +178,11 @@ function atualizar(codigo, dadosProduto) {
         dadosProduto
     );
 
-    return productRepository.atualizar(
-        codigoNormalizado,
-        produto
-    );
+    return productRepository
+        .atualizar(
+            codigoNormalizado,
+            produto
+        );
 }
 
 function excluir(codigo) {
@@ -172,13 +194,15 @@ function excluir(codigo) {
         return false;
     }
 
-    return productRepository.excluir(
-        codigoNormalizado
-    );
+    return productRepository
+        .excluir(
+            codigoNormalizado
+        );
 }
 
 function obterProximoCodigo() {
-    return productRepository.obterProximoCodigo();
+    return productRepository
+        .obterProximoCodigo();
 }
 
 module.exports = {
@@ -187,5 +211,5 @@ module.exports = {
     criar,
     atualizar,
     excluir,
-	obterProximoCodigo
+    obterProximoCodigo
 };

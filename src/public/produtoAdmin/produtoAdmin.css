@@ -115,7 +115,13 @@ select {
 
 .acoes-produto {
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
+}
+
+.botao-descricao {
+    background: #dbeafe;
+    color: #1d4ed8;
 }
 
 .botao-primario,

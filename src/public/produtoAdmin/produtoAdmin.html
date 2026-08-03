@@ -2,14 +2,24 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
     <title>ComDoc - Produtos</title>
-    <link rel="stylesheet" href="/produtoAdmin/produtoAdmin.css">
+
+    <link
+        rel="stylesheet"
+        href="/produtoAdmin/produtoAdmin.css">
 </head>
 <body>
     <header class="topbar">
         <div class="marca">ComDoc</div>
-        <a href="/cotacaoForm/cotacaoForm.html" class="link-voltar">
+
+        <a
+            href="/cotacaoForm/cotacaoForm.html"
+            class="link-voltar">
             Nova cotação
         </a>
     </header>
@@ -18,16 +28,26 @@
         <div class="cabecalho-pagina">
             <div>
                 <h1>Produtos</h1>
-                <p>Gerencie os produtos disponíveis para geração de cotações.</p>
+
+                <p>
+                    Gerencie os produtos disponíveis
+                    para geração de cotações.
+                </p>
             </div>
 
-            <button id="botaoNovoProduto" type="button" class="botao-primario">
+            <button
+                id="botaoNovoProduto"
+                type="button"
+                class="botao-primario">
                 Novo produto
             </button>
         </div>
 
         <section class="filtros">
-            <label for="pesquisaProduto">Pesquisar produto</label>
+            <label for="pesquisaProduto">
+                Pesquisar produto
+            </label>
+
             <input
                 type="search"
                 id="pesquisaProduto"
@@ -35,18 +55,28 @@
         </section>
 
         <section class="lista-produtos">
-            <div id="mensagemLista" class="mensagem-lista">
+            <div
+                id="mensagemLista"
+                class="mensagem-lista">
                 Carregando produtos...
             </div>
 
-            <div id="produtos" class="produtos"></div>
+            <div
+                id="produtos"
+                class="produtos">
+            </div>
         </section>
     </main>
 
     <dialog id="dialogProduto">
-        <form id="formProduto" method="dialog">
+        <form
+            id="formProduto"
+            method="dialog">
+
             <div class="cabecalho-dialog">
-                <h2 id="tituloDialog">Novo produto</h2>
+                <h2 id="tituloDialog">
+                    Novo produto
+                </h2>
 
                 <button
                     id="botaoFecharDialog"
@@ -58,17 +88,23 @@
             </div>
 
             <div class="campo">
-                <label for="codigoProduto">Código</label>
+                <label for="codigoProduto">
+                    Código
+                </label>
+
                 <input
                     type="text"
                     id="codigoProduto"
-					inputmode="numeric"
-					disabled
+                    inputmode="numeric"
+                    disabled
                     required>
             </div>
 
             <div class="campo">
-                <label for="nomeProduto">Nome</label>
+                <label for="nomeProduto">
+                    Nome
+                </label>
+
                 <input
                     type="text"
                     id="nomeProduto"
@@ -76,27 +112,34 @@
             </div>
 
             <div class="campo">
-                <label for="descricaoProduto">Descrição</label>
+                <label for="descricaoProduto">
+                    Descrição resumida
+                </label>
+
                 <textarea
                     id="descricaoProduto"
-                    rows="5"
-                    required></textarea>
+                    rows="4"
+                    required>
+                </textarea>
             </div>
 
             <section class="secao-itens">
-				<div class="cabecalho-itens">
-					<h3>Itens do produto</h3>
-				</div>
+                <div class="cabecalho-itens">
+                    <h3>Itens do produto</h3>
+                </div>
 
-				<div id="itensProduto" class="itens-produto"></div>
-				
-				<button
-					id="botaoAdicionarItem"
-					type="button"
-					class="botao-secundario botao-adicionar-item">
-					+ Adicionar item
-				</button>
-			</section>
+                <div
+                    id="itensProduto"
+                    class="itens-produto">
+                </div>
+
+                <button
+                    id="botaoAdicionarItem"
+                    type="button"
+                    class="botao-secundario botao-adicionar-item">
+                    + Adicionar item
+                </button>
+            </section>
 
             <div class="acoes-dialog">
                 <button

@@ -44,6 +44,13 @@ app.use(
     )
 );
 
+app.use(
+    "/uploads",
+    express.static(
+        path.join(__dirname, "uploads")
+    )
+);
+
 /*
 |--------------------------------------------------------------------------
 | Páginas
@@ -71,6 +78,20 @@ app.get("/admin/produtos", (req, res) => {
         )
     );
 });
+
+app.get(
+    "/admin/produtos/:codigo/descricao",
+    (req, res) => {
+        res.sendFile(
+            path.join(
+                __dirname,
+                "public",
+                "produtoDescricao",
+                "produtoDescricao.html"
+            )
+        );
+    }
+);
 
 app.get("/admin/clientes", (req, res) => {
     res.sendFile(

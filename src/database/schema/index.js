@@ -4,6 +4,13 @@ const {
 } = require("./produtoSchema");
 
 const {
+    criarTabelaTipoBloco,
+    criarTiposBlocoPadrao,
+    criarTabelaProdutoBloco,
+    criarTabelaProdutoBlocoItem
+} = require("./produtoBlocoSchema");
+
+const {
     criarTabelaEmpresa,
     criarEmpresaPadrao
 } = require("./empresaSchema");
@@ -23,6 +30,11 @@ function criarEstruturaAtual(database) {
     criarTabelaProduto(database);
     criarTabelaProdutoItem(database);
 
+    criarTabelaTipoBloco(database);
+    criarTiposBlocoPadrao(database);
+    criarTabelaProdutoBloco(database);
+    criarTabelaProdutoBlocoItem(database);
+
     criarTabelaEmpresa(database);
 
     criarTabelaCliente(database);
@@ -37,6 +49,10 @@ module.exports = {
     criarEstruturaAtual,
     criarTabelaProduto,
     criarTabelaProdutoItem,
+    criarTabelaTipoBloco,
+    criarTiposBlocoPadrao,
+    criarTabelaProdutoBloco,
+    criarTabelaProdutoBlocoItem,
     criarTabelaEmpresa,
     criarEmpresaPadrao,
     criarTabelaCliente,

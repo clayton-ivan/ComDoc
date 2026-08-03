@@ -1,6 +1,10 @@
 const databaseRepository =
     require("../database/databaseRepository");
 
+const productBlockRepository = require(
+    "./productBlockRepository"
+);
+
 /*
 |--------------------------------------------------------------------------
 | Mapeamento
@@ -26,7 +30,8 @@ function mapearItem(registro) {
 
 function mapearProduto(
     registro,
-    itens = []
+    itens = [],
+    blocos = []
 ) {
     return {
         codigo:
@@ -38,7 +43,8 @@ function mapearProduto(
         descricao:
             registro.des_produto,
 
-        itens
+        itens,
+        blocos
     };
 }
 
@@ -73,9 +79,16 @@ function organizarProdutosComItens(
                     registroProduto.id_produto
                 ) || [];
 
+            const blocos =
+                productBlockRepository
+                    .listarPorIdProduto(
+                        registroProduto.id_produto
+                    );
+
             return mapearProduto(
                 registroProduto,
-                itens
+                itens,
+                blocos
             );
         }
     );
@@ -235,12 +248,18 @@ function buscarPorCodigo(codigo) {
             [produto.id_produto]
         );
 
+    const blocos =
+        productBlockRepository
+            .listarPorIdProduto(
+                produto.id_produto
+            );
+
     return mapearProduto(
         produto,
-        itens.map(mapearItem)
+        itens.map(mapearItem),
+        blocos
     );
 }
-
 
 function buscarIdPorCodigo(codigo) {
     const registro =
@@ -254,7 +273,6 @@ function buscarIdPorCodigo(codigo) {
         registro.id_produto
     );
 }
-
 
 /*
 |--------------------------------------------------------------------------
@@ -423,7 +441,7 @@ function obterProximoCodigo() {
 module.exports = {
     listar,
     buscarPorCodigo,
-	buscarIdPorCodigo,
+    buscarIdPorCodigo,
     criar,
     atualizar,
     excluir,
