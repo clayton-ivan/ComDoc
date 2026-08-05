@@ -51,6 +51,15 @@ function mapearBloco(
         conteudo:
             registro.des_conteudo,
 
+        alinhamento:
+            registro.sg_alinhamento,
+
+        tipoLista:
+            registro.sg_tipo_lista,
+
+        tamanhoImagem:
+            registro.sg_tamanho_imagem,
+
         itens
     };
 }
@@ -134,7 +143,10 @@ function buscarBlocosPorIdProduto(idProduto) {
                 sg_tipo_bloco,
                 num_ordem,
                 des_titulo,
-                des_conteudo
+                des_conteudo,
+                sg_alinhamento,
+                sg_tipo_lista,
+                sg_tamanho_imagem
             FROM produto_bloco
             WHERE id_produto = ?
             ORDER BY
@@ -312,11 +324,17 @@ function inserirBlocos(
                     num_ordem,
                     des_titulo,
                     des_conteudo,
+                    sg_alinhamento,
+                    sg_tipo_lista,
+                    sg_tamanho_imagem,
                     dt_criacao,
                     dt_edicao,
                     cod_usu_edicao
                 )
                 VALUES (
+                    ?,
+                    ?,
+                    ?,
                     ?,
                     ?,
                     ?,
@@ -337,7 +355,10 @@ function inserirBlocos(
                 bloco.tipo,
                 indice + 1,
                 bloco.titulo || "",
-                bloco.conteudo || ""
+                bloco.conteudo || "",
+                bloco.alinhamento || "ESQUERDA",
+                bloco.tipoLista || "MARCADOR",
+                bloco.tamanhoImagem || "NORMAL"
             ]
         );
 

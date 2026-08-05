@@ -25,7 +25,16 @@ const migration004Cotacoes =
 const migration005BlocosProduto =
     require("./migration005BlocosProduto");
 
-const VERSAO_ATUAL_DATABASE = 5;
+const migration006ApresentacaoBlocos =
+    require("./migration006ApresentacaoBlocos");
+
+const migration007TamanhoImagemBloco =
+    require("./migration007TamanhoImagemBloco");
+
+const migration008ImagemPequena =
+    require("./migration008ImagemPequena");
+
+const VERSAO_ATUAL_DATABASE = 8;
 
 const migrations = [
     {
@@ -47,6 +56,18 @@ const migrations = [
     {
         versao: 5,
         executar: migration005BlocosProduto
+    },
+    {
+        versao: 6,
+        executar: migration006ApresentacaoBlocos
+    },
+    {
+        versao: 7,
+        executar: migration007TamanhoImagemBloco
+    },
+    {
+        versao: 8,
+        executar: migration008ImagemPequena
     }
 ];
 

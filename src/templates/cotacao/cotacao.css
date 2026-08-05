@@ -205,7 +205,8 @@ article li {
 .produto-card {
     border: 1px solid #d9d9d9;
     border-radius: 6px;
-    overflow: hidden;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
 }
 
 .produto-header {
@@ -229,6 +230,138 @@ article li {
 .produto-descricao p {
     margin: 0;
     text-align: justify;
+}
+
+.produto-blocos {
+    padding: 10mm;
+    font-size: 4.5mm;
+    line-height: 1.6;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+.produto-detalhado .produto-blocos {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.produto-bloco {
+    margin-bottom: 10mm;
+    break-inside: avoid;
+}
+
+.produto-bloco:last-child {
+    margin-bottom: 0;
+}
+
+.produto-bloco h3 {
+    margin: 0 0 4mm;
+    font-size: 5mm;
+    font-style: italic;
+    break-after: avoid;
+}
+
+.alinhamento-esquerda {
+    text-align: left;
+}
+
+.alinhamento-centro {
+    text-align: center;
+}
+
+.alinhamento-direita {
+    text-align: right;
+}
+
+.bloco-texto,
+.bloco-introducao,
+.bloco-lista li,
+.bloco-tabela th,
+.bloco-tabela td {
+    white-space: pre-wrap;
+}
+
+.bloco-texto,
+.bloco-introducao {
+    margin: 0;
+}
+
+.bloco-introducao {
+    text-align: inherit;
+}
+
+.bloco-lista {
+    display: inline-block;
+    margin: 4mm 0 0;
+    padding: 0;
+    list-style-position: inside;
+    text-align: inherit;
+}
+
+.bloco-lista li {
+    margin-bottom: 2mm;
+}
+
+.bloco-tabela {
+    width: auto;
+    max-width: 100%;
+    margin-top: 4mm;
+    border-collapse: collapse;
+}
+
+.alinhamento-esquerda .bloco-tabela {
+    margin-right: auto;
+}
+
+.alinhamento-centro .bloco-tabela {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.alinhamento-direita .bloco-tabela {
+    margin-left: auto;
+}
+
+.bloco-tabela thead {
+    display: table-header-group;
+}
+
+.bloco-tabela tr {
+    break-inside: avoid;
+}
+
+.bloco-tabela th,
+.bloco-tabela td {
+    padding: 1.5mm 2mm;
+    border: 1px solid #9ca3af;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.bloco-tabela th {
+    background: #f1f5f9;
+    font-weight: 700;
+}
+
+.bloco-imagem {
+    display: inline-block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 220mm;
+    object-fit: contain;
+    break-inside: avoid;
+}
+
+.bloco-imagem-grande {
+    width: calc(100% + 10mm);
+    max-width: none;
+    max-height: 240mm;
+}
+
+.bloco-imagem-pequena {
+    width: 50%;
+    max-height: 120mm;
 }
 
 /* ===================================================== */

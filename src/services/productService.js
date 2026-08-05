@@ -2,6 +2,10 @@ const productRepository = require(
     "../repositories/productRepository"
 );
 
+const productImageService = require(
+    "./productImageService"
+);
+
 function listar() {
     const produtos =
         productRepository.listar();
@@ -194,10 +198,19 @@ function excluir(codigo) {
         return false;
     }
 
-    return productRepository
+    const excluido = productRepository
         .excluir(
             codigoNormalizado
         );
+
+    if (excluido) {
+        productImageService
+            .excluirTodasPorProduto(
+                codigoNormalizado
+            );
+    }
+
+    return excluido;
 }
 
 function obterProximoCodigo() {

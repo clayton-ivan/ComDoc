@@ -100,7 +100,44 @@ function excluir(req, res) {
     }
 }
 
+function limparPendentes(req, res) {
+    try {
+        const quantidade =
+            productImageService.excluirPendentes(
+                req.params.codigo,
+                req.body?.nomes
+            );
+
+        if (quantidade === null) {
+            return res
+                .status(HTTP.NOT_FOUND)
+                .json({
+                    sucesso: false,
+                    mensagem: "Produto não encontrado."
+                });
+        }
+
+        return res.json({
+            sucesso: true,
+            quantidade
+        });
+    } catch (erro) {
+        console.error(
+            "Erro ao limpar imagens pendentes:",
+            erro
+        );
+
+        return res
+            .status(HTTP.BAD_REQUEST)
+            .json({
+                sucesso: false,
+                mensagem: erro.message
+            });
+    }
+}
+
 module.exports = {
     upload,
-    excluir
+    excluir,
+    limparPendentes
 };

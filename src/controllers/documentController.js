@@ -50,6 +50,18 @@ const gerar = async (req, res) => {
         const contexto = {
             ...req.body,
 
+            produtoCodigo:
+                cotacao.produto.codigo,
+
+            produtoNome:
+                cotacao.produto.nome,
+
+            produtoDescricao:
+                cotacao.produto.descricao,
+
+            produtoBlocos:
+                cotacao.produto.blocos,
+
             idCotacao:
                 cotacao.idCotacao,
 

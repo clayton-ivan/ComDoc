@@ -209,7 +209,7 @@ function validarCliente(
     return cliente;
 }
 
-function obterIdProduto(
+function obterProduto(
     produtoCodigo
 ) {
     if (!produtoCodigo) {
@@ -218,19 +218,19 @@ function obterIdProduto(
         );
     }
 
-    const idProduto =
+    const produto =
         productRepository
-            .buscarIdPorCodigo(
+            .buscarPorCodigo(
                 produtoCodigo
             );
 
-    if (!idProduto) {
+    if (!produto) {
         throw new Error(
             "Produto não encontrado."
         );
     }
 
-    return idProduto;
+    return produto;
 }
 
 /*
@@ -255,18 +255,23 @@ function criar(
         cotacao.idCliente
     );
 
-    const idProduto =
-        obterIdProduto(
+    const produto =
+        obterProduto(
             cotacao.produtoCodigo
         );
 
-    return cotacaoRepository.criar(
+    const cotacaoCriada =
+        cotacaoRepository.criar(
         idEmpresa,
         {
             idCliente:
                 cotacao.idCliente,
 
-            idProduto,
+            idProduto:
+                productRepository
+                    .buscarIdPorCodigo(
+                        produto.codigo
+                    ),
 
             valorTotal:
                 cotacao.valorTotal,
@@ -283,6 +288,11 @@ function criar(
         },
         codUsuarioCriacao
     );
+
+    return {
+        ...cotacaoCriada,
+        produto
+    };
 }
 
 module.exports = {
