@@ -13,6 +13,9 @@ const botaoAdicionarBloco =
 const botaoSalvar =
     document.getElementById("botaoSalvar");
 
+const botaoPreVisualizar =
+    document.getElementById("botaoPreVisualizar");
+
 const mensagemPagina =
     document.getElementById("mensagemPagina");
 
@@ -29,6 +32,7 @@ const avisoSalvamento =
     document.getElementById("avisoSalvamento");
 
 let tiposBloco = [];
+let produtoAtual = null;
 let possuiAlteracoes = false;
 let temporizadorAviso = null;
 let proximoGrupoRadio = 1;
@@ -1375,6 +1379,7 @@ async function carregarPagina() {
         ]);
 
     tiposBloco = tipos;
+    produtoAtual = produto;
     preencherTipos();
 
     nomeProduto.textContent = produto.nome;
@@ -1386,6 +1391,54 @@ async function carregarPagina() {
 
     mensagemPagina.hidden = true;
     editorBlocos.hidden = false;
+}
+
+function abrirPreVisualizacao() {
+    if (!produtoAtual) {
+        return;
+    }
+
+    const codigoProduto = obterCodigoProduto();
+    const chave = [
+        "comdoc-preview",
+        codigoProduto,
+        Date.now(),
+        Math.random().toString(36).slice(2)
+    ].join(":");
+
+    const dados = {
+        produto: {
+            codigo: produtoAtual.codigo,
+            nome: produtoAtual.nome,
+            descricao: produtoAtual.descricao
+        },
+        blocos: obterBlocosFormulario()
+    };
+
+    sessionStorage.setItem(
+        chave,
+        JSON.stringify(dados)
+    );
+
+    const url = [
+        `/admin/produtos/${encodeURIComponent(
+            codigoProduto
+        )}/descricao/preview`,
+        `?chave=${encodeURIComponent(chave)}`
+    ].join("");
+
+    const janela = window.open(
+        url,
+        "_blank"
+    );
+
+    if (!janela) {
+        sessionStorage.removeItem(chave);
+        exibirAviso(
+            "Permita a abertura de janelas para visualizar a prévia.",
+            true
+        );
+    }
 }
 
 async function salvarDescricao() {
@@ -1509,6 +1562,11 @@ botaoSalvar.addEventListener(
     salvarDescricao
 );
 
+botaoPreVisualizar.addEventListener(
+    "click",
+    abrirPreVisualizacao
+);
+
 containerBlocos.addEventListener(
     "input",
     marcarAlteracao
@@ -1534,6 +1592,23 @@ window.addEventListener(
 window.addEventListener(
     "pagehide",
     limparImagensPendentesAoSair
+);
+
+window.addEventListener(
+    "message",
+    (evento) => {
+        if (
+            evento.origin !== window.location.origin ||
+            evento.data?.tipo !==
+                "comdoc-preview-consumido"
+        ) {
+            return;
+        }
+
+        sessionStorage.removeItem(
+            evento.data.chave
+        );
+    }
 );
 
 carregarPagina().catch((erro) => {
