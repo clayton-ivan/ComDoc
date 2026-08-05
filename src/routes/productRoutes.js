@@ -44,6 +44,11 @@ router.post(
     productImageController.upload
 );
 
+router.post(
+    "/:codigo/imagens/limpar-pendentes",
+    productImageController.limparPendentes
+);
+
 router.delete(
     "/:codigo/imagens/:nome",
     productImageController.excluir

@@ -3,6 +3,110 @@ const path = require("path");
 const Handlebars = require("handlebars");
 const puppeteer = require("puppeteer");
 
+const productImageService = require(
+    "./productImageService"
+);
+
+function organizarLinhasTabela(itens = []) {
+    const linhas = new Map();
+
+    itens.forEach((item) => {
+        if (!linhas.has(item.linha)) {
+            linhas.set(item.linha, []);
+        }
+
+        linhas.get(item.linha).push(item);
+    });
+
+    return Array.from(linhas.entries())
+        .sort((a, b) => a[0] - b[0])
+        .map(([numero, celulas]) => ({
+            numero,
+            celulas: celulas.sort(
+                (a, b) => a.coluna - b.coluna
+            )
+        }));
+}
+
+function prepararBloco(
+    bloco,
+    codigoProduto
+) {
+    const preparado = {
+        ...bloco,
+        classeAlinhamento:
+            `alinhamento-${String(
+                bloco.alinhamento || "ESQUERDA"
+            ).toLowerCase()}`,
+        ehTexto: bloco.tipo === "TEXTO",
+        ehLista: bloco.tipo === "LISTA",
+        ehTabela: bloco.tipo === "TABELA",
+        ehImagem: bloco.tipo === "IMAGEM",
+        listaNumerada:
+            bloco.tipoLista === "NUMERADOR",
+        imagemPequena:
+            bloco.tamanhoImagem === "PEQUENO",
+        imagemGrande:
+            bloco.tamanhoImagem === "GRANDE"
+    };
+
+    if (preparado.ehTabela) {
+        const linhas = organizarLinhasTabela(
+            bloco.itens
+        );
+
+        const primeiraLinha = linhas[0];
+        const primeiraEhCabecalho =
+            primeiraLinha &&
+            primeiraLinha.celulas.length > 0 &&
+            primeiraLinha.celulas.every(
+                (celula) => celula.cabecalho
+            );
+
+        preparado.linhasCabecalho =
+            primeiraEhCabecalho
+                ? [primeiraLinha]
+                : [];
+
+        preparado.linhasCorpo =
+            primeiraEhCabecalho
+                ? linhas.slice(1)
+                : linhas;
+    }
+
+    if (preparado.ehImagem) {
+        preparado.imagemDataUrl =
+            productImageService.obterDataUrl(
+                codigoProduto,
+                bloco.conteudo
+            );
+    }
+
+    return preparado;
+}
+
+function prepararProduto(contexto) {
+    const blocos = Array.isArray(
+        contexto.produtoBlocos
+    )
+        ? contexto.produtoBlocos
+        : [];
+
+    const blocosPreparados = blocos.map(
+        (bloco) => prepararBloco(
+            bloco,
+            contexto.produtoCodigo
+        )
+    );
+
+    return {
+        ...contexto,
+        produtoBlocos: blocosPreparados,
+        possuiProdutoBlocos:
+            blocosPreparados.length > 0
+    };
+}
+
 const gerar = async ({ template, contexto }) => {
 
     const pastaTemplate = path.join(
@@ -71,8 +175,11 @@ const gerar = async ({ template, contexto }) => {
 	
     const templateCompilado = Handlebars.compile(html);
 
+    const contextoPreparado =
+        prepararProduto(contexto);
+
     const htmlFinal = templateCompilado({
-		...contexto,
+		...contextoPreparado,
 		capa,
 		garantia,
 		importacao,
@@ -82,11 +189,13 @@ const gerar = async ({ template, contexto }) => {
 
     const browser = await puppeteer.launch();
 
-    const page = await browser.newPage();
+    try {
+        const page = await browser.newPage();
 
-    await page.setContent(htmlFinal, {
-		waitUntil: "networkidle0"
-	});
+
+        await page.setContent(htmlFinal, {
+		    waitUntil: "networkidle0"
+	    });
 	
 	const pastaOutput = path.join(
 		__dirname,
@@ -104,7 +213,7 @@ const gerar = async ({ template, contexto }) => {
 		"cotacao.pdf"
 	);
 	
-    await page.pdf({
+        await page.pdf({
 		path: caminhoPdf,
 
 		width: "210mm",
@@ -120,13 +229,14 @@ const gerar = async ({ template, contexto }) => {
 		printBackground: true,
 
 		preferCSSPageSize: true
-	});
+	    });
 
-    await browser.close();
-
-    return {
-		caminhoPdf
-	};
+        return {
+		    caminhoPdf
+	    };
+    } finally {
+        await browser.close();
+    }
 };
 
 module.exports = {

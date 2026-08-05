@@ -90,6 +90,18 @@ function criarTabelaProdutoBloco(database) {
                 NOT NULL
                 DEFAULT '',
 
+            sg_alinhamento TEXT
+                NOT NULL
+                DEFAULT 'ESQUERDA',
+
+            sg_tipo_lista TEXT
+                NOT NULL
+                DEFAULT 'MARCADOR',
+
+            sg_tamanho_imagem TEXT
+                NOT NULL
+                DEFAULT 'NORMAL',
+
             dt_criacao TEXT
                 NOT NULL
                 DEFAULT (
@@ -135,6 +147,29 @@ function criarTabelaProdutoBloco(database) {
 
             CHECK (
                 num_ordem > 0
+            ),
+
+            CHECK (
+                sg_alinhamento IN (
+                    'ESQUERDA',
+                    'CENTRO',
+                    'DIREITA'
+                )
+            ),
+
+            CHECK (
+                sg_tipo_lista IN (
+                    'MARCADOR',
+                    'NUMERADOR'
+                )
+            ),
+
+            CHECK (
+                sg_tamanho_imagem IN (
+                    'PEQUENO',
+                    'NORMAL',
+                    'GRANDE'
+                )
             )
         ) STRICT;
     `);

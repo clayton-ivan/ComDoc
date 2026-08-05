@@ -31,6 +31,8 @@ const avisoSalvamento =
 let tiposBloco = [];
 let possuiAlteracoes = false;
 let temporizadorAviso = null;
+let proximoGrupoRadio = 1;
+const imagensPendentes = new Set();
 
 function escaparHtml(valor) {
     return String(valor ?? "")
@@ -616,6 +618,53 @@ async function excluirArquivoImagem(referencia) {
         )}/imagens/${encodeURIComponent(nome)}`,
         { method: "DELETE" }
     );
+
+    imagensPendentes.delete(referencia);
+}
+
+function limparImagensPendentesAoSair() {
+    if (imagensPendentes.size === 0) {
+        return;
+    }
+
+    const nomes = Array.from(imagensPendentes)
+        .map(obterNomeImagemGerenciada)
+        .filter(Boolean);
+
+    if (nomes.length === 0) {
+        return;
+    }
+
+    const codigoProduto = obterCodigoProduto();
+    const url = `/produtos/${encodeURIComponent(
+        codigoProduto
+    )}/imagens/limpar-pendentes`;
+
+    const corpo = JSON.stringify({ nomes });
+    const dados = new Blob(
+        [corpo],
+        { type: "application/json" }
+    );
+
+    const enviado = navigator.sendBeacon(
+        url,
+        dados
+    );
+
+    if (!enviado) {
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: corpo,
+            keepalive: true
+        }).catch(() => {
+            // A página já está sendo descarregada.
+        });
+    }
+
+    imagensPendentes.clear();
 }
 
 function atualizarPreviewImagem(campo, imagem) {
@@ -727,6 +776,9 @@ function criarEditorImagem(bloco) {
             );
 
             campo.value = resultado.imagem.caminho;
+            imagensPendentes.add(
+                resultado.imagem.caminho
+            );
             atualizarPreviewImagem(campo, imagem);
             estadoUpload.textContent =
                 `Imagem enviada: ${resultado.imagem.nome}`;
@@ -811,6 +863,9 @@ function criarBloco(
     bloco = {},
     iniciarMinimizado = false
 ) {
+    const grupoRadio = proximoGrupoRadio;
+    proximoGrupoRadio += 1;
+
     const elemento = document.createElement(
         "article"
     );
@@ -879,6 +934,122 @@ function criarBloco(
                         bloco.titulo || ""
                     )}"
                     placeholder="Opcional">
+            </div>
+
+            <div class="campos-apresentacao-bloco">
+                <fieldset class="grupo-opcoes">
+                    <legend>Alinhamento</legend>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="alinhamento-${grupoRadio}"
+                            class="bloco-alinhamento"
+                            value="ESQUERDA"
+                            ${bloco.alinhamento !== "CENTRO" &&
+                                bloco.alinhamento !== "DIREITA"
+                                ? "checked"
+                                : ""}>
+                        Esquerda
+                    </label>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="alinhamento-${grupoRadio}"
+                            class="bloco-alinhamento"
+                            value="CENTRO"
+                            ${bloco.alinhamento === "CENTRO"
+                                ? "checked"
+                                : ""}>
+                        Centro
+                    </label>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="alinhamento-${grupoRadio}"
+                            class="bloco-alinhamento"
+                            value="DIREITA"
+                            ${bloco.alinhamento === "DIREITA"
+                                ? "checked"
+                                : ""}>
+                        Direita
+                    </label>
+                </fieldset>
+
+                ${tipo === "LISTA" ? `
+                    <fieldset class="grupo-opcoes">
+                        <legend>Estilo da lista</legend>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="tipo-lista-${grupoRadio}"
+                                class="bloco-tipo-lista"
+                                value="MARCADOR"
+                                ${bloco.tipoLista !== "NUMERADOR"
+                                    ? "checked"
+                                    : ""}>
+                            Marcadores
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="tipo-lista-${grupoRadio}"
+                                class="bloco-tipo-lista"
+                                value="NUMERADOR"
+                                ${bloco.tipoLista === "NUMERADOR"
+                                    ? "checked"
+                                    : ""}>
+                            Numeração
+                        </label>
+                    </fieldset>
+                ` : ""}
+
+                ${tipo === "IMAGEM" ? `
+                    <fieldset class="grupo-opcoes">
+                        <legend>Tamanho</legend>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="tamanho-imagem-${grupoRadio}"
+                                class="bloco-tamanho-imagem"
+                                value="PEQUENO"
+                                ${bloco.tamanhoImagem === "PEQUENO"
+                                    ? "checked"
+                                    : ""}>
+                            Pequeno
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="tamanho-imagem-${grupoRadio}"
+                                class="bloco-tamanho-imagem"
+                                value="NORMAL"
+                                ${bloco.tamanhoImagem !== "PEQUENO" &&
+                                    bloco.tamanhoImagem !== "GRANDE"
+                                    ? "checked"
+                                    : ""}>
+                            Normal
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="tamanho-imagem-${grupoRadio}"
+                                class="bloco-tamanho-imagem"
+                                value="GRANDE"
+                                ${bloco.tamanhoImagem === "GRANDE"
+                                    ? "checked"
+                                    : ""}>
+                            Grande
+                        </label>
+                    </fieldset>
+                ` : ""}
             </div>
         </div>
     `;
@@ -1049,6 +1220,13 @@ function obterBlocosFormulario() {
             tipo,
             ordem: indice + 1,
 
+            alinhamento:
+                bloco
+                    .querySelector(
+                        ".bloco-alinhamento:checked"
+                    )
+                    .value,
+
             titulo:
                 bloco
                     .querySelector(
@@ -1069,6 +1247,13 @@ function obterBlocosFormulario() {
         };
 
         if (tipo === "LISTA") {
+            resultado.tipoLista =
+                bloco
+                    .querySelector(
+                        ".bloco-tipo-lista:checked"
+                    )
+                    .value;
+
             resultado.itens =
                 obterItensLista(bloco);
         }
@@ -1078,21 +1263,37 @@ function obterBlocosFormulario() {
                 obterCelulasTabela(bloco);
         }
 
+        if (tipo === "IMAGEM") {
+            resultado.tamanhoImagem =
+                bloco
+                    .querySelector(
+                        ".bloco-tamanho-imagem:checked"
+                    )
+                    .value;
+        }
+
         return resultado;
     });
 }
 
 function carregarBlocos(
     blocos,
-    iniciarMinimizados = false
+    iniciarMinimizados = false,
+    estadosMinimizados = null
 ) {
     containerBlocos.innerHTML = "";
 
-    blocos.forEach((bloco) => {
+    blocos.forEach((bloco, indice) => {
+        const minimizado = Array.isArray(
+            estadosMinimizados
+        )
+            ? Boolean(estadosMinimizados[indice])
+            : iniciarMinimizados;
+
         criarBloco(
             bloco.tipo,
             bloco,
-            iniciarMinimizados
+            minimizado
         );
     });
 
@@ -1233,6 +1434,16 @@ async function salvarDescricao() {
     const codigoProduto =
         obterCodigoProduto();
 
+    const estadosMinimizados = Array.from(
+        containerBlocos.querySelectorAll(
+            ".bloco-produto"
+        )
+    ).map((bloco) =>
+        bloco.classList.contains(
+            "bloco-minimizado"
+        )
+    );
+
     botaoSalvar.disabled = true;
     botaoSalvar.textContent = "Salvando...";
 
@@ -1254,7 +1465,12 @@ async function salvarDescricao() {
             }
         );
 
-        carregarBlocos(resultado.blocos);
+        carregarBlocos(
+            resultado.blocos,
+            false,
+            estadosMinimizados
+        );
+        imagensPendentes.clear();
         possuiAlteracoes = false;
 
         exibirAviso(
@@ -1313,6 +1529,11 @@ window.addEventListener(
         evento.preventDefault();
         evento.returnValue = "";
     }
+);
+
+window.addEventListener(
+    "pagehide",
+    limparImagensPendentesAoSair
 );
 
 carregarPagina().catch((erro) => {

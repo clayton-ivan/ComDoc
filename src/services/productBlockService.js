@@ -13,6 +13,23 @@ const TIPOS_BLOCO = {
     IMAGEM: "IMAGEM"
 };
 
+const ALINHAMENTOS_BLOCO = new Set([
+    "ESQUERDA",
+    "CENTRO",
+    "DIREITA"
+]);
+
+const TIPOS_LISTA = new Set([
+    "MARCADOR",
+    "NUMERADOR"
+]);
+
+const TAMANHOS_IMAGEM = new Set([
+    "PEQUENO",
+    "NORMAL",
+    "GRANDE"
+]);
+
 function normalizarTexto(valor) {
     return String(
         valor || ""
@@ -184,6 +201,21 @@ function validarBloco(
     const conteudo =
         normalizarTexto(bloco.conteudo);
 
+    const alinhamento =
+        normalizarTexto(
+            bloco.alinhamento || "ESQUERDA"
+        ).toUpperCase();
+
+    const tipoLista =
+        normalizarTexto(
+            bloco.tipoLista || "MARCADOR"
+        ).toUpperCase();
+
+    const tamanhoImagem =
+        normalizarTexto(
+            bloco.tamanhoImagem || "NORMAL"
+        ).toUpperCase();
+
     if (!tipo) {
         throw new Error(
             `O tipo do bloco ${indiceBloco + 1} é obrigatório.`
@@ -193,6 +225,30 @@ function validarBloco(
     if (!tiposAtivos.has(tipo)) {
         throw new Error(
             `O tipo "${tipo}" do bloco ${indiceBloco + 1} é inválido ou está inativo.`
+        );
+    }
+
+    if (!ALINHAMENTOS_BLOCO.has(alinhamento)) {
+        throw new Error(
+            `O alinhamento do bloco ${indiceBloco + 1} é inválido.`
+        );
+    }
+
+    if (
+        tipo === TIPOS_BLOCO.LISTA &&
+        !TIPOS_LISTA.has(tipoLista)
+    ) {
+        throw new Error(
+            `O estilo da lista do bloco ${indiceBloco + 1} é inválido.`
+        );
+    }
+
+    if (
+        tipo === TIPOS_BLOCO.IMAGEM &&
+        !TAMANHOS_IMAGEM.has(tamanhoImagem)
+    ) {
+        throw new Error(
+            `O tamanho da imagem do bloco ${indiceBloco + 1} é inválido.`
         );
     }
 
@@ -228,6 +284,15 @@ function validarBloco(
         tipo,
         titulo,
         conteudo,
+        alinhamento,
+        tipoLista:
+            tipo === TIPOS_BLOCO.LISTA
+                ? tipoLista
+                : "MARCADOR",
+        tamanhoImagem:
+            tipo === TIPOS_BLOCO.IMAGEM
+                ? tamanhoImagem
+                : "NORMAL",
         itens
     };
 }

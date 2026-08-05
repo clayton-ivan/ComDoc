@@ -188,9 +188,102 @@ function caminhoPertenceAoProduto(
     );
 }
 
+function obterDataUrl(codigoProduto, caminhoImagem) {
+    if (
+        !caminhoPertenceAoProduto(
+            codigoProduto,
+            caminhoImagem
+        )
+    ) {
+        throw new Error(
+            "Arquivo de imagem do produto não encontrado."
+        );
+    }
+
+    const nome = path.basename(caminhoImagem);
+    const extensao = path.extname(nome).toLowerCase();
+    const mime = extensao === ".png"
+        ? "image/png"
+        : "image/jpeg";
+
+    const arquivo = fs.readFileSync(
+        path.join(
+            obterDiretorioProduto(
+                normalizarCodigo(codigoProduto)
+            ),
+            nome
+        )
+    );
+
+    return `data:${mime};base64,${arquivo.toString("base64")}`;
+}
+
+function excluirPendentes(
+    codigoProduto,
+    nomesArquivos
+) {
+    const codigo = normalizarCodigo(codigoProduto);
+
+    if (!codigo || !produtoExiste(codigo)) {
+        return null;
+    }
+
+    if (!Array.isArray(nomesArquivos)) {
+        throw new Error(
+            "A lista de imagens pendentes é inválida."
+        );
+    }
+
+    const nomesUnicos = new Set(
+        nomesArquivos.map((nome) =>
+            String(nome || "").trim()
+        )
+    );
+
+    let quantidade = 0;
+
+    nomesUnicos.forEach((nome) => {
+        if (!nome) {
+            return;
+        }
+
+        const excluida = excluir(codigo, nome);
+
+        if (excluida) {
+            quantidade += 1;
+        }
+    });
+
+    return quantidade;
+}
+
+function excluirTodasPorProduto(codigoProduto) {
+    const codigo = normalizarCodigo(codigoProduto);
+
+    if (!codigo) {
+        return false;
+    }
+
+    const diretorio = obterDiretorioProduto(codigo);
+
+    if (!fs.existsSync(diretorio)) {
+        return false;
+    }
+
+    fs.rmSync(diretorio, {
+        recursive: true,
+        force: true
+    });
+
+    return true;
+}
+
 module.exports = {
     DIRETORIO_UPLOADS,
     salvar,
     excluir,
-    caminhoPertenceAoProduto
+    excluirPendentes,
+    excluirTodasPorProduto,
+    caminhoPertenceAoProduto,
+    obterDataUrl
 };
