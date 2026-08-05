@@ -1,0 +1,98 @@
+<section id="produto">
+    {{#if possuiProdutoBlocos}}
+        <header class="cabecalho-pagina">
+            <h1>{{produtoNome}}</h1>
+        </header>
+
+        <div class="produto-detalhado">
+            <div class="produto-blocos">
+                {{#each produtoBlocos}}
+                    <article class="produto-bloco {{classeAlinhamento}}">
+                        {{#if titulo}}
+                            <h3>{{titulo}}</h3>
+                        {{/if}}
+
+                        {{#if ehTexto}}
+                            <div class="bloco-texto">{{conteudo}}</div>
+                        {{/if}}
+
+                        {{#if ehLista}}
+                            {{#if conteudo}}
+                                <p class="bloco-introducao">{{conteudo}}</p>
+                            {{/if}}
+
+                            {{#if listaNumerada}}
+                                <ol class="bloco-lista">
+                                    {{#each itens}}
+                                        <li>{{conteudo}}</li>
+                                    {{/each}}
+                                </ol>
+                            {{else}}
+                                <ul class="bloco-lista">
+                                    {{#each itens}}
+                                        <li>{{conteudo}}</li>
+                                    {{/each}}
+                                </ul>
+                            {{/if}}
+                        {{/if}}
+
+                        {{#if ehTabela}}
+                            {{#if conteudo}}
+                                <p class="bloco-introducao">{{conteudo}}</p>
+                            {{/if}}
+
+                            <table class="bloco-tabela">
+                                {{#if linhasCabecalho}}
+                                    <thead>
+                                        {{#each linhasCabecalho}}
+                                            <tr>
+                                                {{#each celulas}}
+                                                    <th>{{conteudo}}</th>
+                                                {{/each}}
+                                            </tr>
+                                        {{/each}}
+                                    </thead>
+                                {{/if}}
+
+                                <tbody>
+                                    {{#each linhasCorpo}}
+                                        <tr>
+                                            {{#each celulas}}
+                                                {{#if cabecalho}}
+                                                    <th>{{conteudo}}</th>
+                                                {{else}}
+                                                    <td>{{conteudo}}</td>
+                                                {{/if}}
+                                            {{/each}}
+                                        </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        {{/if}}
+
+                        {{#if ehImagem}}
+                            <img
+                                class="bloco-imagem{{#if imagemPequena}} bloco-imagem-pequena{{else}}{{#if imagemGrande}} bloco-imagem-grande{{/if}}{{/if}}"
+                                src="{{imagemDataUrl}}"
+                                alt="{{titulo}}">
+                        {{/if}}
+                    </article>
+                {{/each}}
+            </div>
+        </div>
+    {{else}}
+        <header class="cabecalho-pagina">
+            <h1>Descrição do Produto</h1>
+        </header>
+
+        <div class="produto-card">
+            <div class="produto-header">
+                <h2>{{produtoNome}}</h2>
+            </div>
+
+            <div class="produto-descricao">
+                <p>{{produtoDescricao}}</p>
+            </div>
+        </div>
+    {{/if}}
+</section>

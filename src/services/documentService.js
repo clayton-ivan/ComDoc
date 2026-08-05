@@ -107,6 +107,26 @@ function prepararProduto(contexto) {
     };
 }
 
+function registrarParcialProduto(
+    pastaTemplate
+) {
+    const caminhoParcialProduto = path.join(
+        pastaTemplate,
+        "parciais",
+        "produto.html"
+    );
+
+    const parcialProduto = fs.readFileSync(
+        caminhoParcialProduto,
+        "utf8"
+    );
+
+    Handlebars.registerPartial(
+        "produto",
+        parcialProduto
+    );
+}
+
 const gerar = async ({ template, contexto }) => {
 
     const pastaTemplate = path.join(
@@ -134,6 +154,10 @@ const gerar = async ({ template, contexto }) => {
     const css = fs.readFileSync(
         caminhoCss,
         "utf8"
+    );
+
+    registrarParcialProduto(
+        pastaTemplate
     );
 	
 	const caminhoTextos = path.join(
@@ -240,5 +264,7 @@ const gerar = async ({ template, contexto }) => {
 };
 
 module.exports = {
-    gerar
+    gerar,
+    prepararProduto,
+    registrarParcialProduto
 };

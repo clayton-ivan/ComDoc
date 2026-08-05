@@ -80,6 +80,20 @@ app.get("/admin/produtos", (req, res) => {
 });
 
 app.get(
+    "/admin/produtos/:codigo/descricao/preview",
+    (req, res) => {
+        res.sendFile(
+            path.join(
+                __dirname,
+                "public",
+                "produtoDescricaoPreview",
+                "produtoDescricaoPreview.html"
+            )
+        );
+    }
+);
+
+app.get(
     "/admin/produtos/:codigo/descricao",
     (req, res) => {
         res.sendFile(

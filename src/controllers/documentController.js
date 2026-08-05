@@ -8,6 +8,16 @@ const cotacaoService =
         "../services/cotacaoService"
     );
 
+const productService =
+    require(
+        "../services/productService"
+    );
+
+const productPreviewService =
+    require(
+        "../services/productPreviewService"
+    );
+
 const HTTP =
     require(
         "../constants/httpStatus"
@@ -116,6 +126,74 @@ const gerar = async (req, res) => {
     }
 };
 
+const preVisualizarProduto = async (
+    req,
+    res
+) => {
+    try {
+        const codigoProduto = String(
+            req.body?.codigoProduto || ""
+        ).trim();
+
+        const produto =
+            productService.buscarPorCodigo(
+                codigoProduto
+            );
+
+        if (!produto) {
+            return res
+                .status(HTTP.NOT_FOUND)
+                .json({
+                    sucesso: false,
+                    mensagem:
+                        "Produto não encontrado."
+                });
+        }
+
+        const produtoBlocos = Array.isArray(
+            req.body?.blocos
+        )
+            ? req.body.blocos
+            : [];
+
+        const pdf =
+            await productPreviewService.gerar({
+                produtoCodigo:
+                    produto.codigo,
+                produtoNome:
+                    produto.nome,
+                produtoDescricao:
+                    produto.descricao,
+                produtoBlocos
+            });
+
+        res.set({
+            "Content-Type": "application/pdf",
+            "Content-Disposition":
+                "inline; filename=preview-produto.pdf",
+            "Cache-Control":
+                "no-store, no-cache, must-revalidate, private"
+        });
+
+        return res.send(pdf);
+    } catch (erro) {
+        console.error(
+            "Erro ao gerar pré-visualização do produto:",
+            erro
+        );
+
+        return res
+            .status(
+                HTTP.INTERNAL_SERVER_ERROR
+            )
+            .json({
+                sucesso: false,
+                mensagem: erro.message
+            });
+    }
+};
+
 module.exports = {
-    gerar
+    gerar,
+    preVisualizarProduto
 };

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>ComDoc - Pré-visualização</title>
+
+    <link
+        rel="stylesheet"
+        href="/produtoDescricaoPreview/produtoDescricaoPreview.css">
+</head>
+<body>
+    <header class="barra-preview">
+        <span>Pré-visualização</span>
+
+        <button
+            id="botaoFechar"
+            type="button">
+            Fechar
+        </button>
+    </header>
+
+    <main class="area-preview">
+        <p id="mensagemPreview">
+            Gerando pré-visualização...
+        </p>
+
+        <iframe
+            id="documentoPreview"
+            class="documento-preview"
+            title="Pré-visualização do produto"
+            hidden>
+        </iframe>
+    </main>
+
+    <script
+        type="module"
+        src="/produtoDescricaoPreview/produtoDescricaoPreview.js">
+    </script>
+</body>
+</html>
