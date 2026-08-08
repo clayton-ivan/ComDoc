@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <title>Cotação</title>
     <style>
+        :root {
+            --cor-primaria: {{empresa.corPrimaria}};
+            --cor-secundaria: {{empresa.corSecundaria}};
+        }
         {{{css}}}
     </style>
 </head>
@@ -188,7 +192,7 @@
             ________________________________________________
         </p>
         <p>
-            Alfa Gruas e Elevadores
+            {{empresa.nomeFantasia}}
         </p>
 		
 		<div class="rodape-final">

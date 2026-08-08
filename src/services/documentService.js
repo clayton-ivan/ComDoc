@@ -7,6 +7,14 @@ const productImageService = require(
     "./productImageService"
 );
 
+const {
+    ID_EMPRESA_PADRAO
+} = require("../constants/application");
+
+const companyLogoService = require(
+    "./companyLogoService"
+);
+
 function organizarLinhasTabela(itens = []) {
     const linhas = new Map();
 
@@ -30,6 +38,7 @@ function organizarLinhasTabela(itens = []) {
 
 function prepararBloco(
     bloco,
+    idEmpresa,
     codigoProduto
 ) {
     const preparado = {
@@ -77,6 +86,7 @@ function prepararBloco(
     if (preparado.ehImagem) {
         preparado.imagemDataUrl =
             productImageService.obterDataUrl(
+                idEmpresa,
                 codigoProduto,
                 bloco.conteudo
             );
@@ -86,6 +96,10 @@ function prepararBloco(
 }
 
 function prepararProduto(contexto) {
+    const idEmpresa =
+        contexto.idEmpresa ||
+        ID_EMPRESA_PADRAO;
+
     const blocos = Array.isArray(
         contexto.produtoBlocos
     )
@@ -95,12 +109,14 @@ function prepararProduto(contexto) {
     const blocosPreparados = blocos.map(
         (bloco) => prepararBloco(
             bloco,
+            idEmpresa,
             contexto.produtoCodigo
         )
     );
 
     return {
         ...contexto,
+        idEmpresa,
         produtoBlocos: blocosPreparados,
         possuiProdutoBlocos:
             blocosPreparados.length > 0
@@ -127,7 +143,11 @@ function registrarParcialProduto(
     );
 }
 
-const gerar = async ({ template, contexto }) => {
+const gerar = async ({
+    template,
+    contexto,
+    caminhoDestino = null
+}) => {
 
     const pastaTemplate = path.join(
         __dirname,
@@ -202,12 +222,27 @@ const gerar = async ({ template, contexto }) => {
     const contextoPreparado =
         prepararProduto(contexto);
 
+    const empresaPreparada = contextoPreparado.empresa
+        ? {
+            ...contextoPreparado.empresa,
+            logoDataUrl:
+                companyLogoService.obterDataUrl(
+                    contextoPreparado.empresa
+                )
+        }
+        : null;
+
+    const rodapeFinal = Handlebars.compile(
+        rodape
+    )({ empresa: empresaPreparada });
+
     const htmlFinal = templateCompilado({
 		...contextoPreparado,
+		empresa: empresaPreparada,
 		capa,
 		garantia,
 		importacao,
-		rodape,
+		rodape: rodapeFinal,
 		css
 	});
 
@@ -221,21 +256,24 @@ const gerar = async ({ template, contexto }) => {
 		    waitUntil: "networkidle0"
 	    });
 	
-	const pastaOutput = path.join(
+	const pastaOutput = caminhoDestino
+        ? path.dirname(caminhoDestino)
+        : path.join(
 		__dirname,
 		"..",
 		"..",
 		"output"
-	);
+	    );
 
 	if (!fs.existsSync(pastaOutput)) {
 		fs.mkdirSync(pastaOutput);
 	}
 
-	const caminhoPdf = path.join(
-		pastaOutput,
-		"cotacao.pdf"
-	);
+	const caminhoPdf = caminhoDestino ||
+        path.join(
+            pastaOutput,
+            "cotacao.pdf"
+        );
 	
         await page.pdf({
 		path: caminhoPdf,

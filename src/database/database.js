@@ -12,10 +12,14 @@ const pastaDatabase = path.join(
     "database"
 );
 
-const caminhoDatabase = path.join(
-    pastaDatabase,
-    "comdoc.db"
-);
+const caminhoDatabase = process.env.COMDOC_DATABASE_PATH
+    ? path.resolve(
+        process.env.COMDOC_DATABASE_PATH
+    )
+    : path.join(
+        pastaDatabase,
+        "comdoc.db"
+    );
 
 let database = null;
 

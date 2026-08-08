@@ -130,6 +130,15 @@ td {
     font-size: 10px;
 }
 
+.logo-empresa-rodape {
+    display: block;
+    width: auto;
+    max-width: 42mm;
+    max-height: 18mm;
+    margin: 0 auto 4mm;
+    object-fit: contain;
+}
+
 article p {
     margin-bottom: 12px;
     text-align: justify;
@@ -159,6 +168,7 @@ article li {
     margin: 0;
     font-size: 9mm;
     text-transform: uppercase;
+    color: var(--cor-secundaria, #1f2937);
 }
 
 .data-geracao {
@@ -210,7 +220,7 @@ article li {
 }
 
 .produto-header {
-    background: #f36b21;
+    background: var(--cor-primaria, #f36b21);
     color: white;
     padding: 8mm 10mm;
 }
@@ -375,7 +385,7 @@ article li {
 }
 
 .tabela-valores thead {
-    background: #f36b21;
+    background: var(--cor-primaria, #f36b21);
     color: white;
 }
 
@@ -413,7 +423,7 @@ article li {
 
     padding: 8mm;
 
-    background: #f36b21;
+    background: var(--cor-primaria, #f36b21);
 
     color: white;
 

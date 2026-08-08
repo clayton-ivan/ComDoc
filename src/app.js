@@ -10,6 +10,9 @@ const clientRoutes =
 const documentRoutes =
     require("./routes/documentRoutes");
 
+const companyRoutes =
+    require("./routes/companyRoutes");
+
 const {
     inicializarDatabase
 } = require("./database/database");
@@ -79,6 +82,17 @@ app.get("/admin/produtos", (req, res) => {
     );
 });
 
+app.get("/admin/empresa", (req, res) => {
+    res.sendFile(
+        path.join(
+            __dirname,
+            "public",
+            "empresaAdmin",
+            "empresaAdmin.html"
+        )
+    );
+});
+
 app.get(
     "/admin/produtos/:codigo/descricao/preview",
     (req, res) => {
@@ -127,6 +141,7 @@ app.get("/admin/clientes", (req, res) => {
 app.use("/documentos", documentRoutes);
 app.use("/produtos", productRoutes);
 app.use("/clientes", clientRoutes);
+app.use("/empresa", companyRoutes);
 
 /*
 |--------------------------------------------------------------------------

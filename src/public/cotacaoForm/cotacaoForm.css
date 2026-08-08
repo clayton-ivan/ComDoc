@@ -41,11 +41,6 @@ button {
     font-weight: 700;
 }
 
-.link-topbar {
-    color: white;
-    text-decoration: none;
-}
-
 .container {
     width: min(1100px, calc(100% - 40px));
     margin: 32px auto;

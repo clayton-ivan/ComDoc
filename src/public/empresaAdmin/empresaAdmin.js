@@ -1,0 +1,259 @@
+const PALETA = [
+    "#F36B21", "#DC2626", "#DB2777", "#7C3AED", "#2563EB",
+    "#0891B2", "#059669", "#65A30D", "#CA8A04", "#1F2937"
+];
+
+const form = document.getElementById("formEmpresa");
+const mensagemPagina = document.getElementById("mensagemPagina");
+const aviso = document.getElementById("aviso");
+const imagemLogo = document.getElementById("imagemLogo");
+const semLogo = document.getElementById("semLogo");
+const arquivoLogo = document.getElementById("arquivoLogo");
+const campoCnpj = document.getElementById("cnpj");
+const camposTelefone = [
+    document.getElementById("telefone"),
+    document.getElementById("whatsapp")
+];
+const botoesSalvar = [
+    document.getElementById("salvarTopo"),
+    document.getElementById("salvarInferior")
+];
+let empresaAtual = null;
+
+function formatarCnpj(valor) {
+    const digitos = String(valor || "")
+        .replace(/\D/g, "")
+        .slice(0, 14);
+
+    return digitos
+        .replace(/^(\d{2})(\d)/, "$1.$2")
+        .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+        .replace(/\.(\d{3})(\d)/, ".$1/$2")
+        .replace(/(\/\d{4})(\d)/, "$1-$2");
+}
+
+function formatarTelefone(valor) {
+    const digitos = String(valor || "")
+        .replace(/\D/g, "")
+        .slice(0, 11);
+
+    if (digitos.length <= 2) {
+        return digitos
+            ? `(${digitos}`
+            : "";
+    }
+
+    if (digitos.length <= 6) {
+        return `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
+    }
+
+    const quantidadeInicio =
+        digitos.length === 11
+            ? 7
+            : 6;
+
+    return [
+        `(${digitos.slice(0, 2)}) `,
+        digitos.slice(2, quantidadeInicio),
+        "-",
+        digitos.slice(quantidadeInicio)
+    ].join("");
+}
+
+campoCnpj.addEventListener("input", () => {
+    campoCnpj.value = formatarCnpj(
+        campoCnpj.value
+    );
+});
+
+camposTelefone.forEach((campo) => {
+    campo.addEventListener("input", () => {
+        campo.value = formatarTelefone(
+            campo.value
+        );
+    });
+});
+
+function mostrarAviso(mensagem, erro = false) {
+    aviso.textContent = mensagem;
+    aviso.classList.toggle("erro", erro);
+    aviso.classList.add("visivel");
+    window.setTimeout(
+        () => aviso.classList.remove("visivel"),
+        6000
+    );
+}
+
+async function requisitar(url, opcoes) {
+    const resposta = await fetch(url, opcoes);
+    const dados = await resposta.json().catch(() => null);
+    if (!resposta.ok) {
+        throw new Error(dados?.mensagem || "Erro na requisição.");
+    }
+    return dados;
+}
+
+function hexadecimalParaRgb(hexadecimal) {
+    return [1, 3, 5].map((inicio) =>
+        Number.parseInt(hexadecimal.slice(inicio, inicio + 2), 16)
+    );
+}
+
+function rgbParaHexadecimal(valores) {
+    return `#${valores.map((valor) =>
+        Math.max(0, Math.min(255, Number(valor) || 0))
+            .toString(16).padStart(2, "0")
+    ).join("")}`.toUpperCase();
+}
+
+function criarEditorCor(fieldset) {
+    const campo = fieldset.dataset.campo;
+    fieldset.insertAdjacentHTML("beforeend", `
+        <div class="paleta"></div>
+        <div class="linha-cor">
+            <input class="seletor" type="color" aria-label="Seletor de cor">
+            <label>Hexadecimal<input class="hex" maxlength="7" pattern="#[0-9A-Fa-f]{6}" required></label>
+        </div>
+        <div class="rgb">
+            <label>R<input class="r" type="number" min="0" max="255"></label>
+            <label>G<input class="g" type="number" min="0" max="255"></label>
+            <label>B<input class="b" type="number" min="0" max="255"></label>
+        </div>
+    `);
+
+    const paleta = fieldset.querySelector(".paleta");
+    const seletor = fieldset.querySelector(".seletor");
+    const hex = fieldset.querySelector(".hex");
+    const rgb = ["r", "g", "b"].map((classe) => fieldset.querySelector(`.${classe}`));
+
+    function definir(cor) {
+        const normalizada = cor.toUpperCase();
+        seletor.value = normalizada;
+        hex.value = normalizada;
+        hexadecimalParaRgb(normalizada).forEach((valor, indice) => {
+            rgb[indice].value = valor;
+        });
+        paleta.querySelectorAll("button").forEach((botao) =>
+            botao.classList.toggle("selecionada", botao.dataset.cor === normalizada)
+        );
+    }
+
+    PALETA.forEach((cor) => {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "amostra-cor";
+        botao.dataset.cor = cor;
+        botao.title = cor;
+        botao.style.backgroundColor = cor;
+        botao.addEventListener("click", () => definir(cor));
+        paleta.appendChild(botao);
+    });
+
+    seletor.addEventListener("input", () => definir(seletor.value));
+    hex.addEventListener("change", () => {
+        if (/^#[0-9a-f]{6}$/i.test(hex.value)) definir(hex.value);
+    });
+    rgb.forEach((input) => input.addEventListener("input", () =>
+        definir(rgbParaHexadecimal(rgb.map((campoRgb) => campoRgb.value)))
+    ));
+
+    return { campo, definir, obter: () => hex.value.toUpperCase() };
+}
+
+const editoresCor = Array.from(document.querySelectorAll(".editor-cor"))
+    .map(criarEditorCor);
+
+function valor(id) { return document.getElementById(id).value.trim(); }
+function preencher(id, valorCampo) { document.getElementById(id).value = valorCampo || ""; }
+
+function mostrarLogo(empresa) {
+    empresaAtual = empresa;
+    imagemLogo.hidden = !empresa.logoUrl;
+    semLogo.hidden = Boolean(empresa.logoUrl);
+    document.getElementById("excluirLogo").disabled = !empresa.logoUrl;
+    if (empresa.logoUrl) imagemLogo.src = `${empresa.logoUrl}?v=${Date.now()}`;
+}
+
+function preencherEmpresa(empresa) {
+    ["nome", "nomeFantasia", "cnpj", "email", "telefone", "whatsapp",
+        "logradouro", "numeroEndereco", "complemento", "bairro", "cidade",
+        "uf", "cep", "site", "instagram", "slogan"]
+        .forEach((campo) => preencher(campo, empresa[campo]));
+    campoCnpj.value = formatarCnpj(
+        empresa.cnpj
+    );
+    camposTelefone.forEach((campo) => {
+        campo.value = formatarTelefone(
+            empresa[campo.id]
+        );
+    });
+    editoresCor.forEach((editor) => editor.definir(empresa[editor.campo]));
+    mostrarLogo(empresa);
+}
+
+async function carregar() {
+    const empresa = await requisitar("/empresa");
+    preencherEmpresa(empresa);
+    mensagemPagina.hidden = true;
+    form.hidden = false;
+    botoesSalvar.forEach((botao) => {
+        botao.disabled = false;
+    });
+}
+
+form.addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+    if (!form.reportValidity()) return;
+
+    botoesSalvar.forEach((botao) => {
+        botao.disabled = true;
+        botao.textContent = "Salvando...";
+    });
+
+    try {
+        const corpo = {};
+        ["nome", "nomeFantasia", "cnpj", "email", "telefone", "whatsapp",
+            "logradouro", "numeroEndereco", "complemento", "bairro", "cidade",
+            "uf", "cep", "site", "instagram", "slogan"]
+            .forEach((campo) => { corpo[campo] = valor(campo); });
+        editoresCor.forEach((editor) => { corpo[editor.campo] = editor.obter(); });
+        const resultado = await requisitar("/empresa", {
+            method: "PUT", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(corpo)
+        });
+        preencherEmpresa(resultado.empresa);
+        mostrarAviso("Dados da empresa salvos com sucesso.");
+    } catch (erro) {
+        mostrarAviso(erro.message, true);
+    } finally {
+        botoesSalvar.forEach((botao) => {
+            botao.disabled = false;
+            botao.textContent = "Salvar empresa";
+        });
+    }
+});
+
+document.getElementById("enviarLogo").addEventListener("click", async () => {
+    if (!arquivoLogo.files[0]) return mostrarAviso("Selecione uma logo.", true);
+    const dados = new FormData();
+    dados.append("logo", arquivoLogo.files[0]);
+    try {
+        const resultado = await requisitar("/empresa/logo", { method: "POST", body: dados });
+        mostrarLogo(resultado.empresa);
+        arquivoLogo.value = "";
+        mostrarAviso("Logo atualizada com sucesso.");
+    } catch (erro) { mostrarAviso(erro.message, true); }
+});
+
+document.getElementById("excluirLogo").addEventListener("click", async () => {
+    try {
+        const resultado = await requisitar("/empresa/logo", { method: "DELETE" });
+        mostrarLogo(resultado.empresa);
+        mostrarAviso("Logo excluída com sucesso.");
+    } catch (erro) { mostrarAviso(erro.message, true); }
+});
+
+carregar().catch((erro) => {
+    mensagemPagina.textContent = erro.message;
+    mensagemPagina.classList.add("erro");
+});

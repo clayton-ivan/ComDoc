@@ -34,7 +34,13 @@ const gerar = async (contexto) => {
             <html lang="pt-BR">
                 <head>
                     <meta charset="UTF-8">
-                    <style>${css}</style>
+                    <style>
+                        :root {
+                            --cor-primaria: {{empresa.corPrimaria}};
+                            --cor-secundaria: {{empresa.corSecundaria}};
+                        }
+                        ${css}
+                    </style>
                 </head>
                 <body>
                     {{> produto}}

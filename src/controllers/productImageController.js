@@ -6,6 +6,10 @@ const productImageService = require(
 
 const HTTP = require("../constants/httpStatus");
 
+const {
+    ID_EMPRESA_PADRAO
+} = require("../constants/application");
+
 const receberImagem = multer({
     storage: multer.memoryStorage(),
     limits: {
@@ -32,6 +36,7 @@ function upload(req, res) {
 
         try {
             const imagem = productImageService.salvar(
+                ID_EMPRESA_PADRAO,
                 req.params.codigo,
                 req.file
             );
@@ -65,6 +70,7 @@ function upload(req, res) {
 function excluir(req, res) {
     try {
         const excluida = productImageService.excluir(
+            ID_EMPRESA_PADRAO,
             req.params.codigo,
             req.params.nome
         );
@@ -104,6 +110,7 @@ function limparPendentes(req, res) {
     try {
         const quantidade =
             productImageService.excluirPendentes(
+                ID_EMPRESA_PADRAO,
                 req.params.codigo,
                 req.body?.nomes
             );

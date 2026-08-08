@@ -210,6 +210,7 @@ function validarCliente(
 }
 
 function obterProduto(
+    idEmpresa,
     produtoCodigo
 ) {
     if (!produtoCodigo) {
@@ -221,6 +222,7 @@ function obterProduto(
     const produto =
         productRepository
             .buscarPorCodigo(
+                idEmpresa,
                 produtoCodigo
             );
 
@@ -257,6 +259,7 @@ function criar(
 
     const produto =
         obterProduto(
+            idEmpresa,
             cotacao.produtoCodigo
         );
 
@@ -270,6 +273,7 @@ function criar(
             idProduto:
                 productRepository
                     .buscarIdPorCodigo(
+                        idEmpresa,
                         produto.codigo
                     ),
 

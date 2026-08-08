@@ -1,0 +1,172 @@
+:root {
+    --primaria: #f36b21;
+    --escura: #1f2937;
+    --fundo: #f3f4f6;
+    --borda: #d1d5db;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: var(--fundo);
+    color: #111827;
+    font-family: Arial, sans-serif;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--escura);
+    color: white;
+}
+
+.marca { font-size: 22px; font-weight: 700; }
+.container {
+    width: min(1100px, calc(100% - 24px));
+    margin: 24px auto 64px;
+}
+
+.cabecalho-pagina {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.cabecalho-pagina h1 { margin: 0 0 8px; }
+.cabecalho-pagina p, .cartao > p { color: #4b5563; }
+.botao-salvar { width: 100%; }
+
+.cartao {
+    margin-top: 18px;
+    padding: 18px;
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
+}
+
+.cartao h2 { margin-top: 0; }
+.grade { display: grid; gap: 14px; }
+.duas-colunas, .endereco { grid-template-columns: 1fr; }
+
+.linha-numero-complemento {
+    display: grid;
+    grid-template-columns: minmax(76px, 1fr) minmax(0, 3fr);
+    gap: 12px;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 14px;
+    font-weight: 600;
+}
+
+input {
+    width: 100%;
+    min-height: 44px;
+    padding: 9px 11px;
+    border: 1px solid var(--borda);
+    border-radius: 6px;
+    font: inherit;
+}
+
+button {
+    min-height: 44px;
+    border: 0;
+    border-radius: 6px;
+    padding: 10px 18px;
+    background: var(--primaria);
+    color: white;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+}
+
+button:disabled { cursor: not-allowed; opacity: .6; }
+button.secundario { background: var(--escura); }
+button.perigo { background: #b91c1c; }
+
+.logo-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: stretch;
+}
+
+.logo-preview {
+    display: grid;
+    width: 100%;
+    height: 150px;
+    place-items: center;
+    overflow: hidden;
+    border: 1px dashed #9ca3af;
+    border-radius: 8px;
+    background: #f9fafb;
+    color: #6b7280;
+    text-align: center;
+}
+
+.logo-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.acoes-logo { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.acoes-logo input, .acoes-logo small { flex-basis: 100%; }
+
+.editor-cor {
+    min-width: 0;
+    margin: 0;
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    padding: 14px;
+}
+
+.paleta { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 18px; }
+.amostra-cor { width: 36px; min-height: 36px; padding: 0; border: 2px solid white; border-radius: 50%; box-shadow: 0 0 0 1px #9ca3af; }
+.amostra-cor.selecionada { box-shadow: 0 0 0 3px #111827; }
+.linha-cor { display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: end; }
+.linha-cor input[type="color"] { height: 44px; padding: 2px; }
+.rgb { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.rgb label, .linha-cor label { margin-top: 0; }
+.acoes-formulario { display: flex; margin-top: 24px; }
+.acoes-formulario button { width: 100%; }
+
+#aviso {
+    position: fixed;
+    top: 76px;
+    right: 12px;
+    bottom: auto;
+    left: 12px;
+    z-index: 30;
+    padding: 14px 18px;
+    border-radius: 8px;
+    background: #166534;
+    color: white;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 24%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+}
+
+#aviso.visivel { opacity: 1; }
+#aviso.erro { background: #b91c1c; }
+
+@media (min-width: 720px) {
+    .topbar { padding: 16px 28px; }
+    .container { width: min(1100px, calc(100% - 32px)); margin-top: 32px; }
+    .cabecalho-pagina { flex-direction: row; justify-content: space-between; align-items: center; }
+    .botao-salvar { width: auto; flex: 0 0 auto; }
+    .cartao { margin-top: 24px; padding: 24px; }
+    .grade { gap: 18px; }
+    .duas-colunas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .endereco { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .endereco > :first-child, .linha-numero-complemento { grid-column: 1 / -1; }
+    .linha-numero-complemento { grid-template-columns: minmax(100px, 1fr) minmax(0, 4fr); gap: 18px; }
+    .logo-editor { flex-direction: row; gap: 24px; align-items: center; }
+    .logo-preview { width: 240px; flex: 0 0 240px; }
+    .acoes-formulario { justify-content: flex-end; }
+    .acoes-formulario button { width: auto; }
+    #aviso { top: auto; right: 24px; bottom: 24px; left: auto; max-width: 420px; }
+}

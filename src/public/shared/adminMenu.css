@@ -1,0 +1,66 @@
+.menu-administracao {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.topbar .botao-menu-admin {
+    width: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+    font: inherit;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    touch-action: manipulation;
+}
+
+.topbar .botao-menu-admin:hover,
+.topbar .botao-menu-admin:focus-visible,
+.topbar .botao-menu-admin[aria-expanded="true"] {
+    background: rgb(255 255 255 / 12%);
+}
+
+.opcoes-menu-admin {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 100;
+    min-width: 190px;
+    overflow: hidden;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 10px 30px rgb(0 0 0 / 20%);
+}
+
+.opcoes-menu-admin a {
+    display: block;
+    min-height: 44px;
+    padding: 13px 16px;
+    background: white;
+    color: #111827;
+    text-align: left;
+    text-decoration: none;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.opcoes-menu-admin a:hover,
+.opcoes-menu-admin a:focus-visible {
+    background: #f3f4f6;
+    text-decoration: none;
+}
+
+@media (max-width: 760px) {
+    .topbar {
+        flex-direction: row;
+        align-items: center;
+    }
+}
