@@ -34,7 +34,10 @@ const migration007TamanhoImagemBloco =
 const migration008ImagemPequena =
     require("./migration008ImagemPequena");
 
-const VERSAO_ATUAL_DATABASE = 8;
+const migration009Multiempresa =
+    require("./migration009Multiempresa");
+
+const VERSAO_ATUAL_DATABASE = 9;
 
 const migrations = [
     {
@@ -68,6 +71,10 @@ const migrations = [
     {
         versao: 8,
         executar: migration008ImagemPequena
+    },
+    {
+        versao: 9,
+        executar: migration009Multiempresa
     }
 ];
 

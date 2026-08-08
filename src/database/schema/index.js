@@ -1,6 +1,7 @@
 const {
     criarTabelaProduto,
-    criarTabelaProdutoItem
+    criarTabelaProdutoItem,
+    criarIndicesProduto
 } = require("./produtoSchema");
 
 const {
@@ -29,6 +30,7 @@ const {
 function criarEstruturaAtual(database) {
     criarTabelaProduto(database);
     criarTabelaProdutoItem(database);
+    criarIndicesProduto(database);
 
     criarTabelaTipoBloco(database);
     criarTiposBlocoPadrao(database);
@@ -49,6 +51,7 @@ module.exports = {
     criarEstruturaAtual,
     criarTabelaProduto,
     criarTabelaProdutoItem,
+    criarIndicesProduto,
     criarTabelaTipoBloco,
     criarTiposBlocoPadrao,
     criarTabelaProdutoBloco,

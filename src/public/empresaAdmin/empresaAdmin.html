@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComDoc - Empresa</title>
+    <link rel="stylesheet" href="/empresaAdmin/empresaAdmin.css">
+    <link rel="stylesheet" href="/shared/adminMenu.css">
+</head>
+<body>
+    <header class="topbar">
+        <div class="marca">ComDoc</div>
+
+        <div class="menu-administracao">
+            <button
+                class="botao-menu-admin"
+                type="button"
+                aria-label="Abrir menu"
+                aria-expanded="false"
+                aria-controls="menuEmpresa">
+                ⋮
+            </button>
+
+            <nav id="menuEmpresa" class="opcoes-menu-admin" hidden>
+                <a href="/admin/clientes">Clientes</a>
+                <a href="/admin/produtos">Produtos</a>
+                <a href="/">Nova cotação</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <header class="cabecalho-pagina">
+            <div>
+                <h1>Dados da empresa</h1>
+                <p>Configure os dados institucionais e a identidade visual dos documentos.</p>
+            </div>
+
+            <button
+                id="salvarTopo"
+                class="botao-salvar"
+                type="submit"
+                form="formEmpresa"
+                disabled>
+                Salvar empresa
+            </button>
+        </header>
+
+        <p id="mensagemPagina">Carregando empresa...</p>
+
+        <form id="formEmpresa" hidden>
+            <section class="cartao">
+                <h2>Identificação</h2>
+                <div class="grade duas-colunas">
+                    <label>Razão social<input id="nome" required maxlength="150"></label>
+                    <label>Nome fantasia<input id="nomeFantasia" required maxlength="150"></label>
+                    <label>CNPJ<input id="cnpj" inputmode="numeric" maxlength="18"></label>
+                    <label>E-mail<input id="email" type="email" maxlength="150"></label>
+                    <label>Telefone<input id="telefone" inputmode="tel" maxlength="15"></label>
+                    <label>WhatsApp<input id="whatsapp" inputmode="tel" maxlength="15"></label>
+                </div>
+                <label>Slogan<input id="slogan" maxlength="200"></label>
+            </section>
+
+            <section class="cartao">
+                <h2>Endereço</h2>
+                <div class="grade endereco">
+                    <label>Logradouro<input id="logradouro" maxlength="150"></label>
+
+                    <div class="linha-numero-complemento">
+                        <label>Nro.<input id="numeroEndereco" maxlength="15"></label>
+                        <label>Complemento<input id="complemento" maxlength="100"></label>
+                    </div>
+
+                    <label>Bairro<input id="bairro" maxlength="100"></label>
+                    <label>Cidade<input id="cidade" maxlength="100"></label>
+                    <label>UF<input id="uf" maxlength="2"></label>
+                    <label>CEP<input id="cep" inputmode="numeric" maxlength="10"></label>
+                </div>
+            </section>
+
+            <section class="cartao">
+                <h2>Presença digital</h2>
+                <div class="grade duas-colunas">
+                    <label>Site<input id="site" maxlength="200"></label>
+                    <label>Instagram<input id="instagram" maxlength="100"></label>
+                </div>
+            </section>
+
+            <section class="cartao">
+                <h2>Logo</h2>
+                <div class="logo-editor">
+                    <div class="logo-preview">
+                        <img id="imagemLogo" alt="Logo da empresa" hidden>
+                        <span id="semLogo">Nenhuma logo cadastrada</span>
+                    </div>
+                    <div class="acoes-logo">
+                        <input id="arquivoLogo" type="file" accept="image/jpeg,image/png">
+                        <button id="enviarLogo" type="button" class="secundario">Enviar logo</button>
+                        <button id="excluirLogo" type="button" class="perigo">Excluir logo</button>
+                        <small>JPEG ou PNG, com no máximo 5 MB.</small>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cartao">
+                <h2>Cores da identidade visual</h2>
+                <p>Escolha uma cor da paleta ou informe-a em hexadecimal ou RGB.</p>
+                <div class="grade duas-colunas cores">
+                    <fieldset class="editor-cor" data-campo="corPrimaria">
+                        <legend>Cor primária</legend>
+                    </fieldset>
+                    <fieldset class="editor-cor" data-campo="corSecundaria">
+                        <legend>Cor secundária</legend>
+                    </fieldset>
+                </div>
+            </section>
+
+            <div class="acoes-formulario">
+                <button id="salvarInferior" type="submit">Salvar empresa</button>
+            </div>
+        </form>
+    </main>
+    <div
+        id="aviso"
+        role="status"
+        aria-live="polite">
+    </div>
+    <script src="/shared/adminMenu.js"></script>
+    <script type="module" src="/empresaAdmin/empresaAdmin.js"></script>
+</body>
+</html>

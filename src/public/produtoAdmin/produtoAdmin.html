@@ -12,16 +12,20 @@
     <link
         rel="stylesheet"
         href="/produtoAdmin/produtoAdmin.css">
+    <link rel="stylesheet" href="/shared/adminMenu.css">
 </head>
 <body>
     <header class="topbar">
         <div class="marca">ComDoc</div>
 
-        <a
-            href="/cotacaoForm/cotacaoForm.html"
-            class="link-voltar">
-            Nova cotação
-        </a>
+        <div class="menu-administracao">
+            <button class="botao-menu-admin" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menuProdutos">⋮</button>
+            <nav id="menuProdutos" class="opcoes-menu-admin" hidden>
+                <a href="/admin/empresa">Empresa</a>
+                <a href="/admin/clientes">Clientes</a>
+                <a href="/">Nova cotação</a>
+            </nav>
+        </div>
     </header>
 
     <main class="container">
@@ -158,6 +162,7 @@
         </form>
     </dialog>
 
+    <script src="/shared/adminMenu.js"></script>
     <script
         type="module"
         src="/produtoAdmin/produtoAdmin.js">

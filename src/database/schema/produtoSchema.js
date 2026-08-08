@@ -4,9 +4,11 @@ function criarTabelaProduto(database) {
             id_produto INTEGER
                 PRIMARY KEY AUTOINCREMENT,
 
+            id_empresa INTEGER
+                NOT NULL,
+
             cod_produto TEXT
-                NOT NULL
-                UNIQUE,
+                NOT NULL,
 
             nom_produto TEXT
                 NOT NULL,
@@ -27,7 +29,37 @@ function criarTabelaProduto(database) {
             dt_edicao TEXT,
 
             cod_usu_edicao TEXT
+
+            ,UNIQUE (
+                id_empresa,
+                cod_produto
+            )
+
+            ,FOREIGN KEY (
+                id_empresa
+            )
+            REFERENCES empresa (
+                id_empresa
+            )
+            ON DELETE RESTRICT
         ) STRICT;
+    `);
+}
+
+function criarIndicesProduto(database) {
+    database.exec(`
+        CREATE INDEX IF NOT EXISTS
+            idx_produto_empresa
+        ON produto (
+            id_empresa
+        );
+
+        CREATE INDEX IF NOT EXISTS
+            idx_produto_empresa_nome
+        ON produto (
+            id_empresa,
+            nom_produto
+        );
     `);
 }
 
@@ -82,5 +114,6 @@ function criarTabelaProdutoItem(database) {
 
 module.exports = {
     criarTabelaProduto,
-    criarTabelaProdutoItem
+    criarTabelaProdutoItem,
+    criarIndicesProduto
 };

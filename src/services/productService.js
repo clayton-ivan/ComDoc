@@ -6,9 +6,15 @@ const productImageService = require(
     "./productImageService"
 );
 
+const {
+    ID_EMPRESA_PADRAO
+} = require("../constants/application");
+
 function listar() {
     const produtos =
-        productRepository.listar();
+        productRepository.listar(
+            ID_EMPRESA_PADRAO
+        );
 
     return produtos.sort(
         (produtoA, produtoB) =>
@@ -25,7 +31,10 @@ function buscarPorCodigo(codigo) {
     }
 
     return productRepository
-        .buscarPorCodigo(codigo);
+        .buscarPorCodigo(
+            ID_EMPRESA_PADRAO,
+            codigo
+        );
 }
 
 function validarItens(itens) {
@@ -142,7 +151,10 @@ function criar(dadosProduto) {
 
     const produtoExistente =
         productRepository
-            .buscarPorCodigo(codigo);
+            .buscarPorCodigo(
+                ID_EMPRESA_PADRAO,
+                codigo
+            );
 
     if (produtoExistente) {
         throw new Error(
@@ -156,7 +168,10 @@ function criar(dadosProduto) {
     );
 
     return productRepository
-        .criar(produto);
+        .criar(
+            ID_EMPRESA_PADRAO,
+            produto
+        );
 }
 
 function atualizar(
@@ -170,6 +185,7 @@ function atualizar(
     const produtoExistente =
         productRepository
             .buscarPorCodigo(
+                ID_EMPRESA_PADRAO,
                 codigoNormalizado
             );
 
@@ -184,6 +200,7 @@ function atualizar(
 
     return productRepository
         .atualizar(
+            ID_EMPRESA_PADRAO,
             codigoNormalizado,
             produto
         );
@@ -200,12 +217,14 @@ function excluir(codigo) {
 
     const excluido = productRepository
         .excluir(
+            ID_EMPRESA_PADRAO,
             codigoNormalizado
         );
 
     if (excluido) {
         productImageService
             .excluirTodasPorProduto(
+                ID_EMPRESA_PADRAO,
                 codigoNormalizado
             );
     }
@@ -215,7 +234,9 @@ function excluir(codigo) {
 
 function obterProximoCodigo() {
     return productRepository
-        .obterProximoCodigo();
+        .obterProximoCodigo(
+            ID_EMPRESA_PADRAO
+        );
 }
 
 module.exports = {

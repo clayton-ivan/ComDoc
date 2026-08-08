@@ -6,6 +6,10 @@ const productBlockRepository = require(
     "../repositories/productBlockRepository"
 );
 
+const {
+    ID_EMPRESA_PADRAO
+} = require("../constants/application");
+
 const DIRETORIO_UPLOADS = path.join(
     __dirname,
     "..",
@@ -40,23 +44,36 @@ function normalizarCodigo(codigoProduto) {
     return String(codigoProduto || "").trim();
 }
 
-function produtoExiste(codigoProduto) {
+function produtoExiste(idEmpresa, codigoProduto) {
     return productBlockRepository
-        .listarPorCodigoProduto(codigoProduto) !== null;
+        .listarPorCodigoProduto(
+            idEmpresa,
+            codigoProduto
+        ) !== null;
 }
 
-function obterIdentificadorProduto(codigoProduto) {
+function obterIdentificadorProduto(
+    idEmpresa,
+    codigoProduto
+) {
+    const identificador = idEmpresa === ID_EMPRESA_PADRAO
+        ? codigoProduto
+        : `${idEmpresa}:${codigoProduto}`;
+
     return crypto
         .createHash("sha256")
-        .update(codigoProduto)
+        .update(identificador)
         .digest("hex")
         .slice(0, 16);
 }
 
-function obterDiretorioProduto(codigoProduto) {
+function obterDiretorioProduto(idEmpresa, codigoProduto) {
     return path.join(
         DIRETORIO_UPLOADS,
-        obterIdentificadorProduto(codigoProduto)
+        obterIdentificadorProduto(
+            idEmpresa,
+            codigoProduto
+        )
     );
 }
 
@@ -83,10 +100,10 @@ function obterProximoNome(diretorio, extensao) {
     ).padStart(3, "0")}${extensao}`;
 }
 
-function salvar(codigoProduto, arquivo) {
+function salvar(idEmpresa, codigoProduto, arquivo) {
     const codigo = normalizarCodigo(codigoProduto);
 
-    if (!codigo || !produtoExiste(codigo)) {
+    if (!codigo || !produtoExiste(idEmpresa, codigo)) {
         return null;
     }
 
@@ -102,7 +119,10 @@ function salvar(codigoProduto, arquivo) {
         );
     }
 
-    const diretorio = obterDiretorioProduto(codigo);
+    const diretorio = obterDiretorioProduto(
+        idEmpresa,
+        codigo
+    );
     fs.mkdirSync(diretorio, { recursive: true });
 
     const nome = obterProximoNome(
@@ -117,7 +137,7 @@ function salvar(codigoProduto, arquivo) {
     );
 
     const pastaProduto =
-        obterIdentificadorProduto(codigo);
+        obterIdentificadorProduto(idEmpresa, codigo);
 
     return {
         nome,
@@ -126,10 +146,10 @@ function salvar(codigoProduto, arquivo) {
     };
 }
 
-function excluir(codigoProduto, nomeArquivo) {
+function excluir(idEmpresa, codigoProduto, nomeArquivo) {
     const codigo = normalizarCodigo(codigoProduto);
 
-    if (!codigo || !produtoExiste(codigo)) {
+    if (!codigo || !produtoExiste(idEmpresa, codigo)) {
         return null;
     }
 
@@ -140,7 +160,7 @@ function excluir(codigoProduto, nomeArquivo) {
     }
 
     const caminho = path.join(
-        obterDiretorioProduto(codigo),
+        obterDiretorioProduto(idEmpresa, codigo),
         nome
     );
 
@@ -150,7 +170,10 @@ function excluir(codigoProduto, nomeArquivo) {
 
     fs.unlinkSync(caminho);
 
-    const diretorio = obterDiretorioProduto(codigo);
+    const diretorio = obterDiretorioProduto(
+        idEmpresa,
+        codigo
+    );
 
     if (fs.readdirSync(diretorio).length === 0) {
         fs.rmdirSync(diretorio);
@@ -160,6 +183,7 @@ function excluir(codigoProduto, nomeArquivo) {
 }
 
 function caminhoPertenceAoProduto(
+    idEmpresa,
     codigoProduto,
     caminhoImagem
 ) {
@@ -170,7 +194,7 @@ function caminhoPertenceAoProduto(
     }
 
     const pastaProduto =
-        obterIdentificadorProduto(codigo);
+        obterIdentificadorProduto(idEmpresa, codigo);
 
     const resultado = String(caminhoImagem || "").match(
         /^\/uploads\/produtos\/([a-f0-9]{16})\/(imagem-\d+\.(?:jpg|png))$/i
@@ -182,15 +206,20 @@ function caminhoPertenceAoProduto(
 
     return fs.existsSync(
         path.join(
-            obterDiretorioProduto(codigo),
+            obterDiretorioProduto(idEmpresa, codigo),
             resultado[2]
         )
     );
 }
 
-function obterDataUrl(codigoProduto, caminhoImagem) {
+function obterDataUrl(
+    idEmpresa,
+    codigoProduto,
+    caminhoImagem
+) {
     if (
         !caminhoPertenceAoProduto(
+            idEmpresa,
             codigoProduto,
             caminhoImagem
         )
@@ -209,6 +238,7 @@ function obterDataUrl(codigoProduto, caminhoImagem) {
     const arquivo = fs.readFileSync(
         path.join(
             obterDiretorioProduto(
+                idEmpresa,
                 normalizarCodigo(codigoProduto)
             ),
             nome
@@ -219,12 +249,13 @@ function obterDataUrl(codigoProduto, caminhoImagem) {
 }
 
 function excluirPendentes(
+    idEmpresa,
     codigoProduto,
     nomesArquivos
 ) {
     const codigo = normalizarCodigo(codigoProduto);
 
-    if (!codigo || !produtoExiste(codigo)) {
+    if (!codigo || !produtoExiste(idEmpresa, codigo)) {
         return null;
     }
 
@@ -247,7 +278,11 @@ function excluirPendentes(
             return;
         }
 
-        const excluida = excluir(codigo, nome);
+        const excluida = excluir(
+            idEmpresa,
+            codigo,
+            nome
+        );
 
         if (excluida) {
             quantidade += 1;
@@ -257,14 +292,20 @@ function excluirPendentes(
     return quantidade;
 }
 
-function excluirTodasPorProduto(codigoProduto) {
+function excluirTodasPorProduto(
+    idEmpresa,
+    codigoProduto
+) {
     const codigo = normalizarCodigo(codigoProduto);
 
     if (!codigo) {
         return false;
     }
 
-    const diretorio = obterDiretorioProduto(codigo);
+    const diretorio = obterDiretorioProduto(
+        idEmpresa,
+        codigo
+    );
 
     if (!fs.existsSync(diretorio)) {
         return false;

@@ -100,7 +100,7 @@ function organizarProdutosComItens(
 |--------------------------------------------------------------------------
 */
 
-function buscarRegistroPorCodigo(codigo) {
+function buscarRegistroPorCodigo(idEmpresa, codigo) {
     return databaseRepository.buscarUm(
         `
             SELECT
@@ -112,9 +112,10 @@ function buscarRegistroPorCodigo(codigo) {
                 dt_edicao,
                 cod_usu_edicao
             FROM produto
-            WHERE cod_produto = ?
+            WHERE id_empresa = ?
+              AND cod_produto = ?
         `,
-        [String(codigo)]
+        [idEmpresa, String(codigo)]
     );
 }
 
@@ -182,7 +183,7 @@ function excluirItensProduto(idProduto) {
 |--------------------------------------------------------------------------
 */
 
-function listar() {
+function listar(idEmpresa) {
     const produtos =
         databaseRepository.buscarTodos(
             `
@@ -192,10 +193,12 @@ function listar() {
                     nom_produto,
                     des_produto
                 FROM produto
+                WHERE id_empresa = ?
                 ORDER BY
                     CAST(cod_produto AS INTEGER),
                     cod_produto
-            `
+            `,
+            [idEmpresa]
         );
 
     if (produtos.length === 0) {
@@ -212,10 +215,16 @@ function listar() {
                     num_quantidade,
                     val_unitario
                 FROM produto_item
+                WHERE id_produto IN (
+                    SELECT id_produto
+                    FROM produto
+                    WHERE id_empresa = ?
+                )
                 ORDER BY
                     id_produto,
                     id_produto_item
-            `
+            `,
+            [idEmpresa]
         );
 
     return organizarProdutosComItens(
@@ -224,9 +233,9 @@ function listar() {
     );
 }
 
-function buscarPorCodigo(codigo) {
+function buscarPorCodigo(idEmpresa, codigo) {
     const produto =
-        buscarRegistroPorCodigo(codigo);
+        buscarRegistroPorCodigo(idEmpresa, codigo);
 
     if (!produto) {
         return null;
@@ -261,9 +270,9 @@ function buscarPorCodigo(codigo) {
     );
 }
 
-function buscarIdPorCodigo(codigo) {
+function buscarIdPorCodigo(idEmpresa, codigo) {
     const registro =
-        buscarRegistroPorCodigo(codigo);
+        buscarRegistroPorCodigo(idEmpresa, codigo);
 
     if (!registro) {
         return null;
@@ -280,7 +289,7 @@ function buscarIdPorCodigo(codigo) {
 |--------------------------------------------------------------------------
 */
 
-function criar(produto) {
+function criar(idEmpresa, produto) {
     const codigoProduto =
         String(produto.codigo);
 
@@ -290,6 +299,7 @@ function criar(produto) {
                 databaseRepository.executar(
                     `
                         INSERT INTO produto (
+                            id_empresa,
                             cod_produto,
                             nom_produto,
                             des_produto,
@@ -298,6 +308,7 @@ function criar(produto) {
                             cod_usu_edicao
                         )
                         VALUES (
+                            ?,
                             ?,
                             ?,
                             ?,
@@ -310,6 +321,7 @@ function criar(produto) {
                         )
                     `,
                     [
+                        idEmpresa,
                         codigoProduto,
                         produto.nome,
                         produto.descricao || ""
@@ -325,6 +337,7 @@ function criar(produto) {
             );
 
             return buscarPorCodigo(
+                idEmpresa,
                 codigoProduto
             );
         });
@@ -336,7 +349,7 @@ function criar(produto) {
 |--------------------------------------------------------------------------
 */
 
-function atualizar(codigo, produto) {
+function atualizar(idEmpresa, codigo, produto) {
     const codigoProduto =
         String(codigo);
 
@@ -344,6 +357,7 @@ function atualizar(codigo, produto) {
         .executarTransacao(() => {
             const produtoExistente =
                 buscarRegistroPorCodigo(
+                    idEmpresa,
                     codigoProduto
                 );
 
@@ -381,6 +395,7 @@ function atualizar(codigo, produto) {
             );
 
             return buscarPorCodigo(
+                idEmpresa,
                 codigoProduto
             );
         });
@@ -392,14 +407,15 @@ function atualizar(codigo, produto) {
 |--------------------------------------------------------------------------
 */
 
-function excluir(codigo) {
+function excluir(idEmpresa, codigo) {
     const resultado =
         databaseRepository.executar(
             `
                 DELETE FROM produto
-                WHERE cod_produto = ?
+                WHERE id_empresa = ?
+                  AND cod_produto = ?
             `,
-            [String(codigo)]
+            [idEmpresa, String(codigo)]
         );
 
     return Number(resultado.changes) > 0;
@@ -411,7 +427,7 @@ function excluir(codigo) {
 |--------------------------------------------------------------------------
 */
 
-function obterProximoCodigo() {
+function obterProximoCodigo(idEmpresa) {
     const resultado =
         databaseRepository.buscarUm(
             `
@@ -430,7 +446,9 @@ function obterProximoCodigo() {
                         0
                     ) + 1 AS proximo_codigo
                 FROM produto
-            `
+                WHERE id_empresa = ?
+            `,
+            [idEmpresa]
         );
 
     return String(

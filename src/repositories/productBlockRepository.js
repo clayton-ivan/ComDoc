@@ -114,15 +114,16 @@ function organizarBlocosComItens(
 |--------------------------------------------------------------------------
 */
 
-function buscarIdProdutoPorCodigo(codigoProduto) {
+function buscarIdProdutoPorCodigo(idEmpresa, codigoProduto) {
     const registro =
         databaseRepository.buscarUm(
             `
                 SELECT id_produto
                 FROM produto
-                WHERE cod_produto = ?
+                WHERE id_empresa = ?
+                  AND cod_produto = ?
             `,
-            [String(codigoProduto)]
+            [idEmpresa, String(codigoProduto)]
         );
 
     if (!registro) {
@@ -236,9 +237,10 @@ function listarPorIdProduto(idProduto) {
     );
 }
 
-function listarPorCodigoProduto(codigoProduto) {
+function listarPorCodigoProduto(idEmpresa, codigoProduto) {
     const idProduto =
         buscarIdProdutoPorCodigo(
+            idEmpresa,
             codigoProduto
         );
 
@@ -409,11 +411,13 @@ function substituirPorIdProduto(
 }
 
 function substituirPorCodigoProduto(
+    idEmpresa,
     codigoProduto,
     blocos = []
 ) {
     const idProduto =
         buscarIdProdutoPorCodigo(
+            idEmpresa,
             codigoProduto
         );
 

@@ -18,10 +18,19 @@ const productPreviewService =
         "../services/productPreviewService"
     );
 
+const companyService =
+    require(
+        "../services/companyService"
+    );
+
 const HTTP =
     require(
         "../constants/httpStatus"
     );
+
+const {
+    ID_EMPRESA_PADRAO
+} = require("../constants/application");
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +68,12 @@ const gerar = async (req, res) => {
 
         const contexto = {
             ...req.body,
+
+            idEmpresa:
+                ID_EMPRESA_PADRAO,
+
+            empresa:
+                companyService.obterAtual(),
 
             produtoCodigo:
                 cotacao.produto.codigo,
@@ -158,6 +173,10 @@ const preVisualizarProduto = async (
 
         const pdf =
             await productPreviewService.gerar({
+                idEmpresa:
+                    ID_EMPRESA_PADRAO,
+                empresa:
+                    companyService.obterAtual(),
                 produtoCodigo:
                     produto.codigo,
                 produtoNome:
