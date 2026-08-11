@@ -133,6 +133,29 @@ button.perigo { background: #b91c1c; }
 .acoes-formulario { display: flex; margin-top: 24px; }
 .acoes-formulario button { width: 100%; }
 
+.listas-condicoes {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+}
+
+.editor-lista {
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+}
+
+.editor-lista h3 { margin: 0 0 14px; }
+.nova-opcao { display: grid; grid-template-columns: minmax(0, 1fr) 44px; gap: 8px; }
+.nova-opcao input { min-width: 0; }
+.nova-opcao button { padding: 0; font-size: 24px; }
+.lista-opcoes { display: grid; gap: 8px; margin: 14px 0 0; padding: 0; list-style: none; }
+.lista-opcoes li { display: grid; grid-template-columns: minmax(0, 1fr) 44px; gap: 8px; align-items: center; }
+.lista-opcoes span { overflow-wrap: anywhere; }
+.lista-opcoes button { min-height: 38px; padding: 0; background: #b91c1c; font-size: 22px; }
+.lista-vazia { margin: 14px 0 0; color: #6b7280; }
+
 #aviso {
     position: fixed;
     top: 76px;
@@ -161,6 +184,7 @@ button.perigo { background: #b91c1c; }
     .cartao { margin-top: 24px; padding: 24px; }
     .grade { gap: 18px; }
     .duas-colunas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .listas-condicoes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .endereco { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .endereco > :first-child, .linha-numero-complemento { grid-column: 1 / -1; }
     .linha-numero-complemento { grid-template-columns: minmax(100px, 1fr) minmax(0, 4fr); gap: 18px; }

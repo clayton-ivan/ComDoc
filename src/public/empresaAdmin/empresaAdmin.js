@@ -20,6 +20,96 @@ const botoesSalvar = [
 ];
 let empresaAtual = null;
 
+function criarEditorLista(elemento) {
+    const tipo = elemento.dataset.tipo;
+    const campo = elemento.querySelector("input");
+    const botaoAdicionar = elemento.querySelector(".adicionar-opcao");
+    const lista = elemento.querySelector(".lista-opcoes");
+    const mensagemVazia = elemento.querySelector(".lista-vazia");
+
+    function renderizar(registros) {
+        lista.replaceChildren();
+        mensagemVazia.hidden = registros.length > 0;
+
+        registros.forEach((registro) => {
+            const item = document.createElement("li");
+            const descricao = document.createElement("span");
+            const botaoExcluir = document.createElement("button");
+
+            descricao.textContent = registro.descricao;
+            botaoExcluir.type = "button";
+            botaoExcluir.textContent = "−";
+            botaoExcluir.title = `Excluir ${registro.descricao}`;
+            botaoExcluir.setAttribute(
+                "aria-label",
+                `Excluir ${registro.descricao}`
+            );
+
+            botaoExcluir.addEventListener("click", async () => {
+                botaoExcluir.disabled = true;
+
+                try {
+                    await requisitar(`/empresa/${tipo}/${registro.id}`, {
+                        method: "DELETE"
+                    });
+                    await carregar();
+                    mostrarAviso("Opção excluída com sucesso.");
+                } catch (erro) {
+                    botaoExcluir.disabled = false;
+                    mostrarAviso(erro.message, true);
+                }
+            });
+
+            item.append(descricao, botaoExcluir);
+            lista.appendChild(item);
+        });
+    }
+
+    async function carregar() {
+        renderizar(await requisitar(`/empresa/${tipo}`));
+    }
+
+    async function adicionar() {
+        const descricao = campo.value.trim();
+
+        if (!descricao) {
+            campo.focus();
+            return;
+        }
+
+        botaoAdicionar.disabled = true;
+
+        try {
+            await requisitar(`/empresa/${tipo}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ descricao })
+            });
+            campo.value = "";
+            await carregar();
+            campo.focus();
+        } catch (erro) {
+            mostrarAviso(erro.message, true);
+        } finally {
+            botaoAdicionar.disabled = false;
+        }
+    }
+
+    botaoAdicionar.addEventListener("click", adicionar);
+    campo.addEventListener("keydown", (evento) => {
+        if (evento.key === "Enter") {
+            evento.preventDefault();
+            adicionar();
+        }
+    });
+
+    return { carregar };
+}
+
+const editoresLista = Array.from(
+    document.querySelectorAll(".editor-lista")
+).map(criarEditorLista);
+
 function formatarCnpj(valor) {
     const digitos = String(valor || "")
         .replace(/\D/g, "")
@@ -192,7 +282,10 @@ function preencherEmpresa(empresa) {
 }
 
 async function carregar() {
-    const empresa = await requisitar("/empresa");
+    const [empresa] = await Promise.all([
+        requisitar("/empresa"),
+        ...editoresLista.map((editor) => editor.carregar())
+    ]);
     preencherEmpresa(empresa);
     mensagemPagina.hidden = true;
     form.hidden = false;
