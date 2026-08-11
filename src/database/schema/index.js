@@ -27,6 +27,11 @@ const {
     criarIndicesCotacao
 } = require("./cotacaoSchema");
 
+const {
+    criarTabelaPrazoEntrega,
+    criarTabelaFormaPagamento
+} = require("./condicaoComercialSchema");
+
 function criarEstruturaAtual(database) {
     criarTabelaProduto(database);
     criarTabelaProdutoItem(database);
@@ -38,6 +43,9 @@ function criarEstruturaAtual(database) {
     criarTabelaProdutoBlocoItem(database);
 
     criarTabelaEmpresa(database);
+
+    criarTabelaPrazoEntrega(database);
+    criarTabelaFormaPagamento(database);
 
     criarTabelaCliente(database);
     criarIndicesCliente(database);
@@ -58,6 +66,8 @@ module.exports = {
     criarTabelaProdutoBlocoItem,
     criarTabelaEmpresa,
     criarEmpresaPadrao,
+    criarTabelaPrazoEntrega,
+    criarTabelaFormaPagamento,
     criarTabelaCliente,
     criarIndicesCliente,
     criarTabelaCotacao,

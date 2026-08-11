@@ -247,9 +247,27 @@
                             Prazo de entrega
                         </label>
 
-                        <input
-                            type="text"
-                            id="prazoEntrega">
+                        <div class="combobox-editavel">
+                            <input
+                                type="text"
+                                id="prazoEntrega"
+                                role="combobox"
+                                aria-autocomplete="list"
+                                aria-expanded="false"
+                                aria-controls="opcoesPrazoEntrega"
+                                autocomplete="off">
+                            <button
+                                type="button"
+                                class="abrir-combobox"
+                                aria-label="Exibir prazos de entrega"
+                                aria-controls="opcoesPrazoEntrega"
+                                tabindex="-1">▾</button>
+                            <ul
+                                id="opcoesPrazoEntrega"
+                                class="opcoes-combobox"
+                                role="listbox"
+                                hidden></ul>
+                        </div>
                     </div>
 
                     <div class="campo">
@@ -257,9 +275,27 @@
                             Forma de pagamento
                         </label>
 
-                        <input
-                            type="text"
-                            id="pagamento">
+                        <div class="combobox-editavel">
+                            <input
+                                type="text"
+                                id="pagamento"
+                                role="combobox"
+                                aria-autocomplete="list"
+                                aria-expanded="false"
+                                aria-controls="opcoesFormaPagamento"
+                                autocomplete="off">
+                            <button
+                                type="button"
+                                class="abrir-combobox"
+                                aria-label="Exibir formas de pagamento"
+                                aria-controls="opcoesFormaPagamento"
+                                tabindex="-1">▾</button>
+                            <ul
+                                id="opcoesFormaPagamento"
+                                class="opcoes-combobox"
+                                role="listbox"
+                                hidden></ul>
+                        </div>
                     </div>
                 </div>
             </section>

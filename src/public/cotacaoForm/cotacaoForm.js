@@ -20,6 +20,10 @@ import {
     obterOuCriarCliente
 } from "./clientes.js";
 
+import {
+    preencherCondicoesComerciais
+} from "./condicoesComerciais.js";
+
 /*
 |--------------------------------------------------------------------------
 | Elementos do formulário
@@ -927,3 +931,10 @@ formulario.addEventListener(
 preencherComboProdutos(
     campoProduto
 );
+
+preencherCondicoesComerciais().catch((erro) => {
+    console.error(
+        "Erro ao carregar condições comerciais:",
+        erro
+    );
+});

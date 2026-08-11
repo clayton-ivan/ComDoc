@@ -87,6 +87,75 @@ button {
     grid-column: 1 / -1;
 }
 
+.combobox-editavel {
+    position: relative;
+}
+
+.combobox-editavel input {
+    padding-right: 46px;
+}
+
+.abrir-combobox {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 42px;
+    min-height: 42px;
+    padding: 0;
+    border: 0;
+    border-left: 1px solid #d1d5db;
+    border-radius: 0 5px 5px 0;
+    background: #f9fafb;
+    color: #374151;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.abrir-combobox:hover {
+    background: #f3f4f6;
+}
+
+.opcoes-combobox {
+    position: absolute;
+    top: calc(100% + 4px);
+    right: 0;
+    left: 0;
+    z-index: 20;
+    max-height: 220px;
+    margin: 0;
+    padding: 5px;
+    overflow-y: auto;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    list-style: none;
+}
+
+.opcoes-combobox button {
+    width: 100%;
+    min-height: 40px;
+    padding: 9px 10px;
+    border: 0;
+    border-radius: 4px;
+    background: white;
+    color: #1f2937;
+    cursor: pointer;
+    text-align: left;
+}
+
+.opcoes-combobox button:hover,
+.opcoes-combobox button:focus {
+    outline: none;
+    background: #eff6ff;
+}
+
+.opcoes-combobox .sem-opcoes {
+    padding: 10px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
 label {
     display: block;
     margin-bottom: 7px;

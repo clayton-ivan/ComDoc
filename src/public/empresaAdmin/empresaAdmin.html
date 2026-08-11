@@ -116,6 +116,53 @@
                 </div>
             </section>
 
+            <section class="cartao">
+                <h2>Condições comerciais</h2>
+                <p>Cadastre as opções sugeridas durante a criação de uma cotação.</p>
+
+                <div class="listas-condicoes">
+                    <section
+                        class="editor-lista"
+                        data-tipo="prazos-entrega"
+                        aria-labelledby="tituloPrazosEntrega">
+                        <h3 id="tituloPrazosEntrega">Prazos de entrega</h3>
+                        <div class="nova-opcao">
+                            <input
+                                id="novoPrazoEntrega"
+                                maxlength="200"
+                                placeholder="Ex.: 30 dias"
+                                aria-label="Novo prazo de entrega">
+                            <button
+                                type="button"
+                                class="adicionar-opcao"
+                                aria-label="Adicionar prazo de entrega">+</button>
+                        </div>
+                        <ul class="lista-opcoes"></ul>
+                        <p class="lista-vazia" hidden>Nenhum prazo cadastrado.</p>
+                    </section>
+
+                    <section
+                        class="editor-lista"
+                        data-tipo="formas-pagamento"
+                        aria-labelledby="tituloFormasPagamento">
+                        <h3 id="tituloFormasPagamento">Formas de pagamento</h3>
+                        <div class="nova-opcao">
+                            <input
+                                id="novaFormaPagamento"
+                                maxlength="200"
+                                placeholder="Ex.: 50% + 50%"
+                                aria-label="Nova forma de pagamento">
+                            <button
+                                type="button"
+                                class="adicionar-opcao"
+                                aria-label="Adicionar forma de pagamento">+</button>
+                        </div>
+                        <ul class="lista-opcoes"></ul>
+                        <p class="lista-vazia" hidden>Nenhuma forma cadastrada.</p>
+                    </section>
+                </div>
+            </section>
+
             <div class="acoes-formulario">
                 <button id="salvarInferior" type="submit">Salvar empresa</button>
             </div>

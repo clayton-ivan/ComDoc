@@ -13,6 +13,10 @@ const productRepository =
         "../repositories/productRepository"
     );
 
+const commercialConditionService = require(
+    "./commercialConditionService"
+);
+
 const {
     ID_EMPRESA_PADRAO,
     COD_USUARIO_SISTEMA
@@ -262,6 +266,16 @@ function criar(
             idEmpresa,
             cotacao.produtoCodigo
         );
+
+    commercialConditionService.obterOuCriar(
+        "prazoEntrega",
+        cotacao.prazoEntrega
+    );
+
+    commercialConditionService.obterOuCriar(
+        "formaPagamento",
+        cotacao.condicaoPagamento
+    );
 
     const cotacaoCriada =
         cotacaoRepository.criar(
