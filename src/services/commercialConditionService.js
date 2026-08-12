@@ -64,8 +64,65 @@ function excluir(tipo, valorId) {
     );
 }
 
+function normalizarLista(valores, nomeCampo) {
+    if (!Array.isArray(valores)) {
+        throw new Error(`${nomeCampo} deve ser uma lista.`);
+    }
+
+    const unicos = new Map();
+
+    valores.forEach((valor) => {
+        const descricao = normalizarDescricao(valor);
+
+        if (!descricao) {
+            throw new Error(`${nomeCampo} possui uma opção vazia.`);
+        }
+
+        if (descricao.length > 200) {
+            throw new Error(
+                `${nomeCampo} possui uma opção com mais de 200 caracteres.`
+            );
+        }
+
+        const chave = descricao.toLocaleLowerCase("pt-BR");
+
+        if (!unicos.has(chave)) {
+            unicos.set(chave, descricao);
+        }
+    });
+
+    return Array.from(unicos.values()).sort((a, b) =>
+        a.localeCompare(b, "pt-BR", { sensitivity: "base" })
+    );
+}
+
+function substituirTodas(dados = {}) {
+    const condicoes = {
+        prazoEntrega: normalizarLista(
+            dados.prazosEntrega,
+            "Os prazos de entrega"
+        ),
+        formaPagamento: normalizarLista(
+            dados.formasPagamento,
+            "As formas de pagamento"
+        )
+    };
+
+    repository.substituirTodas(
+        ID_EMPRESA_PADRAO,
+        condicoes,
+        COD_USUARIO_SISTEMA
+    );
+
+    return {
+        prazosEntrega: listar("prazoEntrega"),
+        formasPagamento: listar("formaPagamento")
+    };
+}
+
 module.exports = {
     listar,
     obterOuCriar,
-    excluir
+    excluir,
+    substituirTodas
 };

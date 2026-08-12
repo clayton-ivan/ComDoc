@@ -17,11 +17,11 @@
                 type="button"
                 aria-label="Abrir menu"
                 aria-expanded="false"
-                aria-controls="menuEmpresa">
+                aria-controls="menuEmpresaGlobal">
                 ⋮
             </button>
 
-            <nav id="menuEmpresa" class="opcoes-menu-admin" hidden>
+            <nav id="menuEmpresaGlobal" class="opcoes-menu-admin" hidden>
                 <a href="/admin/clientes">Clientes</a>
                 <a href="/admin/produtos">Produtos</a>
                 <a href="/">Nova cotação</a>
@@ -30,149 +30,195 @@
     </header>
 
     <main class="container">
-        <header class="cabecalho-pagina">
-            <div>
-                <h1>Dados da empresa</h1>
-                <p>Configure os dados institucionais e a identidade visual dos documentos.</p>
-            </div>
-
-            <button
-                id="salvarTopo"
-                class="botao-salvar"
-                type="submit"
-                form="formEmpresa"
-                disabled>
-                Salvar empresa
-            </button>
-        </header>
-
         <p id="mensagemPagina">Carregando empresa...</p>
 
-        <form id="formEmpresa" hidden>
-            <section class="cartao">
-                <h2>Identificação</h2>
-                <div class="grade duas-colunas">
-                    <label>Razão social<input id="nome" required maxlength="150"></label>
-                    <label>Nome fantasia<input id="nomeFantasia" required maxlength="150"></label>
-                    <label>CNPJ<input id="cnpj" inputmode="numeric" maxlength="18"></label>
-                    <label>E-mail<input id="email" type="email" maxlength="150"></label>
-                    <label>Telefone<input id="telefone" inputmode="tel" maxlength="15"></label>
-                    <label>WhatsApp<input id="whatsapp" inputmode="tel" maxlength="15"></label>
-                </div>
-                <label>Slogan<input id="slogan" maxlength="200"></label>
-            </section>
-
-            <section class="cartao">
-                <h2>Endereço</h2>
-                <div class="grade endereco">
-                    <label>Logradouro<input id="logradouro" maxlength="150"></label>
-
-                    <div class="linha-numero-complemento">
-                        <label>Nro.<input id="numeroEndereco" maxlength="15"></label>
-                        <label>Complemento<input id="complemento" maxlength="100"></label>
+        <div id="navegacaoEmpresa" hidden>
+            <section id="menuSecoes" class="tela-empresa menu-secoes">
+                <header class="cabecalho-pagina">
+                    <div>
+                        <h1>Dados da empresa</h1>
+                        <p>Escolha uma seção para visualizar ou editar.</p>
                     </div>
+                </header>
 
-                    <label>Bairro<input id="bairro" maxlength="100"></label>
-                    <label>Cidade<input id="cidade" maxlength="100"></label>
-                    <label>UF<input id="uf" maxlength="2"></label>
-                    <label>CEP<input id="cep" inputmode="numeric" maxlength="10"></label>
-                </div>
+                <nav class="grade-menu" aria-label="Seções da empresa">
+                    <button type="button" data-abrir-secao="identificacao">
+                        <strong>Identificação</strong>
+                        <span>Razão social, contatos e slogan</span>
+                    </button>
+                    <button type="button" data-abrir-secao="endereco">
+                        <strong>Endereço</strong>
+                        <span>Localização e dados postais</span>
+                    </button>
+                    <button type="button" data-abrir-secao="presencaDigital">
+                        <strong>Presença digital</strong>
+                        <span>Site e Instagram</span>
+                    </button>
+                    <button type="button" data-abrir-secao="logo">
+                        <strong>Logo</strong>
+                        <span>Imagem usada nos documentos</span>
+                    </button>
+                    <button type="button" data-abrir-secao="cores">
+                        <strong>Cores da identidade visual</strong>
+                        <span>Paleta aplicada aos documentos</span>
+                    </button>
+                    <button type="button" data-abrir-secao="condicoesComerciais">
+                        <strong>Condições comerciais</strong>
+                        <span>Prazos de entrega e formas de pagamento</span>
+                    </button>
+                </nav>
             </section>
 
-            <section class="cartao">
-                <h2>Presença digital</h2>
-                <div class="grade duas-colunas">
-                    <label>Site<input id="site" maxlength="200"></label>
-                    <label>Instagram<input id="instagram" maxlength="100"></label>
-                </div>
-            </section>
-
-            <section class="cartao">
-                <h2>Logo</h2>
-                <div class="logo-editor">
-                    <div class="logo-preview">
-                        <img id="imagemLogo" alt="Logo da empresa" hidden>
-                        <span id="semLogo">Nenhuma logo cadastrada</span>
-                    </div>
-                    <div class="acoes-logo">
-                        <input id="arquivoLogo" type="file" accept="image/jpeg,image/png">
-                        <button id="enviarLogo" type="button" class="secundario">Enviar logo</button>
-                        <button id="excluirLogo" type="button" class="perigo">Excluir logo</button>
-                        <small>JPEG ou PNG, com no máximo 5 MB.</small>
-                    </div>
-                </div>
-            </section>
-
-            <section class="cartao">
-                <h2>Cores da identidade visual</h2>
-                <p>Escolha uma cor da paleta ou informe-a em hexadecimal ou RGB.</p>
-                <div class="grade duas-colunas cores">
-                    <fieldset class="editor-cor" data-campo="corPrimaria">
-                        <legend>Cor primária</legend>
-                    </fieldset>
-                    <fieldset class="editor-cor" data-campo="corSecundaria">
-                        <legend>Cor secundária</legend>
-                    </fieldset>
-                </div>
-            </section>
-
-            <section class="cartao">
-                <h2>Condições comerciais</h2>
-                <p>Cadastre as opções sugeridas durante a criação de uma cotação.</p>
-
-                <div class="listas-condicoes">
-                    <section
-                        class="editor-lista"
-                        data-tipo="prazos-entrega"
-                        aria-labelledby="tituloPrazosEntrega">
-                        <h3 id="tituloPrazosEntrega">Prazos de entrega</h3>
-                        <div class="nova-opcao">
-                            <input
-                                id="novoPrazoEntrega"
-                                maxlength="200"
-                                placeholder="Ex.: 30 dias"
-                                aria-label="Novo prazo de entrega">
-                            <button
-                                type="button"
-                                class="adicionar-opcao"
-                                aria-label="Adicionar prazo de entrega">+</button>
+            <form id="formEmpresa" novalidate>
+                <section class="tela-empresa secao-empresa" data-secao="identificacao" hidden>
+                    <header class="cabecalho-secao">
+                        <button type="button" class="botao-voltar" data-voltar>← Voltar</button>
+                        <h1>Identificação</h1>
+                    </header>
+                    <div class="cartao">
+                        <div class="grade duas-colunas">
+                            <label>Razão social<input id="nome" required maxlength="150"></label>
+                            <label>Nome fantasia<input id="nomeFantasia" required maxlength="150"></label>
+                            <label>CNPJ<input id="cnpj" inputmode="numeric" maxlength="18"></label>
+                            <label>E-mail<input id="email" type="email" maxlength="150"></label>
+                            <label>Telefone<input id="telefone" inputmode="tel" maxlength="15"></label>
+                            <label>WhatsApp<input id="whatsapp" inputmode="tel" maxlength="15"></label>
                         </div>
-                        <ul class="lista-opcoes"></ul>
-                        <p class="lista-vazia" hidden>Nenhum prazo cadastrado.</p>
-                    </section>
+                        <label>Slogan<input id="slogan" maxlength="200"></label>
+                    </div>
+                    <div class="acoes-secao">
+                        <button type="button" class="secundario" data-voltar>Voltar</button>
+                        <button type="submit" data-salvar-secao="identificacao">Salvar</button>
+                    </div>
+                </section>
 
-                    <section
-                        class="editor-lista"
-                        data-tipo="formas-pagamento"
-                        aria-labelledby="tituloFormasPagamento">
-                        <h3 id="tituloFormasPagamento">Formas de pagamento</h3>
-                        <div class="nova-opcao">
-                            <input
-                                id="novaFormaPagamento"
-                                maxlength="200"
-                                placeholder="Ex.: 50% + 50%"
-                                aria-label="Nova forma de pagamento">
-                            <button
-                                type="button"
-                                class="adicionar-opcao"
-                                aria-label="Adicionar forma de pagamento">+</button>
+                <section class="tela-empresa secao-empresa" data-secao="endereco" hidden>
+                    <header class="cabecalho-secao">
+                        <button type="button" class="botao-voltar" data-voltar>← Voltar</button>
+                        <h1>Endereço</h1>
+                    </header>
+                    <div class="cartao">
+                        <div class="grade endereco">
+                            <label>Logradouro<input id="logradouro" maxlength="150"></label>
+                            <div class="linha-numero-complemento">
+                                <label>Nro.<input id="numeroEndereco" maxlength="15"></label>
+                                <label>Complemento<input id="complemento" maxlength="100"></label>
+                            </div>
+                            <label>Bairro<input id="bairro" maxlength="100"></label>
+                            <label>Cidade<input id="cidade" maxlength="100"></label>
+                            <label>UF<input id="uf" maxlength="2"></label>
+                            <label>CEP<input id="cep" inputmode="numeric" maxlength="10"></label>
                         </div>
-                        <ul class="lista-opcoes"></ul>
-                        <p class="lista-vazia" hidden>Nenhuma forma cadastrada.</p>
-                    </section>
-                </div>
-            </section>
+                    </div>
+                    <div class="acoes-secao">
+                        <button type="button" class="secundario" data-voltar>Voltar</button>
+                        <button type="submit" data-salvar-secao="endereco">Salvar</button>
+                    </div>
+                </section>
 
-            <div class="acoes-formulario">
-                <button id="salvarInferior" type="submit">Salvar empresa</button>
-            </div>
-        </form>
+                <section class="tela-empresa secao-empresa" data-secao="presencaDigital" hidden>
+                    <header class="cabecalho-secao">
+                        <button type="button" class="botao-voltar" data-voltar>← Voltar</button>
+                        <h1>Presença digital</h1>
+                    </header>
+                    <div class="cartao">
+                        <div class="grade duas-colunas">
+                            <label>Site<input id="site" maxlength="200"></label>
+                            <label>Instagram<input id="instagram" maxlength="100"></label>
+                        </div>
+                    </div>
+                    <div class="acoes-secao">
+                        <button type="button" class="secundario" data-voltar>Voltar</button>
+                        <button type="submit" data-salvar-secao="presencaDigital">Salvar</button>
+                    </div>
+                </section>
+
+                <section class="tela-empresa secao-empresa" data-secao="logo" hidden>
+                    <header class="cabecalho-secao">
+                        <button type="button" class="botao-voltar" data-voltar>← Voltar</button>
+                        <h1>Logo</h1>
+                    </header>
+                    <div class="cartao">
+                        <div class="logo-editor">
+                            <div class="logo-preview">
+                                <img id="imagemLogo" alt="Logo da empresa" hidden>
+                                <span id="semLogo">Nenhuma logo cadastrada</span>
+                            </div>
+                            <div class="acoes-logo">
+                                <label>Selecionar logo
+                                    <input id="arquivoLogo" type="file" accept="image/jpeg,image/png">
+                                </label>
+                                <button id="excluirLogo" type="button" class="perigo">Excluir logo</button>
+                                <small>JPEG ou PNG, com no máximo 5 MB. A alteração será aplicada ao salvar.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="acoes-secao">
+                        <button type="button" class="secundario" data-voltar>Voltar</button>
+                        <button type="submit" data-salvar-secao="logo">Salvar</button>
+                    </div>
+                </section>
+
+                <section class="tela-empresa secao-empresa" data-secao="cores" hidden>
+                    <header class="cabecalho-secao">
+                        <button type="button" class="botao-voltar" data-voltar>← Voltar</button>
+                        <h1>Cores da identidade visual</h1>
+                    </header>
+                    <div class="cartao">
+                        <p>Escolha uma cor da paleta ou informe-a em hexadecimal ou RGB.</p>
+                        <div class="grade duas-colunas cores">
+                            <fieldset class="editor-cor" data-campo="corPrimaria">
+                                <legend>Cor primária</legend>
+                            </fieldset>
+                            <fieldset class="editor-cor" data-campo="corSecundaria">
+                                <legend>Cor secundária</legend>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <div class="acoes-secao">
+                        <button type="button" class="secundario" data-voltar>Voltar</button>
+                        <button type="submit" data-salvar-secao="cores">Salvar</button>
+                    </div>
+                </section>
+
+                <section class="tela-empresa secao-empresa" data-secao="condicoesComerciais" hidden>
+                    <header class="cabecalho-secao">
+                        <button type="button" class="botao-voltar" data-voltar>← Voltar</button>
+                        <h1>Condições comerciais</h1>
+                    </header>
+                    <div class="cartao">
+                        <p>Cadastre as opções sugeridas durante a criação de uma cotação.</p>
+                        <div class="listas-condicoes">
+                            <section class="editor-lista" data-tipo="prazos-entrega" aria-labelledby="tituloPrazosEntrega">
+                                <h2 id="tituloPrazosEntrega">Prazos de entrega</h2>
+                                <div class="nova-opcao">
+                                    <input id="novoPrazoEntrega" maxlength="200" placeholder="Ex.: 30 dias" aria-label="Novo prazo de entrega">
+                                    <button type="button" class="adicionar-opcao" aria-label="Adicionar prazo de entrega">+</button>
+                                </div>
+                                <ul class="lista-opcoes"></ul>
+                                <p class="lista-vazia" hidden>Nenhum prazo cadastrado.</p>
+                            </section>
+                            <section class="editor-lista" data-tipo="formas-pagamento" aria-labelledby="tituloFormasPagamento">
+                                <h2 id="tituloFormasPagamento">Formas de pagamento</h2>
+                                <div class="nova-opcao">
+                                    <input id="novaFormaPagamento" maxlength="200" placeholder="Ex.: 50% + 50%" aria-label="Nova forma de pagamento">
+                                    <button type="button" class="adicionar-opcao" aria-label="Adicionar forma de pagamento">+</button>
+                                </div>
+                                <ul class="lista-opcoes"></ul>
+                                <p class="lista-vazia" hidden>Nenhuma forma cadastrada.</p>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="acoes-secao">
+                        <button type="button" class="secundario" data-voltar>Voltar</button>
+                        <button type="submit" data-salvar-secao="condicoesComerciais">Salvar</button>
+                    </div>
+                </section>
+            </form>
+        </div>
     </main>
-    <div
-        id="aviso"
-        role="status"
-        aria-live="polite">
-    </div>
+
+    <div id="aviso" role="status" aria-live="polite"></div>
     <script src="/shared/adminMenu.js"></script>
     <script type="module" src="/empresaAdmin/empresaAdmin.js"></script>
 </body>

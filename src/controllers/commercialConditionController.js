@@ -52,5 +52,19 @@ function criarControlador(tipo) {
 
 module.exports = {
     prazosEntrega: criarControlador("prazoEntrega"),
-    formasPagamento: criarControlador("formaPagamento")
+    formasPagamento: criarControlador("formaPagamento"),
+
+    substituirTodas(req, res) {
+        try {
+            return res.json({
+                sucesso: true,
+                ...service.substituirTodas(req.body)
+            });
+        } catch (erro) {
+            return res.status(HTTP.BAD_REQUEST).json({
+                sucesso: false,
+                mensagem: erro.message
+            });
+        }
+    }
 };

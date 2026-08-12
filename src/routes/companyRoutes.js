@@ -41,4 +41,9 @@ router.delete(
     commercialConditionController.formasPagamento.excluir
 );
 
+router.put(
+    "/condicoes-comerciais",
+    commercialConditionController.substituirTodas
+);
+
 module.exports = router;

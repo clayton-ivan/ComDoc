@@ -75,9 +75,52 @@ function excluir(tipo, idEmpresa, idRegistro) {
     `).run(idEmpresa, idRegistro).changes > 0;
 }
 
+function substituirTodas(
+    idEmpresa,
+    condicoes,
+    codUsuarioCriacao
+) {
+    const database = obterDatabase();
+
+    database.exec("BEGIN TRANSACTION");
+
+    try {
+        for (const [tipo, descricoes] of Object.entries(condicoes)) {
+            const { tabela, descricao } = obterConfiguracao(tipo);
+
+            database.prepare(`
+                DELETE FROM ${tabela}
+                WHERE id_empresa = ?
+            `).run(idEmpresa);
+
+            const inserir = database.prepare(`
+                INSERT INTO ${tabela} (
+                    id_empresa,
+                    ${descricao},
+                    cod_usu_criacao
+                ) VALUES (?, ?, ?)
+            `);
+
+            descricoes.forEach((descricaoInformada) => {
+                inserir.run(
+                    idEmpresa,
+                    descricaoInformada,
+                    codUsuarioCriacao
+                );
+            });
+        }
+
+        database.exec("COMMIT");
+    } catch (erro) {
+        database.exec("ROLLBACK");
+        throw erro;
+    }
+}
+
 module.exports = {
     listar,
     buscarPorDescricao,
     criar,
-    excluir
+    excluir,
+    substituirTodas
 };
