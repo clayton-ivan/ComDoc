@@ -3,7 +3,10 @@ const PALETA = [
     "#0891B2", "#059669", "#65A30D", "#CA8A04", "#1F2937"
 ];
 
+const DURACAO_TRANSICAO = 220;
 const form = document.getElementById("formEmpresa");
+const navegacaoEmpresa = document.getElementById("navegacaoEmpresa");
+const menuSecoes = document.getElementById("menuSecoes");
 const mensagemPagina = document.getElementById("mensagemPagina");
 const aviso = document.getElementById("aviso");
 const imagemLogo = document.getElementById("imagemLogo");
@@ -14,106 +17,67 @@ const camposTelefone = [
     document.getElementById("telefone"),
     document.getElementById("whatsapp")
 ];
-const botoesSalvar = [
-    document.getElementById("salvarTopo"),
-    document.getElementById("salvarInferior")
-];
+
 let empresaAtual = null;
+let secaoAtiva = null;
+let logoPendente = null;
+let urlPreviewLogo = null;
+let condicoesAtuais = {
+    prazosEntrega: [],
+    formasPagamento: []
+};
 
-function criarEditorLista(elemento) {
-    const tipo = elemento.dataset.tipo;
-    const campo = elemento.querySelector("input");
-    const botaoAdicionar = elemento.querySelector(".adicionar-opcao");
-    const lista = elemento.querySelector(".lista-opcoes");
-    const mensagemVazia = elemento.querySelector(".lista-vazia");
-
-    function renderizar(registros) {
-        lista.replaceChildren();
-        mensagemVazia.hidden = registros.length > 0;
-
-        registros.forEach((registro) => {
-            const item = document.createElement("li");
-            const descricao = document.createElement("span");
-            const botaoExcluir = document.createElement("button");
-
-            descricao.textContent = registro.descricao;
-            botaoExcluir.type = "button";
-            botaoExcluir.textContent = "−";
-            botaoExcluir.title = `Excluir ${registro.descricao}`;
-            botaoExcluir.setAttribute(
-                "aria-label",
-                `Excluir ${registro.descricao}`
-            );
-
-            botaoExcluir.addEventListener("click", async () => {
-                botaoExcluir.disabled = true;
-
-                try {
-                    await requisitar(`/empresa/${tipo}/${registro.id}`, {
-                        method: "DELETE"
-                    });
-                    await carregar();
-                    mostrarAviso("Opção excluída com sucesso.");
-                } catch (erro) {
-                    botaoExcluir.disabled = false;
-                    mostrarAviso(erro.message, true);
-                }
-            });
-
-            item.append(descricao, botaoExcluir);
-            lista.appendChild(item);
-        });
-    }
-
-    async function carregar() {
-        renderizar(await requisitar(`/empresa/${tipo}`));
-    }
-
-    async function adicionar() {
-        const descricao = campo.value.trim();
-
-        if (!descricao) {
-            campo.focus();
-            return;
-        }
-
-        botaoAdicionar.disabled = true;
-
-        try {
-            await requisitar(`/empresa/${tipo}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ descricao })
-            });
-            campo.value = "";
-            await carregar();
-            campo.focus();
-        } catch (erro) {
-            mostrarAviso(erro.message, true);
-        } finally {
-            botaoAdicionar.disabled = false;
-        }
-    }
-
-    botaoAdicionar.addEventListener("click", adicionar);
-    campo.addEventListener("keydown", (evento) => {
-        if (evento.key === "Enter") {
-            evento.preventDefault();
-            adicionar();
-        }
-    });
-
-    return { carregar };
+function aguardarTransicao() {
+    return new Promise((resolve) =>
+        window.setTimeout(resolve, DURACAO_TRANSICAO)
+    );
 }
 
-const editoresLista = Array.from(
-    document.querySelectorAll(".editor-lista")
-).map(criarEditorLista);
+function limparAnimacoes(elemento) {
+    elemento.classList.remove(
+        "saindo-esquerda",
+        "entrando-direita",
+        "saindo-direita",
+        "entrando-esquerda"
+    );
+}
+
+async function abrirSecao(nomeSecao) {
+    const secao = document.querySelector(`[data-secao="${nomeSecao}"]`);
+
+    if (!secao || secaoAtiva) {
+        return;
+    }
+
+    restaurarDadosDaTela();
+    secaoAtiva = nomeSecao;
+    menuSecoes.classList.add("saindo-esquerda");
+    await aguardarTransicao();
+    menuSecoes.hidden = true;
+    limparAnimacoes(menuSecoes);
+    secao.hidden = false;
+    secao.classList.add("entrando-direita");
+    secao.querySelector("h1")?.focus?.();
+}
+
+async function voltarAoMenu() {
+    if (!secaoAtiva) {
+        return;
+    }
+
+    const secao = document.querySelector(`[data-secao="${secaoAtiva}"]`);
+    secao.classList.remove("entrando-direita");
+    secao.classList.add("saindo-direita");
+    await aguardarTransicao();
+    secao.hidden = true;
+    limparAnimacoes(secao);
+    secaoAtiva = null;
+    menuSecoes.hidden = false;
+    menuSecoes.classList.add("entrando-esquerda");
+}
 
 function formatarCnpj(valor) {
-    const digitos = String(valor || "")
-        .replace(/\D/g, "")
-        .slice(0, 14);
+    const digitos = String(valor || "").replace(/\D/g, "").slice(0, 14);
 
     return digitos
         .replace(/^(\d{2})(\d)/, "$1.$2")
@@ -123,63 +87,36 @@ function formatarCnpj(valor) {
 }
 
 function formatarTelefone(valor) {
-    const digitos = String(valor || "")
-        .replace(/\D/g, "")
-        .slice(0, 11);
+    const digitos = String(valor || "").replace(/\D/g, "").slice(0, 11);
 
     if (digitos.length <= 2) {
-        return digitos
-            ? `(${digitos}`
-            : "";
+        return digitos ? `(${digitos}` : "";
     }
 
     if (digitos.length <= 6) {
         return `(${digitos.slice(0, 2)}) ${digitos.slice(2)}`;
     }
 
-    const quantidadeInicio =
-        digitos.length === 11
-            ? 7
-            : 6;
+    const inicioHifen = digitos.length === 11 ? 7 : 6;
 
-    return [
-        `(${digitos.slice(0, 2)}) `,
-        digitos.slice(2, quantidadeInicio),
-        "-",
-        digitos.slice(quantidadeInicio)
-    ].join("");
+    return `(${digitos.slice(0, 2)}) ${digitos.slice(2, inicioHifen)}-${digitos.slice(inicioHifen)}`;
 }
-
-campoCnpj.addEventListener("input", () => {
-    campoCnpj.value = formatarCnpj(
-        campoCnpj.value
-    );
-});
-
-camposTelefone.forEach((campo) => {
-    campo.addEventListener("input", () => {
-        campo.value = formatarTelefone(
-            campo.value
-        );
-    });
-});
 
 function mostrarAviso(mensagem, erro = false) {
     aviso.textContent = mensagem;
     aviso.classList.toggle("erro", erro);
     aviso.classList.add("visivel");
-    window.setTimeout(
-        () => aviso.classList.remove("visivel"),
-        6000
-    );
+    window.setTimeout(() => aviso.classList.remove("visivel"), 6000);
 }
 
 async function requisitar(url, opcoes) {
     const resposta = await fetch(url, opcoes);
     const dados = await resposta.json().catch(() => null);
+
     if (!resposta.ok) {
         throw new Error(dados?.mensagem || "Erro na requisição.");
     }
+
     return dados;
 }
 
@@ -241,7 +178,9 @@ function criarEditorCor(fieldset) {
 
     seletor.addEventListener("input", () => definir(seletor.value));
     hex.addEventListener("change", () => {
-        if (/^#[0-9a-f]{6}$/i.test(hex.value)) definir(hex.value);
+        if (/^#[0-9a-f]{6}$/i.test(hex.value)) {
+            definir(hex.value);
+        }
     });
     rgb.forEach((input) => input.addEventListener("input", () =>
         definir(rgbParaHexadecimal(rgb.map((campoRgb) => campoRgb.value)))
@@ -253,97 +192,332 @@ function criarEditorCor(fieldset) {
 const editoresCor = Array.from(document.querySelectorAll(".editor-cor"))
     .map(criarEditorCor);
 
-function valor(id) { return document.getElementById(id).value.trim(); }
-function preencher(id, valorCampo) { document.getElementById(id).value = valorCampo || ""; }
+function criarEditorLista(elemento) {
+    const campo = elemento.querySelector("input");
+    const lista = elemento.querySelector(".lista-opcoes");
+    const mensagemVazia = elemento.querySelector(".lista-vazia");
+    let registros = [];
 
-function mostrarLogo(empresa) {
-    empresaAtual = empresa;
-    imagemLogo.hidden = !empresa.logoUrl;
-    semLogo.hidden = Boolean(empresa.logoUrl);
-    document.getElementById("excluirLogo").disabled = !empresa.logoUrl;
-    if (empresa.logoUrl) imagemLogo.src = `${empresa.logoUrl}?v=${Date.now()}`;
+    function ordenar() {
+        registros.sort((a, b) =>
+            a.descricao.localeCompare(b.descricao, "pt-BR", { sensitivity: "base" })
+        );
+    }
+
+    function renderizar() {
+        ordenar();
+        lista.replaceChildren();
+        mensagemVazia.hidden = registros.length > 0;
+
+        registros.forEach((registro, indice) => {
+            const item = document.createElement("li");
+            const descricao = document.createElement("span");
+            const botaoExcluir = document.createElement("button");
+
+            descricao.textContent = registro.descricao;
+            botaoExcluir.type = "button";
+            botaoExcluir.textContent = "−";
+            botaoExcluir.setAttribute("aria-label", `Excluir ${registro.descricao}`);
+            botaoExcluir.addEventListener("click", () => {
+                registros.splice(indice, 1);
+                renderizar();
+            });
+
+            item.append(descricao, botaoExcluir);
+            lista.appendChild(item);
+        });
+    }
+
+    function adicionar() {
+        const descricao = campo.value.trim();
+
+        if (!descricao) {
+            campo.focus();
+            return;
+        }
+
+        const existe = registros.some((registro) =>
+            registro.descricao.localeCompare(
+                descricao,
+                "pt-BR",
+                { sensitivity: "base" }
+            ) === 0
+        );
+
+        if (!existe) {
+            registros.push({ descricao });
+        }
+
+        campo.value = "";
+        renderizar();
+        campo.focus();
+    }
+
+    elemento.querySelector(".adicionar-opcao").addEventListener("click", adicionar);
+    campo.addEventListener("keydown", (evento) => {
+        if (evento.key === "Enter") {
+            evento.preventDefault();
+            adicionar();
+        }
+    });
+
+    return {
+        tipo: elemento.dataset.tipo,
+        definir(novosRegistros) {
+            registros = novosRegistros.map((registro) => ({ ...registro }));
+            campo.value = "";
+            renderizar();
+        },
+        obterDescricoes() {
+            ordenar();
+            return registros.map((registro) => registro.descricao);
+        }
+    };
+}
+
+const editoresLista = Array.from(document.querySelectorAll(".editor-lista"))
+    .map(criarEditorLista);
+
+function valor(id) {
+    return document.getElementById(id).value.trim();
+}
+
+function preencher(id, valorCampo) {
+    document.getElementById(id).value = valorCampo || "";
+}
+
+function revogarPreviewLogo() {
+    if (urlPreviewLogo) {
+        URL.revokeObjectURL(urlPreviewLogo);
+        urlPreviewLogo = null;
+    }
+}
+
+function exibirLogo(url) {
+    imagemLogo.hidden = !url;
+    semLogo.hidden = Boolean(url);
+    imagemLogo.removeAttribute("src");
+
+    if (url) {
+        imagemLogo.src = url;
+    }
+}
+
+function restaurarLogo() {
+    revogarPreviewLogo();
+    logoPendente = null;
+    arquivoLogo.value = "";
+    exibirLogo(
+        empresaAtual?.logoUrl
+            ? `${empresaAtual.logoUrl}?v=${Date.now()}`
+            : null
+    );
+    document.getElementById("excluirLogo").disabled = !empresaAtual?.logoUrl;
 }
 
 function preencherEmpresa(empresa) {
-    ["nome", "nomeFantasia", "cnpj", "email", "telefone", "whatsapp",
+    empresaAtual = empresa;
+    [
+        "nome", "nomeFantasia", "cnpj", "email", "telefone", "whatsapp",
         "logradouro", "numeroEndereco", "complemento", "bairro", "cidade",
-        "uf", "cep", "site", "instagram", "slogan"]
-        .forEach((campo) => preencher(campo, empresa[campo]));
-    campoCnpj.value = formatarCnpj(
-        empresa.cnpj
-    );
+        "uf", "cep", "site", "instagram", "slogan"
+    ].forEach((campo) => preencher(campo, empresa[campo]));
+
+    campoCnpj.value = formatarCnpj(empresa.cnpj);
     camposTelefone.forEach((campo) => {
-        campo.value = formatarTelefone(
-            empresa[campo.id]
-        );
+        campo.value = formatarTelefone(empresa[campo.id]);
     });
     editoresCor.forEach((editor) => editor.definir(empresa[editor.campo]));
-    mostrarLogo(empresa);
+    restaurarLogo();
+}
+
+function preencherCondicoes(condicoes) {
+    condicoesAtuais = {
+        prazosEntrega: condicoes.prazosEntrega.map((item) => ({ ...item })),
+        formasPagamento: condicoes.formasPagamento.map((item) => ({ ...item }))
+    };
+
+    editoresLista.find((editor) => editor.tipo === "prazos-entrega")
+        .definir(condicoesAtuais.prazosEntrega);
+    editoresLista.find((editor) => editor.tipo === "formas-pagamento")
+        .definir(condicoesAtuais.formasPagamento);
+}
+
+function restaurarDadosDaTela() {
+    preencherEmpresa(empresaAtual);
+    preencherCondicoes(condicoesAtuais);
+}
+
+function montarDadosEmpresa() {
+    const corpo = {};
+
+    [
+        "nome", "nomeFantasia", "cnpj", "email", "telefone", "whatsapp",
+        "logradouro", "numeroEndereco", "complemento", "bairro", "cidade",
+        "uf", "cep", "site", "instagram", "slogan"
+    ].forEach((campo) => {
+        corpo[campo] = valor(campo);
+    });
+    editoresCor.forEach((editor) => {
+        corpo[editor.campo] = editor.obter();
+    });
+
+    return corpo;
+}
+
+function validarSecao(secao) {
+    const campos = Array.from(secao.querySelectorAll("input"));
+    const invalido = campos.find((campo) => !campo.checkValidity());
+
+    if (invalido) {
+        invalido.reportValidity();
+        return false;
+    }
+
+    return true;
+}
+
+async function salvarDadosEmpresa() {
+    const resultado = await requisitar("/empresa", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(montarDadosEmpresa())
+    });
+    preencherEmpresa(resultado.empresa);
+}
+
+async function salvarLogo() {
+    if (logoPendente === "excluir") {
+        const resultado = await requisitar("/empresa/logo", { method: "DELETE" });
+        preencherEmpresa(resultado.empresa);
+        return;
+    }
+
+    if (logoPendente instanceof File) {
+        const dados = new FormData();
+        dados.append("logo", logoPendente);
+        const resultado = await requisitar("/empresa/logo", {
+            method: "POST",
+            body: dados
+        });
+        preencherEmpresa(resultado.empresa);
+    }
+}
+
+async function salvarCondicoes() {
+    const prazos = editoresLista.find((editor) => editor.tipo === "prazos-entrega");
+    const formas = editoresLista.find((editor) => editor.tipo === "formas-pagamento");
+    const resultado = await requisitar("/empresa/condicoes-comerciais", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            prazosEntrega: prazos.obterDescricoes(),
+            formasPagamento: formas.obterDescricoes()
+        })
+    });
+    preencherCondicoes(resultado);
 }
 
 async function carregar() {
-    const [empresa] = await Promise.all([
+    const [empresa, prazosEntrega, formasPagamento] = await Promise.all([
         requisitar("/empresa"),
-        ...editoresLista.map((editor) => editor.carregar())
+        requisitar("/empresa/prazos-entrega"),
+        requisitar("/empresa/formas-pagamento")
     ]);
+
     preencherEmpresa(empresa);
+    preencherCondicoes({ prazosEntrega, formasPagamento });
     mensagemPagina.hidden = true;
-    form.hidden = false;
-    botoesSalvar.forEach((botao) => {
-        botao.disabled = false;
-    });
+    navegacaoEmpresa.hidden = false;
 }
+
+campoCnpj.addEventListener("input", () => {
+    campoCnpj.value = formatarCnpj(campoCnpj.value);
+});
+
+camposTelefone.forEach((campo) => {
+    campo.addEventListener("input", () => {
+        campo.value = formatarTelefone(campo.value);
+    });
+});
+
+arquivoLogo.addEventListener("change", () => {
+    const arquivo = arquivoLogo.files[0];
+
+    if (!arquivo) {
+        restaurarLogo();
+        return;
+    }
+
+    if (!["image/jpeg", "image/png"].includes(arquivo.type)) {
+        arquivoLogo.value = "";
+        mostrarAviso("A logo deve estar no formato JPEG ou PNG.", true);
+        return;
+    }
+
+    if (arquivo.size > 5 * 1024 * 1024) {
+        arquivoLogo.value = "";
+        mostrarAviso("A logo deve possuir no máximo 5 MB.", true);
+        return;
+    }
+
+    revogarPreviewLogo();
+    logoPendente = arquivo;
+    urlPreviewLogo = URL.createObjectURL(arquivo);
+    exibirLogo(urlPreviewLogo);
+    document.getElementById("excluirLogo").disabled = false;
+});
+
+document.getElementById("excluirLogo").addEventListener("click", () => {
+    revogarPreviewLogo();
+    logoPendente = "excluir";
+    arquivoLogo.value = "";
+    exibirLogo(null);
+    document.getElementById("excluirLogo").disabled = true;
+});
+
+document.querySelectorAll("[data-abrir-secao]").forEach((botao) => {
+    botao.addEventListener("click", () => abrirSecao(botao.dataset.abrirSecao));
+});
+
+document.querySelectorAll("[data-voltar]").forEach((botao) => {
+    botao.addEventListener("click", async () => {
+        restaurarDadosDaTela();
+        await voltarAoMenu();
+    });
+});
 
 form.addEventListener("submit", async (evento) => {
     evento.preventDefault();
-    if (!form.reportValidity()) return;
 
-    botoesSalvar.forEach((botao) => {
-        botao.disabled = true;
-        botao.textContent = "Salvando...";
-    });
+    const botaoSalvar = evento.submitter;
+    const nomeSecao = botaoSalvar?.dataset.salvarSecao;
+    const secao = document.querySelector(`[data-secao="${nomeSecao}"]`);
+
+    if (!secao || !validarSecao(secao)) {
+        return;
+    }
+
+    botaoSalvar.disabled = true;
+    botaoSalvar.textContent = "Salvando...";
 
     try {
-        const corpo = {};
-        ["nome", "nomeFantasia", "cnpj", "email", "telefone", "whatsapp",
-            "logradouro", "numeroEndereco", "complemento", "bairro", "cidade",
-            "uf", "cep", "site", "instagram", "slogan"]
-            .forEach((campo) => { corpo[campo] = valor(campo); });
-        editoresCor.forEach((editor) => { corpo[editor.campo] = editor.obter(); });
-        const resultado = await requisitar("/empresa", {
-            method: "PUT", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(corpo)
-        });
-        preencherEmpresa(resultado.empresa);
-        mostrarAviso("Dados da empresa salvos com sucesso.");
+        if (nomeSecao === "logo") {
+            await salvarLogo();
+        } else if (nomeSecao === "condicoesComerciais") {
+            await salvarCondicoes();
+        } else {
+            await salvarDadosEmpresa();
+        }
+
+        await voltarAoMenu();
+        mostrarAviso("Dados salvos com sucesso.");
     } catch (erro) {
         mostrarAviso(erro.message, true);
     } finally {
-        botoesSalvar.forEach((botao) => {
-            botao.disabled = false;
-            botao.textContent = "Salvar empresa";
-        });
+        botaoSalvar.disabled = false;
+        botaoSalvar.textContent = "Salvar";
     }
-});
-
-document.getElementById("enviarLogo").addEventListener("click", async () => {
-    if (!arquivoLogo.files[0]) return mostrarAviso("Selecione uma logo.", true);
-    const dados = new FormData();
-    dados.append("logo", arquivoLogo.files[0]);
-    try {
-        const resultado = await requisitar("/empresa/logo", { method: "POST", body: dados });
-        mostrarLogo(resultado.empresa);
-        arquivoLogo.value = "";
-        mostrarAviso("Logo atualizada com sucesso.");
-    } catch (erro) { mostrarAviso(erro.message, true); }
-});
-
-document.getElementById("excluirLogo").addEventListener("click", async () => {
-    try {
-        const resultado = await requisitar("/empresa/logo", { method: "DELETE" });
-        mostrarLogo(resultado.empresa);
-        mostrarAviso("Logo excluída com sucesso.");
-    } catch (erro) { mostrarAviso(erro.message, true); }
 });
 
 carregar().catch((erro) => {
