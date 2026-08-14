@@ -40,7 +40,9 @@ const migration009Multiempresa =
 const migration010CondicoesComerciais =
     require("./migration010CondicoesComerciais");
 
-const VERSAO_ATUAL_DATABASE = 10;
+const migration011Usuarios = require("./migration011Usuarios");
+
+const VERSAO_ATUAL_DATABASE = 11;
 
 const migrations = [
     {
@@ -82,6 +84,10 @@ const migrations = [
     {
         versao: 10,
         executar: migration010CondicoesComerciais
+    },
+    {
+        versao: 11,
+        executar: migration011Usuarios
     }
 ];
 

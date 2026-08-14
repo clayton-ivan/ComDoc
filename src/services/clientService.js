@@ -2,12 +2,7 @@ const clientRepository = require(
     "../repositories/clientRepository"
 );
 
-const {
-    ID_EMPRESA_PADRAO,
-    COD_USUARIO_SISTEMA
-} = require(
-    "../constants/application"
-);
+const { obterIdEmpresaAtual, obterCodigoUsuarioAtual } = require("../context/requestContext");
 
 const {
     normalizarTexto,
@@ -42,10 +37,6 @@ const {
 | req.usuario.idEmpresa
 |
 */
-
-function obterIdEmpresaAtual() {
-    return ID_EMPRESA_PADRAO;
-}
 
 /*
 |--------------------------------------------------------------------------
@@ -313,7 +304,7 @@ function criar(
 
 function obterOuCriarCliente(
     dadosCliente,
-    codUsuarioEdicao = COD_USUARIO_SISTEMA
+    codUsuarioEdicao = obterCodigoUsuarioAtual()
 ) {
     const idEmpresa = obterIdEmpresaAtual();
 

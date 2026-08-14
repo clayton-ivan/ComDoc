@@ -6,14 +6,12 @@ const productImageService = require(
     "./productImageService"
 );
 
-const {
-    ID_EMPRESA_PADRAO
-} = require("../constants/application");
+const { obterIdEmpresaAtual } = require("../context/requestContext");
 
 function listar() {
     const produtos =
         productRepository.listar(
-            ID_EMPRESA_PADRAO
+            obterIdEmpresaAtual()
         );
 
     return produtos.sort(
@@ -32,7 +30,7 @@ function buscarPorCodigo(codigo) {
 
     return productRepository
         .buscarPorCodigo(
-            ID_EMPRESA_PADRAO,
+            obterIdEmpresaAtual(),
             codigo
         );
 }
@@ -152,7 +150,7 @@ function criar(dadosProduto) {
     const produtoExistente =
         productRepository
             .buscarPorCodigo(
-                ID_EMPRESA_PADRAO,
+                obterIdEmpresaAtual(),
                 codigo
             );
 
@@ -169,7 +167,7 @@ function criar(dadosProduto) {
 
     return productRepository
         .criar(
-            ID_EMPRESA_PADRAO,
+            obterIdEmpresaAtual(),
             produto
         );
 }
@@ -185,7 +183,7 @@ function atualizar(
     const produtoExistente =
         productRepository
             .buscarPorCodigo(
-                ID_EMPRESA_PADRAO,
+                obterIdEmpresaAtual(),
                 codigoNormalizado
             );
 
@@ -200,7 +198,7 @@ function atualizar(
 
     return productRepository
         .atualizar(
-            ID_EMPRESA_PADRAO,
+            obterIdEmpresaAtual(),
             codigoNormalizado,
             produto
         );
@@ -217,14 +215,14 @@ function excluir(codigo) {
 
     const excluido = productRepository
         .excluir(
-            ID_EMPRESA_PADRAO,
+            obterIdEmpresaAtual(),
             codigoNormalizado
         );
 
     if (excluido) {
         productImageService
             .excluirTodasPorProduto(
-                ID_EMPRESA_PADRAO,
+                obterIdEmpresaAtual(),
                 codigoNormalizado
             );
     }
@@ -235,7 +233,7 @@ function excluir(codigo) {
 function obterProximoCodigo() {
     return productRepository
         .obterProximoCodigo(
-            ID_EMPRESA_PADRAO
+            obterIdEmpresaAtual()
         );
 }
 

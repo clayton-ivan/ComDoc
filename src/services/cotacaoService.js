@@ -18,11 +18,12 @@ const commercialConditionService = require(
 );
 
 const {
-    ID_EMPRESA_PADRAO,
     COD_USUARIO_SISTEMA
 } = require(
     "../constants/application"
 );
+
+const { obterIdEmpresaAtual, obterCodigoUsuarioAtual } = require("../context/requestContext");
 
 /*
 |--------------------------------------------------------------------------
@@ -248,10 +249,10 @@ function obterProduto(
 function criar(
     dados,
     codUsuarioCriacao =
-        COD_USUARIO_SISTEMA
+        obterCodigoUsuarioAtual()
 ) {
     const idEmpresa =
-        ID_EMPRESA_PADRAO;
+        obterIdEmpresaAtual();
 
     const cotacao =
         normalizarCotacao(dados);

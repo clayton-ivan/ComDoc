@@ -5,10 +5,7 @@ const companyRepository = require(
     "../repositories/companyRepository"
 );
 
-const {
-    ID_EMPRESA_PADRAO,
-    COD_USUARIO_SISTEMA
-} = require("../constants/application");
+const { obterIdEmpresaAtual, obterCodigoUsuarioAtual } = require("../context/requestContext");
 
 const DIRETORIO_EMPRESAS = path.join(
     __dirname,
@@ -64,20 +61,19 @@ function salvarAtual(arquivo) {
         throw new Error("A logo deve estar no formato JPEG ou PNG.");
     }
 
-    const empresa = companyRepository.buscarPorId(
-        ID_EMPRESA_PADRAO
-    );
+    const idEmpresa = obterIdEmpresaAtual();
+    const empresa = companyRepository.buscarPorId(idEmpresa);
 
     if (!empresa) {
         return null;
     }
 
-    const pasta = diretorio(ID_EMPRESA_PADRAO);
+    const pasta = diretorio(idEmpresa);
     fs.mkdirSync(pasta, { recursive: true });
 
     const nomeArquivo = `logo${formato.extensao}`;
     const caminhoNovo = caminho(
-        ID_EMPRESA_PADRAO,
+        idEmpresa,
         nomeArquivo
     );
 
@@ -88,7 +84,7 @@ function salvarAtual(arquivo) {
         empresa.arquivoLogo !== nomeArquivo
     ) {
         const caminhoAnterior = caminho(
-            ID_EMPRESA_PADRAO,
+            idEmpresa,
             empresa.arquivoLogo
         );
 
@@ -98,16 +94,15 @@ function salvarAtual(arquivo) {
     }
 
     return companyRepository.atualizarLogo(
-        ID_EMPRESA_PADRAO,
+        idEmpresa,
         nomeArquivo,
-        COD_USUARIO_SISTEMA
+        obterCodigoUsuarioAtual()
     );
 }
 
 function excluirAtual() {
-    const empresa = companyRepository.buscarPorId(
-        ID_EMPRESA_PADRAO
-    );
+    const idEmpresa = obterIdEmpresaAtual();
+    const empresa = companyRepository.buscarPorId(idEmpresa);
 
     if (!empresa) {
         return null;
@@ -115,7 +110,7 @@ function excluirAtual() {
 
     if (empresa.arquivoLogo) {
         const arquivo = caminho(
-            ID_EMPRESA_PADRAO,
+            idEmpresa,
             empresa.arquivoLogo
         );
 
@@ -124,7 +119,7 @@ function excluirAtual() {
         }
 
         const pasta = diretorio(
-            ID_EMPRESA_PADRAO
+            idEmpresa
         );
 
         if (
@@ -136,9 +131,9 @@ function excluirAtual() {
     }
 
     return companyRepository.atualizarLogo(
-        ID_EMPRESA_PADRAO,
+        idEmpresa,
         null,
-        COD_USUARIO_SISTEMA
+        obterCodigoUsuarioAtual()
     );
 }
 
