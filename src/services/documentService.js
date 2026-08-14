@@ -7,9 +7,7 @@ const productImageService = require(
     "./productImageService"
 );
 
-const {
-    ID_EMPRESA_PADRAO
-} = require("../constants/application");
+const { obterIdEmpresaAtual } = require("../context/requestContext");
 
 const companyLogoService = require(
     "./companyLogoService"
@@ -98,7 +96,7 @@ function prepararBloco(
 function prepararProduto(contexto) {
     const idEmpresa =
         contexto.idEmpresa ||
-        ID_EMPRESA_PADRAO;
+        obterIdEmpresaAtual();
 
     const blocos = Array.isArray(
         contexto.produtoBlocos

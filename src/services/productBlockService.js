@@ -6,9 +6,7 @@ const productImageService = require(
     "./productImageService"
 );
 
-const {
-    ID_EMPRESA_PADRAO
-} = require("../constants/application");
+const { obterIdEmpresaAtual } = require("../context/requestContext");
 
 const TIPOS_BLOCO = {
     TEXTO: "TEXTO",
@@ -343,7 +341,7 @@ function listarPorCodigoProduto(codigoProduto) {
 
     return productBlockRepository
         .listarPorCodigoProduto(
-            ID_EMPRESA_PADRAO,
+            obterIdEmpresaAtual(),
             codigoNormalizado
         );
 }
@@ -368,7 +366,7 @@ function substituirPorCodigoProduto(
                 bloco.tipo === TIPOS_BLOCO.IMAGEM &&
                 !productImageService
                     .caminhoPertenceAoProduto(
-                        ID_EMPRESA_PADRAO,
+                        obterIdEmpresaAtual(),
                         codigoNormalizado,
                         bloco.conteudo
                     )
@@ -382,7 +380,7 @@ function substituirPorCodigoProduto(
 
     return productBlockRepository
         .substituirPorCodigoProduto(
-            ID_EMPRESA_PADRAO,
+            obterIdEmpresaAtual(),
             codigoNormalizado,
             blocosValidados
         );

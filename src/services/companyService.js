@@ -2,10 +2,7 @@ const companyRepository = require(
     "../repositories/companyRepository"
 );
 
-const {
-    ID_EMPRESA_PADRAO,
-    COD_USUARIO_SISTEMA
-} = require("../constants/application");
+const { obterIdEmpresaAtual, obterCodigoUsuarioAtual } = require("../context/requestContext");
 
 function texto(valor) {
     return String(valor ?? "").trim();
@@ -29,7 +26,7 @@ function cor(valor, nomeCampo) {
 
 function obterAtual() {
     return companyRepository.buscarPorId(
-        ID_EMPRESA_PADRAO
+        obterIdEmpresaAtual()
     );
 }
 
@@ -53,7 +50,7 @@ function atualizarAtual(dados = {}) {
         slogan: texto(dados.slogan),
         corPrimaria: cor(dados.corPrimaria, "A cor primária"),
         corSecundaria: cor(dados.corSecundaria, "A cor secundária"),
-        usuarioEdicao: COD_USUARIO_SISTEMA
+        usuarioEdicao: obterCodigoUsuarioAtual()
     };
 
     if (!empresa.nome) {
@@ -95,7 +92,7 @@ function atualizarAtual(dados = {}) {
     }
 
     return companyRepository.atualizar(
-        ID_EMPRESA_PADRAO,
+        obterIdEmpresaAtual(),
         empresa
     );
 }

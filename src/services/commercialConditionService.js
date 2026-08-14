@@ -2,10 +2,7 @@ const repository = require(
     "../repositories/commercialConditionRepository"
 );
 
-const {
-    ID_EMPRESA_PADRAO,
-    COD_USUARIO_SISTEMA
-} = require("../constants/application");
+const { obterIdEmpresaAtual, obterCodigoUsuarioAtual } = require("../context/requestContext");
 
 function normalizarDescricao(valor) {
     return String(valor ?? "").trim();
@@ -22,7 +19,7 @@ function normalizarId(valor) {
 }
 
 function listar(tipo) {
-    return repository.listar(tipo, ID_EMPRESA_PADRAO);
+    return repository.listar(tipo, obterIdEmpresaAtual());
 }
 
 function obterOuCriar(tipo, valor) {
@@ -40,7 +37,7 @@ function obterOuCriar(tipo, valor) {
 
     const existente = repository.buscarPorDescricao(
         tipo,
-        ID_EMPRESA_PADRAO,
+        obterIdEmpresaAtual(),
         descricao
     );
 
@@ -50,16 +47,16 @@ function obterOuCriar(tipo, valor) {
 
     return repository.criar(
         tipo,
-        ID_EMPRESA_PADRAO,
+        obterIdEmpresaAtual(),
         descricao,
-        COD_USUARIO_SISTEMA
+        obterCodigoUsuarioAtual()
     );
 }
 
 function excluir(tipo, valorId) {
     return repository.excluir(
         tipo,
-        ID_EMPRESA_PADRAO,
+        obterIdEmpresaAtual(),
         normalizarId(valorId)
     );
 }
@@ -109,9 +106,9 @@ function substituirTodas(dados = {}) {
     };
 
     repository.substituirTodas(
-        ID_EMPRESA_PADRAO,
+        obterIdEmpresaAtual(),
         condicoes,
-        COD_USUARIO_SISTEMA
+        obterCodigoUsuarioAtual()
     );
 
     return {

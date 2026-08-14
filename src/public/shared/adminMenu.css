@@ -40,7 +40,8 @@
     box-shadow: 0 10px 30px rgb(0 0 0 / 20%);
 }
 
-.opcoes-menu-admin a {
+.opcoes-menu-admin a,
+.opcoes-menu-admin .sair-menu-admin {
     display: block;
     min-height: 44px;
     padding: 13px 16px;
@@ -49,11 +50,25 @@
     text-align: left;
     text-decoration: none;
     white-space: nowrap;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.opcoes-menu-admin .sair-menu-admin {
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
     font-weight: 600;
 }
 
 .opcoes-menu-admin a:hover,
-.opcoes-menu-admin a:focus-visible {
+.opcoes-menu-admin a:focus-visible,
+.opcoes-menu-admin .sair-menu-admin:hover,
+.opcoes-menu-admin .sair-menu-admin:focus-visible {
     background: #f3f4f6;
     text-decoration: none;
 }

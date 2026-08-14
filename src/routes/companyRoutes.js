@@ -9,11 +9,12 @@ const commercialConditionController = require(
 );
 
 const router = express.Router();
+const { exigirAdmin } = require("../middleware/authMiddleware");
 
 router.get("/", companyController.buscar);
-router.put("/", companyController.atualizar);
-router.post("/logo", companyController.uploadLogo);
-router.delete("/logo", companyController.excluirLogo);
+router.put("/", exigirAdmin, companyController.atualizar);
+router.post("/logo", exigirAdmin, companyController.uploadLogo);
+router.delete("/logo", exigirAdmin, companyController.excluirLogo);
 
 router.get(
     "/prazos-entrega",
@@ -21,10 +22,12 @@ router.get(
 );
 router.post(
     "/prazos-entrega",
+    exigirAdmin,
     commercialConditionController.prazosEntrega.criar
 );
 router.delete(
     "/prazos-entrega/:id",
+    exigirAdmin,
     commercialConditionController.prazosEntrega.excluir
 );
 
@@ -34,15 +37,18 @@ router.get(
 );
 router.post(
     "/formas-pagamento",
+    exigirAdmin,
     commercialConditionController.formasPagamento.criar
 );
 router.delete(
     "/formas-pagamento/:id",
+    exigirAdmin,
     commercialConditionController.formasPagamento.excluir
 );
 
 router.put(
     "/condicoes-comerciais",
+    exigirAdmin,
     commercialConditionController.substituirTodas
 );
 

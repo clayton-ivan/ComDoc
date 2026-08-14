@@ -1,0 +1,5 @@
+import { requisitar, mostrarToast } from "./auth.js";
+const lista=document.getElementById("empresas"); let empresas=[];
+function renderizar(){const q=document.getElementById("pesquisa").value.toLocaleLowerCase("pt-BR");lista.replaceChildren();empresas.filter(e=>`${e.nomeFantasia} ${e.nome}`.toLocaleLowerCase("pt-BR").includes(q)).forEach(e=>{const li=document.createElement("li"),b=document.createElement("button");b.type="button";b.innerHTML=`<strong></strong><span></span>`;b.querySelector("strong").textContent=e.nomeFantasia;b.querySelector("span").textContent=e.nome;b.onclick=async()=>{await requisitar("/auth/selecionar-empresa",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({idEmpresa:e.id})});location.href="/";};li.append(b);lista.append(li);});}
+document.getElementById("pesquisa").oninput=renderizar;document.getElementById("sair").onclick=async()=>{await requisitar("/auth/logout",{method:"POST"});location.href="/login";};
+requisitar("/auth/empresas").then(r=>{empresas=r;renderizar();}).catch(e=>mostrarToast(e.message,true));

@@ -70,6 +70,13 @@ function buscarPorId(idEmpresa) {
     );
 }
 
+function listar() {
+    return databaseRepository.buscarTodos(`
+        SELECT * FROM empresa
+        ORDER BY nom_fantasia COLLATE NOCASE, nom_empresa COLLATE NOCASE
+    `).map(mapear);
+}
+
 function atualizar(idEmpresa, empresa) {
     const resultado = databaseRepository.executar(
         `
@@ -146,6 +153,7 @@ function atualizarLogo(idEmpresa, arquivoLogo, usuarioEdicao) {
 
 module.exports = {
     buscarPorId,
+    listar,
     atualizar,
     atualizarLogo
 };

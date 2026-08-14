@@ -28,9 +28,7 @@ const HTTP =
         "../constants/httpStatus"
     );
 
-const {
-    ID_EMPRESA_PADRAO
-} = require("../constants/application");
+const { obterIdEmpresaAtual } = require("../context/requestContext");
 
 /*
 |--------------------------------------------------------------------------
@@ -70,7 +68,7 @@ const gerar = async (req, res) => {
             ...req.body,
 
             idEmpresa:
-                ID_EMPRESA_PADRAO,
+                obterIdEmpresaAtual(),
 
             empresa:
                 companyService.obterAtual(),
@@ -174,7 +172,7 @@ const preVisualizarProduto = async (
         const pdf =
             await productPreviewService.gerar({
                 idEmpresa:
-                    ID_EMPRESA_PADRAO,
+                    obterIdEmpresaAtual(),
                 empresa:
                     companyService.obterAtual(),
                 produtoCodigo:

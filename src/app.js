@@ -13,6 +13,11 @@ const documentRoutes =
 const companyRoutes =
     require("./routes/companyRoutes");
 
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+const authMiddleware = require("./middleware/authMiddleware");
+const requestContext = require("./context/requestContext");
+
 const {
     inicializarDatabase
 } = require("./database/database");
@@ -35,6 +40,18 @@ app.use(express.json());
 
 inicializarDatabase();
 
+app.use(requestContext.middleware);
+app.use(authMiddleware.carregar);
+
+app.use((req, res, next) => {
+    if (["GET", "HEAD", "OPTIONS"].includes(req.method)) return next();
+    const origem = req.headers.origin;
+    if (origem && origem !== `${req.protocol}://${req.get("host")}`) {
+        return res.status(403).json({ sucesso: false, mensagem: "Origem da requisição não autorizada." });
+    }
+    next();
+});
+
 /*
 |--------------------------------------------------------------------------
 | Arquivos estáticos
@@ -49,6 +66,7 @@ app.use(
 
 app.use(
     "/uploads",
+    authMiddleware.exigirApi,
     express.static(
         path.join(__dirname, "uploads")
     )
@@ -60,7 +78,15 @@ app.use(
 |--------------------------------------------------------------------------
 */
 
-app.get("/", (req, res) => {
+function enviarPagina(pasta, arquivo) {
+    return (req, res) => res.sendFile(path.join(__dirname, "public", pasta, arquivo));
+}
+
+app.get("/login", enviarPagina("auth", "login.html"));
+app.get("/trocar-senha", enviarPagina("auth", "trocarSenha.html"));
+app.get("/selecionar-empresa", enviarPagina("auth", "selecionarEmpresa.html"));
+
+app.get("/", authMiddleware.exigirPagina, (req, res) => {
     res.sendFile(
         path.join(
             __dirname,
@@ -71,7 +97,7 @@ app.get("/", (req, res) => {
     );
 });
 
-app.get("/admin/produtos", (req, res) => {
+app.get("/admin/produtos", authMiddleware.exigirPagina, (req, res) => {
     res.sendFile(
         path.join(
             __dirname,
@@ -82,7 +108,7 @@ app.get("/admin/produtos", (req, res) => {
     );
 });
 
-app.get("/admin/empresa", (req, res) => {
+app.get("/admin/empresa", authMiddleware.exigirPagina, authMiddleware.exigirAdminPagina, (req, res) => {
     res.sendFile(
         path.join(
             __dirname,
@@ -95,6 +121,7 @@ app.get("/admin/empresa", (req, res) => {
 
 app.get(
     "/admin/produtos/:codigo/descricao/preview",
+    authMiddleware.exigirPagina,
     (req, res) => {
         res.sendFile(
             path.join(
@@ -109,6 +136,7 @@ app.get(
 
 app.get(
     "/admin/produtos/:codigo/descricao",
+    authMiddleware.exigirPagina,
     (req, res) => {
         res.sendFile(
             path.join(
@@ -121,7 +149,7 @@ app.get(
     }
 );
 
-app.get("/admin/clientes", (req, res) => {
+app.get("/admin/clientes", authMiddleware.exigirPagina, (req, res) => {
     res.sendFile(
         path.join(
             __dirname,
@@ -132,16 +160,21 @@ app.get("/admin/clientes", (req, res) => {
     );
 });
 
+app.get("/minha-conta", authMiddleware.exigirPagina, enviarPagina("auth", "minhaConta.html"));
+app.get("/admin/usuarios", authMiddleware.exigirPagina, authMiddleware.exigirAdminPagina, enviarPagina("usuarioAdmin", "usuarioAdmin.html"));
+
 /*
 |--------------------------------------------------------------------------
 | Rotas da aplicação
 |--------------------------------------------------------------------------
 */
 
-app.use("/documentos", documentRoutes);
-app.use("/produtos", productRoutes);
-app.use("/clientes", clientRoutes);
-app.use("/empresa", companyRoutes);
+app.use("/auth", authRoutes);
+app.use("/documentos", authMiddleware.exigirApi, documentRoutes);
+app.use("/produtos", authMiddleware.exigirApi, productRoutes);
+app.use("/clientes", authMiddleware.exigirApi, clientRoutes);
+app.use("/empresa", authMiddleware.exigirApi, companyRoutes);
+app.use("/usuarios", authMiddleware.exigirApi, userRoutes);
 
 /*
 |--------------------------------------------------------------------------
