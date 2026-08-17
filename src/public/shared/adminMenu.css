@@ -3,6 +3,20 @@
     flex: 0 0 auto;
 }
 
+.empresa-selecionada-super {
+    display: block;
+    padding: 8px 16px;
+    background: #111827;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.empresa-selecionada-super:hover,
+.empresa-selecionada-super:focus-visible { text-decoration: underline; }
+
 .topbar .botao-menu-admin {
     width: 44px;
     min-width: 44px;
@@ -53,6 +67,12 @@
     font-family: Arial, sans-serif;
     font-size: 16px;
     font-weight: 600;
+}
+
+.separador-menu-admin {
+    height: 1px;
+    margin: 4px 0;
+    background: #d1d5db;
 }
 
 .opcoes-menu-admin .sair-menu-admin {

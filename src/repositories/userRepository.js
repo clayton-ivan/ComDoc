@@ -41,6 +41,15 @@ function listar(idEmpresa, superUsuario) {
     return registros.map(mapear);
 }
 
+function buscarAdminEmpresa(idEmpresa) {
+    return mapear(obterDatabase().prepare(`
+        SELECT * FROM usuario
+        WHERE id_empresa = ? AND sg_perfil = 'ADMIN'
+        ORDER BY fg_status DESC, id_usuario DESC
+        LIMIT 1
+    `).get(idEmpresa));
+}
+
 function criar(usuario, idUsuarioCriacao = null) {
     const resultado = obterDatabase().prepare(`
         INSERT INTO usuario (
@@ -107,7 +116,16 @@ function revogarTodas(idUsuario) {
     return buscarPorId(idUsuario);
 }
 
+function revogarEmpresa(idEmpresa) {
+    obterDatabase().prepare(`
+        UPDATE usuario
+        SET num_versao_sessao = num_versao_sessao + 1
+        WHERE id_empresa = ?
+    `).run(idEmpresa);
+}
+
 module.exports = {
-    buscarPorEmail, buscarPorId, listar, criar, atualizar,
-    atualizarSenha, registrarFalha, registrarLogin, revogarTodas
+    buscarPorEmail, buscarPorId, buscarAdminEmpresa, listar, criar, atualizar,
+    atualizarSenha, registrarFalha, registrarLogin, revogarTodas,
+    revogarEmpresa
 };

@@ -80,6 +80,11 @@ function criarTabelaEmpresa(database) {
 
             nom_arquivo_logo TEXT,
 
+            fg_status INTEGER
+                NOT NULL
+                DEFAULT 1
+                CHECK (fg_status IN (0, 1)),
+
             dt_criacao TEXT
                 NOT NULL
                 DEFAULT (

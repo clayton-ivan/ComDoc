@@ -34,7 +34,8 @@ function buscar(req, res) {
 function atualizar(req, res) {
     try {
         const empresa = companyService.atualizarAtual(
-            req.body
+            req.body,
+            req.usuario
         );
 
         return res.json({ sucesso: true, empresa });
@@ -43,6 +44,39 @@ function atualizar(req, res) {
             sucesso: false,
             mensagem: erro.message
         });
+    }
+}
+
+function listar(req, res) {
+    return res.json(companyService.listarGerenciamento());
+}
+
+async function criar(req, res) {
+    try {
+        const empresa = await companyService.criar(req.body, req.usuario);
+        return res.status(HTTP.CREATED).json({ sucesso: true, empresa });
+    } catch (erro) {
+        return res.status(HTTP.BAD_REQUEST).json({ sucesso: false, mensagem: erro.message });
+    }
+}
+
+async function atualizarAdministrador(req, res) {
+    try {
+        const administrador = await companyService.atualizarAdministradorAtual(req.body, req.usuario);
+        return res.json({ sucesso: true, administrador });
+    } catch (erro) {
+        return res.status(HTTP.BAD_REQUEST).json({ sucesso: false, mensagem: erro.message });
+    }
+}
+
+async function redefinirSenhaAdministrador(req, res) {
+    try {
+        const administrador = await companyService.redefinirSenhaAdministradorAtual(
+            req.body?.senha, req.usuario
+        );
+        return res.json({ sucesso: true, administrador });
+    } catch (erro) {
+        return res.status(HTTP.BAD_REQUEST).json({ sucesso: false, mensagem: erro.message });
     }
 }
 
@@ -92,7 +126,11 @@ function excluirLogo(req, res) {
 
 module.exports = {
     buscar,
+    listar,
+    criar,
     atualizar,
+    atualizarAdministrador,
+    redefinirSenhaAdministrador,
     uploadLogo,
     excluirLogo
 };
