@@ -55,6 +55,11 @@ function mapear(registro) {
         corPrimaria: registro.cod_cor_primaria,
         corSecundaria: registro.cod_cor_secundaria,
         arquivoLogo: registro.nom_arquivo_logo,
+        ativo: Boolean(registro.fg_status),
+        quantidadeUsuariosAtivos:
+            registro.qtd_usuarios_ativos === undefined
+                ? undefined
+                : Number(registro.qtd_usuarios_ativos),
         logoUrl: registro.nom_arquivo_logo
             ? `/uploads/empresas/${registro.id_empresa}/${registro.nom_arquivo_logo}`
             : null
@@ -75,6 +80,41 @@ function listar() {
         SELECT * FROM empresa
         ORDER BY nom_fantasia COLLATE NOCASE, nom_empresa COLLATE NOCASE
     `).map(mapear);
+}
+
+function listarComResumo() {
+    return databaseRepository.buscarTodos(`
+        SELECT empresa.*,
+            COUNT(usuario.id_usuario) AS qtd_usuarios_ativos
+        FROM empresa
+        LEFT JOIN usuario
+            ON usuario.id_empresa = empresa.id_empresa
+           AND usuario.fg_status = 1
+        GROUP BY empresa.id_empresa
+        ORDER BY empresa.nom_fantasia COLLATE NOCASE,
+                 empresa.nom_empresa COLLATE NOCASE
+    `).map(mapear);
+}
+
+function criar(empresa) {
+    const resultado = databaseRepository.executar(`
+        INSERT INTO empresa (
+            nom_empresa, nom_fantasia, num_cnpj, end_email,
+            num_telefone, num_whatsapp, nom_logradouro, num_endereco,
+            nom_complem, nom_bairro, nom_cidade, sg_uf, num_cep,
+            end_site, nom_instagram, dsc_slogan, cod_cor_primaria,
+            cod_cor_secundaria, fg_status, cod_usu_edicao
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+        empresa.nome, empresa.nomeFantasia, empresa.cnpj || null,
+        empresa.email, empresa.telefone, empresa.whatsapp,
+        empresa.logradouro, empresa.numeroEndereco, empresa.complemento,
+        empresa.bairro, empresa.cidade, empresa.uf, empresa.cep,
+        empresa.site, empresa.instagram, empresa.slogan,
+        empresa.corPrimaria, empresa.corSecundaria,
+        empresa.ativo ? 1 : 0, empresa.usuarioEdicao
+    ]);
+    return buscarPorId(Number(resultado.lastInsertRowid));
 }
 
 function atualizar(idEmpresa, empresa) {
@@ -100,6 +140,7 @@ function atualizar(idEmpresa, empresa) {
                 dsc_slogan = ?,
                 cod_cor_primaria = ?,
                 cod_cor_secundaria = ?,
+                fg_status = ?,
                 dt_edicao = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
                 cod_usu_edicao = ?
             WHERE id_empresa = ?
@@ -123,6 +164,7 @@ function atualizar(idEmpresa, empresa) {
             empresa.slogan,
             empresa.corPrimaria,
             empresa.corSecundaria,
+            empresa.ativo ? 1 : 0,
             empresa.usuarioEdicao,
             idEmpresa
         ]
@@ -154,6 +196,8 @@ function atualizarLogo(idEmpresa, arquivoLogo, usuarioEdicao) {
 module.exports = {
     buscarPorId,
     listar,
+    listarComResumo,
+    criar,
     atualizar,
     atualizarLogo
 };

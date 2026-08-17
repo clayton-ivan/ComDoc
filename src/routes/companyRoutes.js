@@ -9,10 +9,12 @@ const commercialConditionController = require(
 );
 
 const router = express.Router();
-const { exigirAdmin } = require("../middleware/authMiddleware");
+const { exigirAdmin, exigirSuper } = require("../middleware/authMiddleware");
 
 router.get("/", companyController.buscar);
 router.put("/", exigirAdmin, companyController.atualizar);
+router.put("/administrador", exigirSuper, companyController.atualizarAdministrador);
+router.put("/administrador/senha", exigirSuper, companyController.redefinirSenhaAdministrador);
 router.post("/logo", exigirAdmin, companyController.uploadLogo);
 router.delete("/logo", exigirAdmin, companyController.excluirLogo);
 

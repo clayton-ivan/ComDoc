@@ -60,23 +60,48 @@ fetch("/auth/sessao")
     .then((sessao) => {
         if (!sessao.autenticado) return;
 
+        document.querySelectorAll(".empresa-selecionada-super").forEach((item) => item.remove());
+        if (sessao.usuario.perfil === "SUPER" && sessao.empresaSelecionada) {
+            const indicador = document.createElement("a");
+            indicador.className = "empresa-selecionada-super";
+            indicador.href = "/admin/empresas";
+            indicador.textContent = `Empresa selecionada: ${sessao.empresaSelecionada.nomeFantasia}`;
+            document.querySelector(".topbar")?.insertAdjacentElement("afterend", indicador);
+        }
+
         document.querySelectorAll(".opcoes-menu-admin").forEach((menu) => {
-            if (["SUPER", "ADMIN"].includes(sessao.usuario.perfil) && !menu.querySelector('[href="/admin/usuarios"]')) {
-                const usuarios = document.createElement("a");
-                usuarios.href = "/admin/usuarios";
-                usuarios.textContent = "Usuários";
-                menu.appendChild(usuarios);
+            function adicionarLink(texto, destino) {
+                const link = document.createElement("a");
+                link.href = destino;
+                link.textContent = texto;
+                menu.appendChild(link);
             }
+
+            function adicionarSeparador() {
+                const separador = document.createElement("div");
+                separador.className = "separador-menu-admin";
+                separador.setAttribute("role", "separator");
+                menu.appendChild(separador);
+            }
+
+            menu.replaceChildren();
+            adicionarLink("Nova cotação", "/");
             if (sessao.usuario.perfil === "SUPER") {
-                const empresa = document.createElement("a");
-                empresa.href = "/selecionar-empresa";
-                empresa.textContent = "Trocar empresa";
-                menu.appendChild(empresa);
+                adicionarLink("Gerenciar empresas", "/admin/empresas");
             }
-            const conta = document.createElement("a");
-            conta.href = "/minha-conta";
-            conta.textContent = `${sessao.usuario.nome.split(" ")[0]} (${sessao.usuario.perfil.toLowerCase()})`;
-            menu.appendChild(conta);
+            adicionarSeparador();
+            adicionarLink("Clientes", "/admin/clientes");
+            adicionarLink("Produtos", "/admin/produtos");
+
+            if (["SUPER", "ADMIN"].includes(sessao.usuario.perfil)) {
+                adicionarSeparador();
+                adicionarLink("Empresa", "/admin/empresa");
+                adicionarLink("Usuários", "/admin/usuarios");
+            }
+
+            adicionarSeparador();
+            adicionarLink("Minha conta", "/minha-conta");
+
             const sair = document.createElement("button");
             sair.type = "button";
             sair.className = "sair-menu-admin";

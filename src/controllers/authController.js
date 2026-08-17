@@ -24,10 +24,14 @@ async function login(req, res) {
 }
 
 function sessao(req, res) {
+    const empresaSelecionada = req.idEmpresa
+        ? companyRepository.buscarPorId(req.idEmpresa)
+        : null;
     return res.json({
         autenticado: Boolean(req.usuario),
         usuario: userService.publico(req.usuario),
-        idEmpresaAtiva: req.idEmpresa || null
+        idEmpresaAtiva: req.idEmpresa || null,
+        empresaSelecionada
     });
 }
 

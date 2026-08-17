@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Empresas - ComDoc</title>
+    <link rel="stylesheet" href="/auth/auth.css">
+    <link rel="stylesheet" href="/shared/adminMenu.css">
+    <link rel="stylesheet" href="/empresaGerenciamento/empresaGerenciamento.css">
+</head>
+<body>
+    <header class="topbar"><div>ComDoc</div><div class="menu-administracao"><button class="botao-menu-admin" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menuEmpresas">⋮</button><nav id="menuEmpresas" class="opcoes-menu-admin" hidden><a href="/">Nova cotação</a></nav></div></header>
+    <main class="empresas-container">
+        <header class="cabecalho"><div><h1>Empresas</h1><p>Cadastre empresas e escolha o contexto de trabalho.</p></div><a class="botao" href="/admin/empresa?nova=1">Nova empresa</a></header>
+        <label>Pesquisar<input id="pesquisa" type="search" placeholder="Nome, razão social ou CNPJ"></label>
+        <div id="lista" class="lista-empresas"></div>
+        <p id="mensagem" class="mensagem"></p>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="/shared/adminMenu.js"></script>
+    <script type="module" src="/empresaGerenciamento/empresaGerenciamento.js"></script>
+</body>
+</html>

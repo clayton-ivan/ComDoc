@@ -32,6 +32,27 @@
     <main class="container">
         <p id="mensagemPagina">Carregando empresa...</p>
 
+        <section id="cadastroInicial" class="tela-empresa" hidden>
+            <header class="cabecalho-pagina"><h1>Nova empresa</h1><p>Cadastre a empresa e seu administrador inicial.</p></header>
+            <form id="formCadastroInicial" class="cartao">
+                <h2>Empresa</h2>
+                <div class="grade duas-colunas">
+                    <label>Razão social<input id="novaNome" required maxlength="150"></label>
+                    <label>Nome fantasia<input id="novaNomeFantasia" required maxlength="150"></label>
+                    <label>CNPJ<input id="novoCnpj" inputmode="numeric" maxlength="18"></label>
+                    <label>E-mail da empresa<input id="novoEmailEmpresa" type="email" maxlength="150"></label>
+                </div>
+                <h2 class="titulo-administrador">Administrador</h2>
+                <div class="grade duas-colunas">
+                    <label>Nome<input id="novoAdminNome" required maxlength="150"></label>
+                    <label>E-mail de login<input id="novoAdminEmail" type="email" required maxlength="200"></label>
+                    <label>Senha provisória<input id="novoAdminSenha" type="password" required minlength="7" maxlength="128"></label>
+                </div>
+                <p class="ajuda">A senha deve possuir ao menos uma letra e um número. A troca será exigida no primeiro acesso.</p>
+                <div class="acoes-secao"><a class="botao-link secundario" href="/admin/empresas">Cancelar</a><button type="submit">Cadastrar empresa</button></div>
+            </form>
+        </section>
+
         <div id="navegacaoEmpresa" hidden>
             <section id="menuSecoes" class="tela-empresa menu-secoes">
                 <header class="cabecalho-pagina">
@@ -66,6 +87,10 @@
                         <strong>Condições comerciais</strong>
                         <span>Prazos de entrega e formas de pagamento</span>
                     </button>
+                    <button id="abrirAdministrador" type="button" data-abrir-secao="administrador" hidden>
+                        <strong>Administrador</strong>
+                        <span>Responsável principal pela empresa</span>
+                    </button>
                 </nav>
             </section>
 
@@ -85,11 +110,27 @@
                             <label>WhatsApp<input id="whatsapp" inputmode="tel" maxlength="15"></label>
                         </div>
                         <label>Slogan<input id="slogan" maxlength="200"></label>
+                        <label id="campoEmpresaAtiva" class="check" hidden><input id="empresaAtiva" type="checkbox"> Empresa ativa</label>
                     </div>
                     <div class="acoes-secao">
                         <button type="button" class="secundario" data-voltar>Voltar</button>
                         <button type="submit" data-salvar-secao="identificacao">Salvar</button>
                     </div>
+                </section>
+
+                <section class="tela-empresa secao-empresa" data-secao="administrador" hidden>
+                    <header class="cabecalho-secao"><button type="button" class="botao-voltar" data-voltar>← Voltar</button><h1>Administrador</h1></header>
+                    <div class="cartao">
+                        <div class="grade duas-colunas">
+                            <label>Nome<input id="adminNome" required maxlength="150"></label>
+                            <label>E-mail de login<input id="adminEmail" type="email" required maxlength="200"></label>
+                            <label>Último acesso<input id="adminUltimoLogin" readonly></label>
+                            <label>Bloqueio temporário<input id="adminBloqueio" readonly></label>
+                        </div>
+                        <label class="check"><input id="adminTrocarSenha" type="checkbox"> Exigir troca de senha</label>
+                        <div class="redefinir-senha"><label>Nova senha provisória<input id="adminNovaSenha" type="password" minlength="7" maxlength="128"></label><button id="redefinirSenhaAdmin" type="button" class="secundario">Redefinir senha</button></div>
+                    </div>
+                    <div class="acoes-secao"><button type="button" class="secundario" data-voltar>Voltar</button><button type="submit" data-salvar-secao="administrador">Salvar</button></div>
                 </section>
 
                 <section class="tela-empresa secao-empresa" data-secao="endereco" hidden>

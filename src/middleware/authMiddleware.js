@@ -9,7 +9,11 @@ function carregar(req, res, next) {
 
     if (sessao) {
         const usuario = userRepository.buscarPorId(sessao.sub);
-        if (usuario?.ativo && usuario.versaoSessao === sessao.ver) {
+        const empresaUsuario = usuario?.perfil === "SUPER"
+            ? null
+            : companyRepository.buscarPorId(usuario?.idEmpresa);
+        if (usuario?.ativo && usuario.versaoSessao === sessao.ver &&
+            (usuario.perfil === "SUPER" || empresaUsuario?.ativo)) {
             req.usuario = usuario;
             req.manterConectado = Boolean(sessao.manter);
             req.senhaExpirada = authService.senhaExpirada(usuario);
@@ -31,8 +35,13 @@ function exigirApi(req, res, next) {
     if (req.senhaExpirada && req.path !== "/alterar-senha") {
         return res.status(403).json({ sucesso: false, codigo: "TROCAR_SENHA", mensagem: "Troca de senha obrigatória." });
     }
+    const rotaCompleta = req.originalUrl.split("?")[0];
+    const rotaPermitidaSemEmpresa =
+        rotaCompleta === "/auth/empresas" ||
+        rotaCompleta === "/auth/selecionar-empresa" ||
+        rotaCompleta.startsWith("/empresas");
     if (req.usuario.perfil === "SUPER" && !req.idEmpresa &&
-        !req.path.startsWith("/empresas") &&
+        !rotaPermitidaSemEmpresa &&
         !["/alterar-senha", "/selecionar-empresa"].includes(req.path)) {
         return res.status(403).json({ sucesso: false, codigo: "SELECIONAR_EMPRESA", mensagem: "Selecione uma empresa." });
     }
@@ -60,4 +69,21 @@ function exigirAdminPagina(req, res, next) {
     next();
 }
 
-module.exports = { carregar, exigirApi, exigirPagina, exigirAdmin, exigirAdminPagina };
+function exigirSuper(req, res, next) {
+    if (req.usuario?.perfil !== "SUPER") {
+        return res.status(403).json({ sucesso: false, mensagem: "Acesso não autorizado." });
+    }
+    next();
+}
+
+function exigirSuperPagina(req, res, next) {
+    if (!req.usuario) return res.redirect("/login");
+    if (req.senhaExpirada) return res.redirect("/trocar-senha");
+    if (req.usuario.perfil !== "SUPER") return res.redirect("/");
+    next();
+}
+
+module.exports = {
+    carregar, exigirApi, exigirPagina, exigirAdmin, exigirAdminPagina,
+    exigirSuper, exigirSuperPagina
+};

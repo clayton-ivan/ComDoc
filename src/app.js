@@ -12,6 +12,7 @@ const documentRoutes =
 
 const companyRoutes =
     require("./routes/companyRoutes");
+const companyManagementRoutes = require("./routes/companyManagementRoutes");
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -108,7 +109,12 @@ app.get("/admin/produtos", authMiddleware.exigirPagina, (req, res) => {
     );
 });
 
-app.get("/admin/empresa", authMiddleware.exigirPagina, authMiddleware.exigirAdminPagina, (req, res) => {
+app.get("/admin/empresa", (req, res, next) => {
+    if (req.query.nova === "1" && req.usuario?.perfil === "SUPER") {
+        return authMiddleware.exigirSuperPagina(req, res, next);
+    }
+    return authMiddleware.exigirPagina(req, res, next);
+}, authMiddleware.exigirAdminPagina, (req, res) => {
     res.sendFile(
         path.join(
             __dirname,
@@ -118,6 +124,12 @@ app.get("/admin/empresa", authMiddleware.exigirPagina, authMiddleware.exigirAdmi
         )
     );
 });
+
+app.get(
+    "/admin/empresas",
+    authMiddleware.exigirSuperPagina,
+    enviarPagina("empresaGerenciamento", "empresaGerenciamento.html")
+);
 
 app.get(
     "/admin/produtos/:codigo/descricao/preview",
@@ -174,6 +186,7 @@ app.use("/documentos", authMiddleware.exigirApi, documentRoutes);
 app.use("/produtos", authMiddleware.exigirApi, productRoutes);
 app.use("/clientes", authMiddleware.exigirApi, clientRoutes);
 app.use("/empresa", authMiddleware.exigirApi, companyRoutes);
+app.use("/empresas", authMiddleware.exigirApi, companyManagementRoutes);
 app.use("/usuarios", authMiddleware.exigirApi, userRoutes);
 
 /*

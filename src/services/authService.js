@@ -1,5 +1,6 @@
 const userRepository = require("../repositories/userRepository");
 const passwordService = require("./passwordService");
+const companyRepository = require("../repositories/companyRepository");
 
 const LIMITE_TENTATIVAS = 5;
 const BLOQUEIO_MS = 15 * 60 * 1000;
@@ -23,6 +24,9 @@ async function autenticar(dados = {}) {
     const usuario = userRepository.buscarPorEmail(email(dados.email));
 
     if (!usuario || !usuario.ativo) throw new Error(mensagem);
+    if (usuario.perfil !== "SUPER" && !companyRepository.buscarPorId(usuario.idEmpresa)?.ativo) {
+        throw new Error(mensagem);
+    }
     if (usuario.bloqueadoAte && Date.parse(usuario.bloqueadoAte) > Date.now()) {
         throw new Error("Acesso temporariamente bloqueado. Tente novamente mais tarde.");
     }

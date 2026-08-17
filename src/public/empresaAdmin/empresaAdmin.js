@@ -19,6 +19,7 @@ const camposTelefone = [
 ];
 
 let empresaAtual = null;
+let sessaoAtual = null;
 let secaoAtiva = null;
 let logoPendente = null;
 let urlPreviewLogo = null;
@@ -328,6 +329,18 @@ function preencherEmpresa(empresa) {
         campo.value = formatarTelefone(empresa[campo.id]);
     });
     editoresCor.forEach((editor) => editor.definir(empresa[editor.campo]));
+    document.getElementById("empresaAtiva").checked = empresa.ativo;
+    const admin = empresa.administrador;
+    preencher("adminNome", admin?.nome);
+    preencher("adminEmail", admin?.email);
+    preencher("adminUltimoLogin", admin?.ultimoLogin
+        ? new Date(admin.ultimoLogin).toLocaleString("pt-BR")
+        : "Nenhum acesso");
+    preencher("adminBloqueio", admin?.bloqueadoAte
+        ? new Date(admin.bloqueadoAte).toLocaleString("pt-BR")
+        : "Sem bloqueio");
+    document.getElementById("adminTrocarSenha").checked = Boolean(admin?.trocarSenha);
+    document.getElementById("adminNovaSenha").value = "";
     restaurarLogo();
 }
 
@@ -361,6 +374,9 @@ function montarDadosEmpresa() {
     editoresCor.forEach((editor) => {
         corpo[editor.campo] = editor.obter();
     });
+    if (sessaoAtual?.usuario.perfil === "SUPER") {
+        corpo.ativo = document.getElementById("empresaAtiva").checked;
+    }
 
     return corpo;
 }
@@ -418,14 +434,49 @@ async function salvarCondicoes() {
     preencherCondicoes(resultado);
 }
 
+async function salvarAdministrador() {
+    const resultado = await requisitar("/empresa/administrador", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            nome: valor("adminNome"),
+            email: valor("adminEmail"),
+            trocarSenha: document.getElementById("adminTrocarSenha").checked,
+            senha: valor("adminNovaSenha")
+        })
+    });
+    empresaAtual.administrador = resultado.administrador;
+    preencherEmpresa(empresaAtual);
+}
+
+async function carregarCadastroInicial() {
+    sessaoAtual = await requisitar("/auth/sessao");
+    if (sessaoAtual.usuario.perfil !== "SUPER") {
+        location.href = "/";
+        return;
+    }
+    mensagemPagina.hidden = true;
+    document.getElementById("cadastroInicial").hidden = false;
+}
+
 async function carregar() {
-    const [empresa, prazosEntrega, formasPagamento] = await Promise.all([
+    if (new URLSearchParams(location.search).get("nova") === "1") {
+        await carregarCadastroInicial();
+        return;
+    }
+    const [sessao, empresa, prazosEntrega, formasPagamento] = await Promise.all([
+        requisitar("/auth/sessao"),
         requisitar("/empresa"),
         requisitar("/empresa/prazos-entrega"),
         requisitar("/empresa/formas-pagamento")
     ]);
 
+    sessaoAtual = sessao;
     preencherEmpresa(empresa);
+    const superUsuario = sessao.usuario.perfil === "SUPER";
+    document.getElementById("abrirAdministrador").hidden = !superUsuario;
+    document.getElementById("campoEmpresaAtiva").hidden = false;
+    document.getElementById("empresaAtiva").disabled = !superUsuario;
     preencherCondicoes({ prazosEntrega, formasPagamento });
     mensagemPagina.hidden = true;
     navegacaoEmpresa.hidden = false;
@@ -476,6 +527,67 @@ document.getElementById("excluirLogo").addEventListener("click", () => {
     document.getElementById("excluirLogo").disabled = true;
 });
 
+document.getElementById("novoCnpj").addEventListener("input", (evento) => {
+    evento.target.value = formatarCnpj(evento.target.value);
+});
+
+document.getElementById("formCadastroInicial").addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+    const botao = evento.submitter;
+    botao.disabled = true;
+    try {
+        const resultado = await requisitar("/empresas", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                empresa: {
+                    nome: valor("novaNome"),
+                    nomeFantasia: valor("novaNomeFantasia"),
+                    cnpj: valor("novoCnpj"),
+                    email: valor("novoEmailEmpresa")
+                },
+                administrador: {
+                    nome: valor("novoAdminNome"),
+                    email: valor("novoAdminEmail"),
+                    senha: valor("novoAdminSenha")
+                }
+            })
+        });
+        await requisitar("/auth/selecionar-empresa", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idEmpresa: resultado.empresa.id })
+        });
+        location.href = "/admin/empresa";
+    } catch (erro) {
+        mostrarAviso(erro.message, true);
+        botao.disabled = false;
+    }
+});
+
+document.getElementById("redefinirSenhaAdmin").addEventListener("click", async (evento) => {
+    const senha = valor("adminNovaSenha");
+    if (!senha) {
+        document.getElementById("adminNovaSenha").focus();
+        return;
+    }
+    evento.currentTarget.disabled = true;
+    try {
+        const resultado = await requisitar("/empresa/administrador/senha", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ senha })
+        });
+        empresaAtual.administrador = resultado.administrador;
+        preencherEmpresa(empresaAtual);
+        mostrarAviso("Senha redefinida. A troca será exigida no próximo acesso.");
+    } catch (erro) {
+        mostrarAviso(erro.message, true);
+    } finally {
+        evento.currentTarget.disabled = false;
+    }
+});
+
 document.querySelectorAll("[data-abrir-secao]").forEach((botao) => {
     botao.addEventListener("click", () => abrirSecao(botao.dataset.abrirSecao));
 });
@@ -506,6 +618,8 @@ form.addEventListener("submit", async (evento) => {
             await salvarLogo();
         } else if (nomeSecao === "condicoesComerciais") {
             await salvarCondicoes();
+        } else if (nomeSecao === "administrador") {
+            await salvarAdministrador();
         } else {
             await salvarDadosEmpresa();
         }
