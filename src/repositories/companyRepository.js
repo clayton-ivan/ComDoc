@@ -23,6 +23,14 @@ function formatarCep(valor) {
         : valor || "";
 }
 
+function formatarCnpj(valor) {
+    const digitos = String(valor || "").replace(/\D/g, "");
+
+    return digitos.length === 14
+        ? `${digitos.slice(0, 2)}.${digitos.slice(2, 5)}.${digitos.slice(5, 8)}/${digitos.slice(8, 12)}-${digitos.slice(12)}`
+        : valor || "";
+}
+
 function mapear(registro) {
     if (!registro) {
         return null;
@@ -33,6 +41,8 @@ function mapear(registro) {
         nome: registro.nom_empresa,
         nomeFantasia: registro.nom_fantasia,
         cnpj: registro.num_cnpj || "",
+        cnpjFormatado:
+            formatarCnpj(registro.num_cnpj),
         email: registro.end_email,
         telefone: registro.num_telefone,
         telefoneFormatado:
@@ -55,6 +65,9 @@ function mapear(registro) {
         corPrimaria: registro.cod_cor_primaria,
         corSecundaria: registro.cod_cor_secundaria,
         arquivoLogo: registro.nom_arquivo_logo,
+        arquivoCapa: registro.nom_arquivo_capa,
+        usarCapaPropria: Boolean(registro.fg_usar_capa_propria),
+        logoMarcaDagua: Boolean(registro.fg_logo_marca_dagua),
         ativo: Boolean(registro.fg_status),
         quantidadeUsuariosAtivos:
             registro.qtd_usuarios_ativos === undefined
@@ -62,6 +75,9 @@ function mapear(registro) {
                 : Number(registro.qtd_usuarios_ativos),
         logoUrl: registro.nom_arquivo_logo
             ? `/uploads/empresas/${registro.id_empresa}/${registro.nom_arquivo_logo}`
+            : null,
+        capaUrl: registro.nom_arquivo_capa
+            ? `/uploads/empresas/${registro.id_empresa}/${registro.nom_arquivo_capa}`
             : null
     };
 }
@@ -181,16 +197,40 @@ function atualizarLogo(idEmpresa, arquivoLogo, usuarioEdicao) {
             UPDATE empresa
             SET
                 nom_arquivo_logo = ?,
+                fg_logo_marca_dagua = CASE WHEN ? IS NULL THEN 0 ELSE fg_logo_marca_dagua END,
                 dt_edicao = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
                 cod_usu_edicao = ?
             WHERE id_empresa = ?
         `,
-        [arquivoLogo, usuarioEdicao, idEmpresa]
+        [arquivoLogo, arquivoLogo, usuarioEdicao, idEmpresa]
     );
 
     return Number(resultado.changes) > 0
         ? buscarPorId(idEmpresa)
         : null;
+}
+
+function atualizarCapa(idEmpresa, arquivoCapa, usuarioEdicao) {
+    const resultado = databaseRepository.executar(`
+        UPDATE empresa
+        SET nom_arquivo_capa = ?,
+            fg_usar_capa_propria = CASE WHEN ? IS NULL THEN 0 ELSE fg_usar_capa_propria END,
+            dt_edicao = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+            cod_usu_edicao = ?
+        WHERE id_empresa = ?
+    `, [arquivoCapa, arquivoCapa, usuarioEdicao, idEmpresa]);
+    return Number(resultado.changes) > 0 ? buscarPorId(idEmpresa) : null;
+}
+
+function atualizarIdentidadePdf(idEmpresa, usarCapaPropria, logoMarcaDagua, usuarioEdicao) {
+    const resultado = databaseRepository.executar(`
+        UPDATE empresa
+        SET fg_usar_capa_propria = ?, fg_logo_marca_dagua = ?,
+            dt_edicao = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+            cod_usu_edicao = ?
+        WHERE id_empresa = ?
+    `, [usarCapaPropria ? 1 : 0, logoMarcaDagua ? 1 : 0, usuarioEdicao, idEmpresa]);
+    return Number(resultado.changes) > 0 ? buscarPorId(idEmpresa) : null;
 }
 
 module.exports = {
@@ -199,5 +239,7 @@ module.exports = {
     listarComResumo,
     criar,
     atualizar,
-    atualizarLogo
+    atualizarLogo,
+    atualizarCapa,
+    atualizarIdentidadePdf
 };

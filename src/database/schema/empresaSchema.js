@@ -80,6 +80,18 @@ function criarTabelaEmpresa(database) {
 
             nom_arquivo_logo TEXT,
 
+            nom_arquivo_capa TEXT,
+
+            fg_usar_capa_propria INTEGER
+                NOT NULL
+                DEFAULT 0
+                CHECK (fg_usar_capa_propria IN (0, 1)),
+
+            fg_logo_marca_dagua INTEGER
+                NOT NULL
+                DEFAULT 0
+                CHECK (fg_logo_marca_dagua IN (0, 1)),
+
             fg_status INTEGER
                 NOT NULL
                 DEFAULT 1

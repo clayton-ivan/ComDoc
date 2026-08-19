@@ -121,6 +121,33 @@ function prepararProduto(contexto) {
     };
 }
 
+function rgb(cor) {
+    const valor = String(cor || "").replace("#", "");
+    return [0, 2, 4].map((inicio) => Number.parseInt(valor.slice(inicio, inicio + 2), 16));
+}
+
+function luminancia(cor) {
+    const canais = rgb(cor).map((canal) => {
+        const valor = canal / 255;
+        return valor <= 0.03928 ? valor / 12.92 : ((valor + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * canais[0] + 0.7152 * canais[1] + 0.0722 * canais[2];
+}
+
+function contraste(corA, corB) {
+    const [maior, menor] = [luminancia(corA), luminancia(corB)].sort((a, b) => b - a);
+    return (maior + 0.05) / (menor + 0.05);
+}
+
+function textoSobre(corFundo) {
+    return contraste(corFundo, "#FFFFFF") >= contraste(corFundo, "#111827")
+        ? "#FFFFFF" : "#111827";
+}
+
+function corLegivelEmBranco(cor) {
+    return contraste(cor, "#FFFFFF") >= 4.5 ? cor : "#1F2937";
+}
+
 function registrarParcialProduto(
     pastaTemplate
 ) {
@@ -183,30 +210,10 @@ const gerar = async ({
 		"textos"
 	);
 
-	const garantia = fs.readFileSync(
-		path.join(caminhoTextos, "garantia.html"),
-		"utf8"
-	);
-
-	const importacao = fs.readFileSync(
-		path.join(caminhoTextos, "importacao.html"),
-		"utf8"
-	);
-
 	const rodape = fs.readFileSync(
 		path.join(caminhoTextos, "rodape.html"),
 		"utf8"
 	);
-	
-	const caminhoCapa = path.join(
-		pastaTemplate,
-		"imagens",
-		"capa.png"
-	);
-
-	const capaBase64 = fs.readFileSync(caminhoCapa, "base64");
-
-	const capa = `data:image/png;base64,${capaBase64}`;
 	
 	Handlebars.registerHelper("moeda", (valor) => {
 		return Number(valor).toLocaleString("pt-BR", {
@@ -226,9 +233,24 @@ const gerar = async ({
             logoDataUrl:
                 companyLogoService.obterDataUrl(
                     contextoPreparado.empresa
-                )
+                ),
+            capaDataUrl:
+                companyLogoService.obterCapaDataUrl(
+                    contextoPreparado.empresa
+                ),
+            corTextoPrimaria: textoSobre(contextoPreparado.empresa.corPrimaria),
+            corTextoSecundaria: corLegivelEmBranco(contextoPreparado.empresa.corSecundaria)
         }
         : null;
+
+    if (empresaPreparada) {
+        empresaPreparada.usarCapaPropria = Boolean(
+            empresaPreparada.usarCapaPropria && empresaPreparada.capaDataUrl
+        );
+        empresaPreparada.logoMarcaDagua = Boolean(
+            empresaPreparada.logoMarcaDagua && empresaPreparada.logoDataUrl
+        );
+    }
 
     const rodapeFinal = Handlebars.compile(
         rodape
@@ -237,21 +259,19 @@ const gerar = async ({
     const htmlFinal = templateCompilado({
 		...contextoPreparado,
 		empresa: empresaPreparada,
-		capa,
-		garantia,
-		importacao,
 		rodape: rodapeFinal,
 		css
 	});
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ timeout: 120000 });
 
     try {
         const page = await browser.newPage();
 
 
         await page.setContent(htmlFinal, {
-		    waitUntil: "networkidle0"
+		    waitUntil: "networkidle0",
+            timeout: 120000
 	    });
 	
 	const pastaOutput = caminhoDestino
@@ -288,7 +308,8 @@ const gerar = async ({
 
 		printBackground: true,
 
-		preferCSSPageSize: true
+		preferCSSPageSize: true,
+        timeout: 120000
 	    });
 
         return {
