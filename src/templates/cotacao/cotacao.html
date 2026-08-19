@@ -8,29 +8,36 @@
         :root {
             --cor-primaria: {{empresa.corPrimaria}};
             --cor-secundaria: {{empresa.corSecundaria}};
+            --texto-cor-primaria: {{empresa.corTextoPrimaria}};
+            --cor-secundaria-legivel: {{empresa.corTextoSecundaria}};
         }
         {{{css}}}
     </style>
 </head>
 
 <body>
+    {{#if empresa.logoMarcaDagua}}
+        <img class="marca-dagua-global" src="{{empresa.logoDataUrl}}" alt="">
+    {{/if}}
     <!-- ===================================================== -->
     <!-- CAPA -->
     <!-- ===================================================== -->
-    <section id="capa" style="background-image: url('{{capa}}');">
-		<div class="overlay-capa">
-			<div class="titulo-capa">
-				<div class="titulo-linha">
-					PROPOSTA
-				</div>
-				<div class="titulo-linha">
-					COMERCIAL
-				</div>
-			</div>
-			<div class="numero-cotacao">
-				Proposta Comercial nº {{numero}}
-			</div>
-		</div>
+    <section id="capa" class="{{#if empresa.usarCapaPropria}}capa-propria{{else}}capa-padrao{{/if}}"{{#if empresa.usarCapaPropria}} style="background-image: url('{{empresa.capaDataUrl}}');"{{/if}}>
+        {{#unless empresa.usarCapaPropria}}
+            <div class="capa-identidade">
+                {{#if empresa.logoDataUrl}}<img class="logo-capa" src="{{empresa.logoDataUrl}}" alt="Logo de {{empresa.nomeFantasia}}">{{/if}}
+                <h1>{{empresa.nomeFantasia}}</h1>
+                {{#if empresa.slogan}}<p class="slogan-capa">{{empresa.slogan}}</p>{{/if}}
+            </div>
+            <div class="contatos-capa">
+                {{#if empresa.logradouro}}<p>{{empresa.logradouro}}{{#if empresa.numeroEndereco}}, {{empresa.numeroEndereco}}{{/if}}{{#if empresa.complemento}} - {{empresa.complemento}}{{/if}}<br>{{#if empresa.bairro}}{{empresa.bairro}}, {{/if}}{{empresa.cidade}}{{#if empresa.uf}} - {{empresa.uf}}{{/if}}{{#if empresa.cepFormatado}} - CEP {{empresa.cepFormatado}}{{/if}}</p>{{/if}}
+                {{#if empresa.telefoneFormatado}}<p>Telefone: {{empresa.telefoneFormatado}}</p>{{/if}}
+                {{#if empresa.whatsappFormatado}}<p>WhatsApp: {{empresa.whatsappFormatado}}</p>{{/if}}
+                {{#if empresa.email}}<p>{{empresa.email}}</p>{{/if}}
+                {{#if empresa.site}}<p>{{empresa.site}}</p>{{/if}}
+            </div>
+        {{/unless}}
+        <div class="numero-cotacao">Proposta Comercial nº {{numero}}</div>
 	</section>
 
     <!-- ===================================================== -->
@@ -144,25 +151,6 @@
 	</section>
 
     <!-- ===================================================== -->
-    <!-- GARANTIA E IMPORTAÇÃO -->
-    <!-- ===================================================== -->
-
-    <section id="garantia">
-        <header>
-            <h1>Garantia</h1>
-        </header>
-        <article>
-            {{{garantia}}}
-        </article>
-        <header>
-            <h1>Importação</h1>
-        </header>
-        <article>
-            {{{importacao}}}
-        </article>
-    </section>
-
-    <!-- ===================================================== -->
     <!-- ASSINATURA -->
     <!-- ===================================================== -->
 
@@ -183,7 +171,7 @@
             ________________________________________________
         </p>
         <p class="assinatura-cliente">
-			{{contato}}
+			<span class="nome-assinatura">{{contato}}</span>
 			<br>
 			<strong>{{tipoDocumentoLabel}} {{documentoFormatado}}</strong>
 		</p>
@@ -191,8 +179,18 @@
         <p>
             ________________________________________________
         </p>
-        <p>
-            {{empresa.nomeFantasia}}
+        <p class="assinatura-cliente">
+            <span class="nome-assinatura">{{empresa.nomeFantasia}}</span>
+            {{#if empresa.cnpjFormatado}}
+                <br>
+                <strong>CNPJ {{empresa.cnpjFormatado}}</strong>
+            {{/if}}
+            {{#if empresa.logoDataUrl}}
+                <img class="logo-empresa-assinatura" src="{{empresa.logoDataUrl}}" alt="Logo de {{empresa.nomeFantasia}}">
+            {{/if}}
+            {{#if empresa.slogan}}
+                <span class="slogan-assinatura">{{empresa.slogan}}</span>
+            {{/if}}
         </p>
 		
 		<div class="rodape-final">

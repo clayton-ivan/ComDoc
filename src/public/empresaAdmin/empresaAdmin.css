@@ -183,6 +183,8 @@ button.perigo { background: #b91c1c; }
 }
 
 .logo-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.capa-preview { height: 260px; }
+.separador-identidade { margin: 24px 0; border: 0; border-top: 1px solid var(--borda); }
 .acoes-logo { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
 .acoes-logo label { margin: 0; }
 .acoes-logo small { color: #6b7280; }

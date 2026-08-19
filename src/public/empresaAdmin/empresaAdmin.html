@@ -72,12 +72,12 @@
                         <span>Localização e dados postais</span>
                     </button>
                     <button type="button" data-abrir-secao="presencaDigital">
-                        <strong>Presença digital</strong>
+                        <strong>Na Internet</strong>
                         <span>Site e Instagram</span>
                     </button>
                     <button type="button" data-abrir-secao="logo">
-                        <strong>Logo</strong>
-                        <span>Imagem usada nos documentos</span>
+                        <strong>Logo e capa</strong>
+                        <span>Imagens usadas nos documentos</span>
                     </button>
                     <button type="button" data-abrir-secao="cores">
                         <strong>Cores da identidade visual</strong>
@@ -160,7 +160,7 @@
                 <section class="tela-empresa secao-empresa" data-secao="presencaDigital" hidden>
                     <header class="cabecalho-secao">
                         <button type="button" class="botao-voltar" data-voltar>← Voltar</button>
-                        <h1>Presença digital</h1>
+                        <h1>Na Internet</h1>
                     </header>
                     <div class="cartao">
                         <div class="grade duas-colunas">
@@ -177,7 +177,7 @@
                 <section class="tela-empresa secao-empresa" data-secao="logo" hidden>
                     <header class="cabecalho-secao">
                         <button type="button" class="botao-voltar" data-voltar>← Voltar</button>
-                        <h1>Logo</h1>
+                        <h1>Logo e capa</h1>
                     </header>
                     <div class="cartao">
                         <div class="logo-editor">
@@ -190,7 +190,23 @@
                                     <input id="arquivoLogo" type="file" accept="image/jpeg,image/png">
                                 </label>
                                 <button id="excluirLogo" type="button" class="perigo">Excluir logo</button>
+                                <label class="check"><input id="logoMarcaDagua" type="checkbox"> Usar como marca d'água</label>
                                 <small>JPEG ou PNG, com no máximo 5 MB. A alteração será aplicada ao salvar.</small>
+                            </div>
+                        </div>
+                        <hr class="separador-identidade">
+                        <label class="check"><input id="usarCapaPropria" type="checkbox"> Usar capa própria</label>
+                        <div id="opcoesCapa" class="logo-editor" hidden>
+                            <div class="logo-preview capa-preview">
+                                <img id="imagemCapa" alt="Capa própria da empresa" hidden>
+                                <span id="semCapa">Nenhuma capa cadastrada</span>
+                            </div>
+                            <div class="acoes-logo">
+                                <label>Selecionar capa
+                                    <input id="arquivoCapa" type="file" accept="image/jpeg,image/png">
+                                </label>
+                                <button id="excluirCapa" type="button" class="perigo">Excluir capa</button>
+                                <small>Use uma imagem vertical na proporção A4. Tamanho recomendado: 1240 × 1754 pixels. JPEG ou PNG, com no máximo 5 MB.</small>
                             </div>
                         </div>
                     </div>

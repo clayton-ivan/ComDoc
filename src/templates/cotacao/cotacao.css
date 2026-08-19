@@ -15,6 +15,8 @@ body {
 }
 
 section:not(#capa) {
+    position: relative;
+    z-index: 1;
     padding: 20mm;
     break-before: page;
     box-sizing: border-box;
@@ -36,6 +38,7 @@ p {
 
 #capa {
     position: relative;
+    z-index: 1;
     width: 210mm;
     height: 297mm;
     margin: 0;
@@ -47,31 +50,15 @@ p {
     background-repeat: no-repeat;
 }
 
-.imagem-capa {
-    display: none;
-}
-
-.overlay-capa {
-    position: absolute;
-    inset: 0;
-}
-
-.titulo-capa {
-    position: absolute;
-
-    left: 24mm;
-    bottom: 46mm;
-
-    color: white;
-
-    font-weight: 700;
-    line-height: .95;
-}
-
-.titulo-linha {
-    font-size: 18mm;
-    text-transform: uppercase;
-}
+.capa-propria { background-size: cover; background-position: center; }
+.capa-padrao { background: #fff; color: var(--cor-secundaria-legivel, #1f2937); }
+.capa-padrao::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 14mm; background: var(--cor-primaria, #f36b21); }
+.capa-identidade { position: absolute; top: 42mm; left: 28mm; right: 24mm; text-align: left; }
+.logo-capa { display: block; width: auto; max-width: 58mm; max-height: 32mm; margin: 0 0 14mm; object-fit: contain; }
+.capa-identidade h1 { max-width: 145mm; margin: 0; font-size: 13mm; line-height: 1.08; text-transform: uppercase; }
+.slogan-capa { max-width: 130mm; margin-top: 7mm; font-size: 5mm; line-height: 1.45; }
+.contatos-capa { position: absolute; left: 28mm; right: 24mm; bottom: 45mm; font-size: 3.6mm; line-height: 1.45; }
+.contatos-capa p { margin: 0 0 1.5mm; }
 
 .numero-cotacao {
     position: absolute;
@@ -79,14 +66,17 @@ p {
     left: 24mm;
     bottom: 24mm;
 
-    color: white;
+    color: var(--texto-cor-primaria, white);
     font-size: 6mm;
     font-weight: 600;
 
-    background: rgba(0, 0, 0, .65);
+    padding: 2.5mm 4mm;
+    background: var(--cor-primaria, #f36b21);
 
     letter-spacing: 0.2mm;
 }
+
+.marca-dagua-global { position: fixed; inset: 0; z-index: 0; width: 210mm; height: 297mm; opacity: .07; object-fit: contain; }
 
 .data-geracao {
     text-align: right;
@@ -116,7 +106,7 @@ td {
 
 #assinatura {
     position: relative;
-    min-height: 240mm;
+    height: 297mm;
     text-align: center;
 }
 
@@ -130,13 +120,41 @@ td {
     font-size: 10px;
 }
 
-.logo-empresa-rodape {
+.logo-empresa-assinatura {
     display: block;
     width: auto;
     max-width: 42mm;
     max-height: 18mm;
-    margin: 0 auto 4mm;
+    margin: 3mm auto 2mm;
     object-fit: contain;
+}
+
+.slogan-assinatura {
+    display: block;
+}
+
+.dados-rodape {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6mm;
+    margin-top: 4mm;
+    text-align: left;
+}
+
+.grupo-rodape {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.grupo-rodape > strong {
+    display: block;
+    margin-bottom: 2mm;
+    font-size: 11px;
+}
+
+.grupo-rodape p {
+    margin: 0 0 1mm;
+    line-height: 1.35;
 }
 
 article p {
@@ -168,7 +186,7 @@ article li {
     margin: 0;
     font-size: 9mm;
     text-transform: uppercase;
-    color: var(--cor-secundaria, #1f2937);
+    color: var(--cor-secundaria-legivel, #1f2937);
 }
 
 .data-geracao {
@@ -221,7 +239,7 @@ article li {
 
 .produto-header {
     background: var(--cor-primaria, #f36b21);
-    color: white;
+    color: var(--texto-cor-primaria, white);
     padding: 8mm 10mm;
 }
 
@@ -386,7 +404,7 @@ article li {
 
 .tabela-valores thead {
     background: var(--cor-primaria, #f36b21);
-    color: white;
+    color: var(--texto-cor-primaria, white);
 }
 
 .tabela-valores th {
@@ -425,7 +443,7 @@ article li {
 
     background: var(--cor-primaria, #f36b21);
 
-    color: white;
+    color: var(--texto-cor-primaria, white);
 
     display: flex;
     justify-content: space-between;
@@ -442,4 +460,8 @@ article li {
 
 .assinatura-cliente {
     line-height: 1.7;
+}
+
+.nome-assinatura {
+    font-size: 15px;
 }

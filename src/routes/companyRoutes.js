@@ -17,6 +17,9 @@ router.put("/administrador", exigirSuper, companyController.atualizarAdministrad
 router.put("/administrador/senha", exigirSuper, companyController.redefinirSenhaAdministrador);
 router.post("/logo", exigirAdmin, companyController.uploadLogo);
 router.delete("/logo", exigirAdmin, companyController.excluirLogo);
+router.post("/capa", exigirAdmin, companyController.uploadCapa);
+router.delete("/capa", exigirAdmin, companyController.excluirCapa);
+router.put("/identidade-pdf", exigirAdmin, companyController.atualizarIdentidadePdf);
 
 router.get(
     "/prazos-entrega",

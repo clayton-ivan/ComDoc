@@ -12,6 +12,10 @@ const aviso = document.getElementById("aviso");
 const imagemLogo = document.getElementById("imagemLogo");
 const semLogo = document.getElementById("semLogo");
 const arquivoLogo = document.getElementById("arquivoLogo");
+const imagemCapa = document.getElementById("imagemCapa");
+const semCapa = document.getElementById("semCapa");
+const arquivoCapa = document.getElementById("arquivoCapa");
+const usarCapaPropria = document.getElementById("usarCapaPropria");
 const campoCnpj = document.getElementById("cnpj");
 const camposTelefone = [
     document.getElementById("telefone"),
@@ -23,6 +27,8 @@ let sessaoAtual = null;
 let secaoAtiva = null;
 let logoPendente = null;
 let urlPreviewLogo = null;
+let capaPendente = null;
+let urlPreviewCapa = null;
 let condicoesAtuais = {
     prazosEntrega: [],
     formasPagamento: []
@@ -316,6 +322,31 @@ function restaurarLogo() {
     document.getElementById("excluirLogo").disabled = !empresaAtual?.logoUrl;
 }
 
+function revogarPreviewCapa() {
+    if (urlPreviewCapa) {
+        URL.revokeObjectURL(urlPreviewCapa);
+        urlPreviewCapa = null;
+    }
+}
+
+function exibirCapa(url) {
+    imagemCapa.hidden = !url;
+    semCapa.hidden = Boolean(url);
+    imagemCapa.removeAttribute("src");
+    if (url) imagemCapa.src = url;
+}
+
+function restaurarCapa() {
+    revogarPreviewCapa();
+    capaPendente = null;
+    arquivoCapa.value = "";
+    usarCapaPropria.checked = Boolean(empresaAtual?.usarCapaPropria);
+    document.getElementById("opcoesCapa").hidden = !usarCapaPropria.checked;
+    exibirCapa(empresaAtual?.capaUrl
+        ? `${empresaAtual.capaUrl}?v=${Date.now()}` : null);
+    document.getElementById("excluirCapa").disabled = !empresaAtual?.capaUrl;
+}
+
 function preencherEmpresa(empresa) {
     empresaAtual = empresa;
     [
@@ -341,7 +372,9 @@ function preencherEmpresa(empresa) {
         : "Sem bloqueio");
     document.getElementById("adminTrocarSenha").checked = Boolean(admin?.trocarSenha);
     document.getElementById("adminNovaSenha").value = "";
+    document.getElementById("logoMarcaDagua").checked = Boolean(empresa.logoMarcaDagua);
     restaurarLogo();
+    restaurarCapa();
 }
 
 function preencherCondicoes(condicoes) {
@@ -403,21 +436,42 @@ async function salvarDadosEmpresa() {
 }
 
 async function salvarLogo() {
+    const administrador = empresaAtual.administrador;
+    let empresa = empresaAtual;
     if (logoPendente === "excluir") {
         const resultado = await requisitar("/empresa/logo", { method: "DELETE" });
-        preencherEmpresa(resultado.empresa);
-        return;
-    }
-
-    if (logoPendente instanceof File) {
+        empresa = resultado.empresa;
+    } else if (logoPendente instanceof File) {
         const dados = new FormData();
         dados.append("logo", logoPendente);
         const resultado = await requisitar("/empresa/logo", {
             method: "POST",
             body: dados
         });
-        preencherEmpresa(resultado.empresa);
+        empresa = resultado.empresa;
     }
+
+    if (capaPendente === "excluir") {
+        const resultado = await requisitar("/empresa/capa", { method: "DELETE" });
+        empresa = resultado.empresa;
+    } else if (capaPendente instanceof File) {
+        const dados = new FormData();
+        dados.append("capa", capaPendente);
+        const resultado = await requisitar("/empresa/capa", { method: "POST", body: dados });
+        empresa = resultado.empresa;
+    }
+
+    if (!empresa.capaUrl) usarCapaPropria.checked = false;
+    const resultado = await requisitar("/empresa/identidade-pdf", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            usarCapaPropria: usarCapaPropria.checked,
+            logoMarcaDagua: empresa.logoUrl && document.getElementById("logoMarcaDagua").checked
+        })
+    });
+    resultado.empresa.administrador = administrador;
+    preencherEmpresa(resultado.empresa);
 }
 
 async function salvarCondicoes() {
@@ -525,6 +579,41 @@ document.getElementById("excluirLogo").addEventListener("click", () => {
     arquivoLogo.value = "";
     exibirLogo(null);
     document.getElementById("excluirLogo").disabled = true;
+});
+
+usarCapaPropria.addEventListener("change", () => {
+    document.getElementById("opcoesCapa").hidden = !usarCapaPropria.checked;
+});
+
+arquivoCapa.addEventListener("change", () => {
+    const arquivo = arquivoCapa.files[0];
+    if (!arquivo) {
+        restaurarCapa();
+        return;
+    }
+    if (!["image/jpeg", "image/png"].includes(arquivo.type)) {
+        arquivoCapa.value = "";
+        mostrarAviso("A capa deve estar no formato JPEG ou PNG.", true);
+        return;
+    }
+    if (arquivo.size > 5 * 1024 * 1024) {
+        arquivoCapa.value = "";
+        mostrarAviso("A capa deve possuir no máximo 5 MB.", true);
+        return;
+    }
+    revogarPreviewCapa();
+    capaPendente = arquivo;
+    urlPreviewCapa = URL.createObjectURL(arquivo);
+    exibirCapa(urlPreviewCapa);
+    document.getElementById("excluirCapa").disabled = false;
+});
+
+document.getElementById("excluirCapa").addEventListener("click", () => {
+    revogarPreviewCapa();
+    capaPendente = "excluir";
+    arquivoCapa.value = "";
+    exibirCapa(null);
+    document.getElementById("excluirCapa").disabled = true;
 });
 
 document.getElementById("novoCnpj").addEventListener("input", (evento) => {

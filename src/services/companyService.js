@@ -132,6 +132,22 @@ function atualizarAtual(dados = {}, ator) {
     return { ...atualizada, administrador: administradorPublico(userRepository.buscarAdminEmpresa(existente.id)) };
 }
 
+function atualizarIdentidadePdfAtual(dados = {}, ator) {
+    const empresa = companyRepository.buscarPorId(obterIdEmpresaAtual());
+    if (!empresa) return null;
+    const usarCapaPropria = Boolean(dados.usarCapaPropria);
+    const logoMarcaDagua = Boolean(dados.logoMarcaDagua);
+    if (usarCapaPropria && !empresa.arquivoCapa) {
+        throw new Error("Selecione uma imagem para usar a capa própria.");
+    }
+    if (logoMarcaDagua && !empresa.arquivoLogo) {
+        throw new Error("Selecione uma logo para usá-la como marca d'água.");
+    }
+    return companyRepository.atualizarIdentidadePdf(
+        empresa.id, usarCapaPropria, logoMarcaDagua, ator.idUsuario
+    );
+}
+
 async function atualizarAdministradorAtual(dados = {}, ator) {
     if (ator.perfil !== "SUPER") throw new Error("Acesso não autorizado.");
     const administrador = userRepository.buscarAdminEmpresa(obterIdEmpresaAtual());
@@ -182,6 +198,7 @@ module.exports = {
     listarGerenciamento,
     criar,
     atualizarAtual,
+    atualizarIdentidadePdfAtual,
     atualizarAdministradorAtual,
     redefinirSenhaAdministradorAtual
 };

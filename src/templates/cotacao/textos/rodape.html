@@ -1,15 +1,21 @@
-{{#if empresa.logoDataUrl}}
-    <img class="logo-empresa-rodape" src="{{empresa.logoDataUrl}}" alt="Logo de {{empresa.nomeFantasia}}">
-{{/if}}
-{{#if empresa.slogan}}<p>{{empresa.slogan}}</p>{{/if}}
-{{#if empresa.logradouro}}
-    <p>
-        Endereço: {{empresa.logradouro}}{{#if empresa.numeroEndereco}}, {{empresa.numeroEndereco}}{{/if}}{{#if empresa.complemento}} - {{empresa.complemento}}{{/if}}<br>
-        {{#if empresa.bairro}}{{empresa.bairro}}, {{/if}}{{empresa.cidade}}{{#if empresa.uf}}, {{empresa.uf}}{{/if}}{{#if empresa.cepFormatado}} - CEP: {{empresa.cepFormatado}}{{/if}}
-    </p>
-{{/if}}
-{{#if empresa.telefoneFormatado}}<p>Telefone: {{empresa.telefoneFormatado}}</p>{{/if}}
-{{#if empresa.whatsappFormatado}}<p>WhatsApp: {{empresa.whatsappFormatado}}</p>{{/if}}
-{{#if empresa.email}}<p>E-mail: {{empresa.email}}</p>{{/if}}
-{{#if empresa.instagram}}<p>Instagram: {{empresa.instagram}}</p>{{/if}}
-{{#if empresa.site}}<p>Site: {{empresa.site}}</p>{{/if}}
+<div class="dados-rodape">
+    <div class="grupo-rodape">
+        <strong>Endereço</strong>
+        {{#if empresa.logradouro}}<p>{{empresa.logradouro}}{{#if empresa.numeroEndereco}}, {{empresa.numeroEndereco}}{{/if}}{{#if empresa.complemento}} - {{empresa.complemento}}{{/if}}{{#if empresa.bairro}} - {{empresa.bairro}}{{/if}}</p>{{/if}}
+        {{#if empresa.cidade}}<p>{{empresa.cidade}}{{#if empresa.uf}} - {{empresa.uf}}{{/if}}</p>{{/if}}
+        {{#if empresa.cepFormatado}}<p>CEP: {{empresa.cepFormatado}}</p>{{/if}}
+    </div>
+
+    <div class="grupo-rodape">
+        <strong>Contato</strong>
+        {{#if empresa.telefoneFormatado}}<p>Telefone: {{empresa.telefoneFormatado}}</p>{{/if}}
+        {{#if empresa.whatsappFormatado}}<p>WhatsApp: {{empresa.whatsappFormatado}}</p>{{/if}}
+        {{#if empresa.email}}<p>E-mail: {{empresa.email}}</p>{{/if}}
+    </div>
+
+    <div class="grupo-rodape">
+        <strong>Na Internet</strong>
+        {{#if empresa.site}}<p>Site: {{empresa.site}}</p>{{/if}}
+        {{#if empresa.instagram}}<p>Instagram: {{empresa.instagram}}</p>{{/if}}
+    </div>
+</div>

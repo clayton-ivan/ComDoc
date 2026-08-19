@@ -18,6 +18,11 @@ const receberLogo = multer({
     }
 }).single("logo");
 
+const receberCapa = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024, files: 1 }
+}).single("capa");
+
 function buscar(req, res) {
     const empresa = companyService.obterAtual();
 
@@ -124,6 +129,40 @@ function excluirLogo(req, res) {
     return res.json({ sucesso: true, empresa });
 }
 
+function uploadCapa(req, res) {
+    receberCapa(req, res, (erroUpload) => {
+        if (erroUpload) {
+            return res.status(HTTP.BAD_REQUEST).json({
+                sucesso: false,
+                mensagem: erroUpload.code === "LIMIT_FILE_SIZE"
+                    ? "A capa deve possuir no máximo 5 MB."
+                    : "Não foi possível receber a capa."
+            });
+        }
+        try {
+            const empresa = companyLogoService.salvarCapaAtual(req.file);
+            return res.status(HTTP.CREATED).json({ sucesso: true, empresa });
+        } catch (erro) {
+            return res.status(HTTP.BAD_REQUEST).json({ sucesso: false, mensagem: erro.message });
+        }
+    });
+}
+
+function excluirCapa(req, res) {
+    const empresa = companyLogoService.excluirCapaAtual();
+    if (!empresa) return res.status(HTTP.NOT_FOUND).json({ sucesso: false, mensagem: "Empresa não encontrada." });
+    return res.json({ sucesso: true, empresa });
+}
+
+function atualizarIdentidadePdf(req, res) {
+    try {
+        const empresa = companyService.atualizarIdentidadePdfAtual(req.body, req.usuario);
+        return res.json({ sucesso: true, empresa });
+    } catch (erro) {
+        return res.status(HTTP.BAD_REQUEST).json({ sucesso: false, mensagem: erro.message });
+    }
+}
+
 module.exports = {
     buscar,
     listar,
@@ -132,5 +171,8 @@ module.exports = {
     atualizarAdministrador,
     redefinirSenhaAdministrador,
     uploadLogo,
-    excluirLogo
+    excluirLogo,
+    uploadCapa,
+    excluirCapa,
+    atualizarIdentidadePdf
 };
