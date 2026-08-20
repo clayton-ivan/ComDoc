@@ -124,8 +124,21 @@ function revogarEmpresa(idEmpresa) {
     `).run(idEmpresa);
 }
 
+function removerBloqueio(idUsuario, idUsuarioEdicao) {
+    obterDatabase().prepare(`
+        UPDATE usuario
+        SET qtd_tentativas_login = 0,
+            dt_bloqueado_ate = NULL,
+            dt_edicao = strftime('%Y-%m-%dT%H:%M:%fZ', 'now'),
+            id_usu_edicao = ?
+        WHERE id_usuario = ?
+    `).run(idUsuarioEdicao, idUsuario);
+
+    return buscarPorId(idUsuario);
+}
+
 module.exports = {
     buscarPorEmail, buscarPorId, buscarAdminEmpresa, listar, criar, atualizar,
     atualizarSenha, registrarFalha, registrarLogin, revogarTodas,
-    revogarEmpresa
+    revogarEmpresa, removerBloqueio
 };

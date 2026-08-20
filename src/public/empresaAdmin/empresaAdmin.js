@@ -29,6 +29,7 @@ let logoPendente = null;
 let urlPreviewLogo = null;
 let capaPendente = null;
 let urlPreviewCapa = null;
+let limiteUploadMb = 5;
 let condicoesAtuais = {
     prazosEntrega: [],
     formasPagamento: []
@@ -514,6 +515,14 @@ async function carregarCadastroInicial() {
 }
 
 async function carregar() {
+    const configuracoes = await requisitar("/parametros/publicos");
+    limiteUploadMb = configuracoes.limiteUploadImagemMb;
+    document.querySelectorAll("[data-limite-upload]").forEach((elemento) => {
+        elemento.textContent = elemento.hasAttribute("data-capa")
+            ? `Use uma imagem vertical na proporção A4. Tamanho recomendado: 1240 × 1754 pixels. JPEG ou PNG, com no máximo ${limiteUploadMb} MB.`
+            : `JPEG ou PNG, com no máximo ${limiteUploadMb} MB. A alteração será aplicada ao salvar.`;
+    });
+
     if (new URLSearchParams(location.search).get("nova") === "1") {
         await carregarCadastroInicial();
         return;
@@ -560,9 +569,9 @@ arquivoLogo.addEventListener("change", () => {
         return;
     }
 
-    if (arquivo.size > 5 * 1024 * 1024) {
+    if (arquivo.size > limiteUploadMb * 1024 * 1024) {
         arquivoLogo.value = "";
-        mostrarAviso("A logo deve possuir no máximo 5 MB.", true);
+        mostrarAviso(`A logo deve possuir no máximo ${limiteUploadMb} MB.`, true);
         return;
     }
 
@@ -596,9 +605,9 @@ arquivoCapa.addEventListener("change", () => {
         mostrarAviso("A capa deve estar no formato JPEG ou PNG.", true);
         return;
     }
-    if (arquivo.size > 5 * 1024 * 1024) {
+    if (arquivo.size > limiteUploadMb * 1024 * 1024) {
         arquivoCapa.value = "";
-        mostrarAviso("A capa deve possuir no máximo 5 MB.", true);
+        mostrarAviso(`A capa deve possuir no máximo ${limiteUploadMb} MB.`, true);
         return;
     }
     revogarPreviewCapa();

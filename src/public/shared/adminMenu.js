@@ -88,6 +88,7 @@ fetch("/auth/sessao")
             adicionarLink("Nova cotação", "/");
             if (sessao.usuario.perfil === "SUPER") {
                 adicionarLink("Gerenciar empresas", "/admin/empresas");
+                adicionarLink("Parâmetros", "/admin/parametros");
             }
             adicionarSeparador();
             adicionarLink("Clientes", "/admin/clientes");

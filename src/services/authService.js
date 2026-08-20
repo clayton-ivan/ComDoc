@@ -1,10 +1,7 @@
 const userRepository = require("../repositories/userRepository");
 const passwordService = require("./passwordService");
 const companyRepository = require("../repositories/companyRepository");
-
-const LIMITE_TENTATIVAS = 5;
-const BLOQUEIO_MS = 15 * 60 * 1000;
-const SEIS_MESES_MS = 183 * 24 * 60 * 60 * 1000;
+const systemParameterService = require("./systemParameterService");
 
 function email(valor) {
     const normalizado = String(valor ?? "").trim().toLocaleLowerCase("pt-BR");
@@ -15,8 +12,9 @@ function email(valor) {
 }
 
 function senhaExpirada(usuario) {
+    const validadeMs = systemParameterService.obter("DIAS_EXPIRACAO_SENHA") * 24 * 60 * 60 * 1000;
     return usuario.trocarSenha ||
-        Date.now() - Date.parse(usuario.senhaAlteradaEm) >= SEIS_MESES_MS;
+        Date.now() - Date.parse(usuario.senhaAlteradaEm) >= validadeMs;
 }
 
 async function autenticar(dados = {}) {
@@ -24,19 +22,30 @@ async function autenticar(dados = {}) {
     const usuario = userRepository.buscarPorEmail(email(dados.email));
 
     if (!usuario || !usuario.ativo) throw new Error(mensagem);
-    if (usuario.perfil !== "SUPER" && !companyRepository.buscarPorId(usuario.idEmpresa)?.ativo) {
+    const superUsuario = usuario.perfil === "SUPER";
+
+    if (!superUsuario && !companyRepository.buscarPorId(usuario.idEmpresa)?.ativo) {
         throw new Error(mensagem);
     }
-    if (usuario.bloqueadoAte && Date.parse(usuario.bloqueadoAte) > Date.now()) {
+
+    if (superUsuario && (usuario.tentativasLogin > 0 || usuario.bloqueadoAte)) {
+        userRepository.registrarFalha(usuario.idUsuario, 0, null);
+    }
+
+    if (!superUsuario && usuario.bloqueadoAte && Date.parse(usuario.bloqueadoAte) > Date.now()) {
         throw new Error("Acesso temporariamente bloqueado. Tente novamente mais tarde.");
     }
 
     if (!await passwordService.verificar(usuario.senhaHash, dados.senha)) {
-        const tentativas = usuario.tentativasLogin + 1;
-        const bloqueadoAte = tentativas >= LIMITE_TENTATIVAS
-            ? new Date(Date.now() + BLOQUEIO_MS).toISOString()
-            : null;
-        userRepository.registrarFalha(usuario.idUsuario, tentativas, bloqueadoAte);
+        if (!superUsuario) {
+            const tentativas = usuario.tentativasLogin + 1;
+            const limiteTentativas = systemParameterService.obter("QTD_TENTATIVAS_LOGIN");
+            const bloqueioMs = systemParameterService.obter("MIN_BLOQUEIO_LOGIN") * 60 * 1000;
+            const bloqueadoAte = tentativas >= limiteTentativas
+                ? new Date(Date.now() + bloqueioMs).toISOString()
+                : null;
+            userRepository.registrarFalha(usuario.idUsuario, tentativas, bloqueadoAte);
+        }
         throw new Error(mensagem);
     }
 

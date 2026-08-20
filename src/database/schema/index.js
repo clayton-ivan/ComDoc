@@ -33,6 +33,7 @@ const {
 } = require("./condicaoComercialSchema");
 
 const { criarTabelaUsuario } = require("./usuarioSchema");
+const { criarTabelaParametroSistema } = require("./parametroSistemaSchema");
 
 function criarEstruturaAtual(database) {
     criarTabelaProduto(database);
@@ -46,6 +47,7 @@ function criarEstruturaAtual(database) {
 
     criarTabelaEmpresa(database);
     criarTabelaUsuario(database);
+    criarTabelaParametroSistema(database);
 
     criarTabelaPrazoEntrega(database);
     criarTabelaFormaPagamento(database);
@@ -72,6 +74,7 @@ module.exports = {
     criarTabelaPrazoEntrega,
     criarTabelaFormaPagamento,
     criarTabelaUsuario,
+    criarTabelaParametroSistema,
     criarTabelaCliente,
     criarIndicesCliente,
     criarTabelaCotacao,

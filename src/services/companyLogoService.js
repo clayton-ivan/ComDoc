@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const companyRepository = require("../repositories/companyRepository");
 const { obterIdEmpresaAtual, obterCodigoUsuarioAtual } = require("../context/requestContext");
+const systemParameterService = require("./systemParameterService");
 
 const DIRETORIO_EMPRESAS = path.join(__dirname, "..", "uploads", "empresas");
 const FORMATOS = {
@@ -28,6 +29,11 @@ function caminho(idEmpresa, nomeArquivo) {
 
 function validarImagem(arquivo, nome) {
     if (!arquivo) throw new Error("Selecione uma imagem.");
+    if (arquivo.size > systemParameterService.limiteUploadBytes()) {
+        throw new Error(
+            `A ${nome} deve possuir no máximo ${systemParameterService.obter("MB_LIMITE_UPLOAD_IMAGEM")} MB.`
+        );
+    }
     const formato = FORMATOS[arquivo.mimetype];
     if (!formato || !formato.assinatura(arquivo.buffer)) {
         throw new Error(`A ${nome} deve estar no formato JPEG ou PNG.`);

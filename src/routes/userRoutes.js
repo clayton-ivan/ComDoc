@@ -9,5 +9,6 @@ router.post("/", controller.criar);
 router.put("/:id", controller.atualizar);
 router.put("/:id/senha", controller.redefinirSenha);
 router.post("/:id/revogar", controller.revogar);
+router.post("/:id/remover-bloqueio", controller.removerBloqueio);
 
 module.exports = router;

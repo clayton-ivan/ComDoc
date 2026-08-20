@@ -3,6 +3,7 @@ const userRepository = require("../repositories/userRepository");
 const passwordService = require("./passwordService");
 const databaseRepository = require("../database/databaseRepository");
 const { obterIdEmpresaAtual, obterCodigoUsuarioAtual } = require("../context/requestContext");
+const { validarCnpj } = require("../util/validators");
 
 function texto(valor) {
     return String(valor ?? "").trim();
@@ -49,7 +50,7 @@ function normalizarEmpresa(dados = {}, existente = null, ator = null) {
 
     if (!empresa.nome) throw new Error("A razão social é obrigatória.");
     if (!empresa.nomeFantasia) throw new Error("O nome fantasia é obrigatório.");
-    if (empresa.cnpj && empresa.cnpj.length !== 14) throw new Error("O CNPJ deve possuir 14 dígitos.");
+    validarCnpj(empresa.cnpj);
     if (empresa.telefone && !/^\d{10,11}$/.test(empresa.telefone)) {
         throw new Error("O telefone deve possuir 10 ou 11 dígitos.");
     }

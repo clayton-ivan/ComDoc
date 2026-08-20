@@ -9,18 +9,19 @@ const companyLogoService = require(
 );
 
 const HTTP = require("../constants/httpStatus");
+const systemParameterService = require("../services/systemParameterService");
 
 const receberLogo = multer({
     storage: multer.memoryStorage(),
     limits: {
-        fileSize: 5 * 1024 * 1024,
+        fileSize: 20 * 1024 * 1024,
         files: 1
     }
 }).single("logo");
 
 const receberCapa = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 5 * 1024 * 1024, files: 1 }
+    limits: { fileSize: 20 * 1024 * 1024, files: 1 }
 }).single("capa");
 
 function buscar(req, res) {
@@ -92,7 +93,7 @@ function uploadLogo(req, res) {
                 sucesso: false,
                 mensagem:
                     erroUpload.code === "LIMIT_FILE_SIZE"
-                        ? "A logo deve possuir no máximo 5 MB."
+                        ? `A logo deve possuir no máximo ${systemParameterService.obter("MB_LIMITE_UPLOAD_IMAGEM")} MB.`
                         : "Não foi possível receber a logo."
             });
         }
@@ -135,7 +136,7 @@ function uploadCapa(req, res) {
             return res.status(HTTP.BAD_REQUEST).json({
                 sucesso: false,
                 mensagem: erroUpload.code === "LIMIT_FILE_SIZE"
-                    ? "A capa deve possuir no máximo 5 MB."
+                    ? `A capa deve possuir no máximo ${systemParameterService.obter("MB_LIMITE_UPLOAD_IMAGEM")} MB.`
                     : "Não foi possível receber a capa."
             });
         }

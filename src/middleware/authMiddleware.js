@@ -39,7 +39,8 @@ function exigirApi(req, res, next) {
     const rotaPermitidaSemEmpresa =
         rotaCompleta === "/auth/empresas" ||
         rotaCompleta === "/auth/selecionar-empresa" ||
-        rotaCompleta.startsWith("/empresas");
+        rotaCompleta.startsWith("/empresas") ||
+        rotaCompleta.startsWith("/parametros");
     if (req.usuario.perfil === "SUPER" && !req.idEmpresa &&
         !rotaPermitidaSemEmpresa &&
         !["/alterar-senha", "/selecionar-empresa"].includes(req.path)) {

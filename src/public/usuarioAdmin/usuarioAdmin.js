@@ -102,6 +102,7 @@ function abrir(usuario = null) {
         ? new Date(usuario.bloqueadoAte).toLocaleString("pt-BR")
         : "Sem bloqueio";
     document.getElementById("campoBloqueio").hidden = !usuario;
+    document.getElementById("removerBloqueio").hidden = !usuario?.bloqueadoAte;
     document.getElementById("campoSenha").hidden = Boolean(usuario);
     document.getElementById("senha").required = !usuario;
     document.getElementById("tituloForm").textContent = usuario
@@ -126,6 +127,7 @@ function fechar() {
     document.getElementById("perfil").disabled = false;
     document.getElementById("ativo").disabled = false;
     document.getElementById("trocarSenha").disabled = false;
+    document.getElementById("removerBloqueio").hidden = true;
 }
 
 function exibirErroFormulario(erro) {
@@ -185,6 +187,29 @@ async function carregar() {
 
 document.getElementById("novo").addEventListener("click", () => abrir());
 document.getElementById("cancelar").addEventListener("click", fechar);
+document.getElementById("removerBloqueio").addEventListener("click", async (evento) => {
+    const idUsuario = Number(document.getElementById("idUsuario").value);
+    if (!idUsuario) return;
+
+    const botao = evento.currentTarget;
+    botao.disabled = true;
+    try {
+        const atualizado = await requisitar(`/usuarios/${idUsuario}/remover-bloqueio`, {
+            method: "POST"
+        });
+        usuarios = usuarios.map((usuario) =>
+            usuario.idUsuario === atualizado.idUsuario ? atualizado : usuario
+        );
+        document.getElementById("bloqueadoAte").value = "Sem bloqueio";
+        botao.hidden = true;
+        renderizar();
+        mostrarToast("Bloqueio removido com sucesso.");
+    } catch (erro) {
+        mostrarToast(erro.message, true);
+    } finally {
+        botao.disabled = false;
+    }
+});
 document.getElementById("voltar").addEventListener("click", () => {
     location.href = "/";
 });

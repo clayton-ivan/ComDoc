@@ -1,9 +1,14 @@
 const crypto = require("node:crypto");
+const systemParameterService = require("./systemParameterService");
 
 const NOME_COOKIE = "comdoc_auth";
 const NOME_COOKIE_EMPRESA = "comdoc_empresa";
-const OITO_HORAS = 8 * 60 * 60;
-const TRINTA_DIAS = 30 * 24 * 60 * 60;
+
+function duracaoSessao(manterConectado) {
+    return manterConectado
+        ? systemParameterService.obter("DIAS_DURACAO_SESSAO_PERSISTENTE") * 24 * 60 * 60
+        : systemParameterService.obter("HORAS_DURACAO_SESSAO") * 60 * 60;
+}
 
 function segredo() {
     const valor = process.env.COMDOC_SESSION_SECRET;
@@ -63,7 +68,7 @@ function opcoesCookie(persistente, maxAge) {
 }
 
 function definirSessao(res, usuario, manterConectado) {
-    const duracao = manterConectado ? TRINTA_DIAS : OITO_HORAS;
+    const duracao = duracaoSessao(manterConectado);
     res.cookie(NOME_COOKIE, criar({
         sub: usuario.idUsuario,
         ver: usuario.versaoSessao,
@@ -73,7 +78,7 @@ function definirSessao(res, usuario, manterConectado) {
 }
 
 function definirEmpresa(res, idEmpresa, manterConectado) {
-    const duracao = manterConectado ? TRINTA_DIAS : OITO_HORAS;
+    const duracao = duracaoSessao(manterConectado);
     res.cookie(NOME_COOKIE_EMPRESA, criar({
         idEmpresa,
         exp: Date.now() + duracao * 1000
