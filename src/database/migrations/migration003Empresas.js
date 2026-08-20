@@ -1,3 +1,5 @@
+const logger = require("../../services/loggerService");
+
 const {
     ID_EMPRESA_PADRAO
 } = require("../../constants/application");
@@ -112,9 +114,7 @@ function migrarClienteParaEmpresa(database) {
 
         database.exec("COMMIT");
 
-        console.log(
-            "Clientes vinculados à empresa padrão."
-        );
+        logger.info("Clientes vinculados à empresa padrão");
     } catch (erro) {
         try {
             database.exec("ROLLBACK");

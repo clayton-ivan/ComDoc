@@ -9,6 +9,7 @@ const HTTP = require(
 const MESSAGES = require(
     "../constants/messages"
 );
+const logger = require("../services/loggerService");
 
 /*
 |--------------------------------------------------------------------------
@@ -22,7 +23,7 @@ function enviarErro(
     status = HTTP.BAD_REQUEST
 ) {
     if (status >= HTTP.INTERNAL_SERVER_ERROR) {
-        console.error(erro);
+        logger.error("Erro ao processar cliente", erro);
     }
 
     return res

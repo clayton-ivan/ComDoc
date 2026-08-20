@@ -233,6 +233,14 @@ function listar(idEmpresa) {
     );
 }
 
+function listarCodigos(idEmpresa) {
+    return databaseRepository.buscarTodos(`
+        SELECT cod_produto AS codigo
+        FROM produto
+        WHERE id_empresa = ?
+    `, [idEmpresa]).map((registro) => registro.codigo);
+}
+
 function buscarPorCodigo(idEmpresa, codigo) {
     const produto =
         buscarRegistroPorCodigo(idEmpresa, codigo);
@@ -458,6 +466,7 @@ function obterProximoCodigo(idEmpresa) {
 
 module.exports = {
     listar,
+    listarCodigos,
     buscarPorCodigo,
     buscarIdPorCodigo,
     criar,

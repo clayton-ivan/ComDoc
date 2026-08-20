@@ -1,3 +1,5 @@
+const logger = require("../../services/loggerService");
+
 const {
     tabelaExiste,
     definirVersaoDatabase
@@ -135,9 +137,7 @@ function migrarProdutosParaNovoModelo(database) {
 
         database.exec("COMMIT");
 
-        console.log(
-            "Tabelas de produtos migradas para o novo padrão."
-        );
+        logger.info("Tabelas de produtos migradas para o novo padrão");
 
         return true;
     } catch (erro) {

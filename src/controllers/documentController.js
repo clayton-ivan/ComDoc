@@ -2,6 +2,7 @@ const documentService =
     require(
         "../services/documentService"
     );
+const fs = require("node:fs");
 
 const cotacaoService =
     require(
@@ -29,6 +30,7 @@ const HTTP =
     );
 
 const { obterIdEmpresaAtual } = require("../context/requestContext");
+const logger = require("../services/loggerService");
 
 /*
 |--------------------------------------------------------------------------
@@ -48,12 +50,6 @@ function formatarNumeroCotacao(numero) {
 */
 
 const gerar = async (req, res) => {
-    console.log(
-        "Recebi uma solicitação para gerar uma cotação."
-    );
-
-    console.log(req.body);
-
     try {
         /*
          * A cotação é persistida antes da
@@ -106,27 +102,40 @@ const gerar = async (req, res) => {
                 contexto
             });
 
-        console.log(
-            "Cotação criada:",
-            {
-                idCotacao:
-                    cotacao.idCotacao,
+        logger.info("Cotação criada", {
+            idRequisicao: req.idRequisicao,
+            idCotacao: cotacao.idCotacao,
+            numero: cotacao.numero
+        });
 
-                numero:
-                    cotacao.numero
+        return res.download(
+            resultado.caminhoPdf,
+            `cotacao-${contexto.numero}.pdf`,
+            (erroDownload) => {
+                fs.promises.unlink(resultado.caminhoPdf).catch((erroExclusao) => {
+                    logger.warn("Não foi possível remover o PDF temporário", {
+                        idRequisicao: req.idRequisicao,
+                        erro: erroExclusao.message
+                    });
+                });
+
+                if (erroDownload) {
+                    logger.error("Erro durante o download da cotação", erroDownload, {
+                        idRequisicao: req.idRequisicao
+                    });
+                    if (!res.headersSent) {
+                        res.status(HTTP.INTERNAL_SERVER_ERROR).json({
+                            sucesso: false,
+                            mensagem: "Não foi possível enviar o documento."
+                        });
+                    }
+                }
             }
         );
-
-        res.download(
-            resultado.caminhoPdf,
-            `cotacao-${contexto.numero}.pdf`
-        );
     } catch (erro) {
-        console.error(
-            "ERRO NO CONTROLLER:"
-        );
-
-        console.error(erro);
+        logger.error("Erro ao gerar cotação", erro, {
+            idRequisicao: req.idRequisicao
+        });
 
         res
             .status(
@@ -194,10 +203,9 @@ const preVisualizarProduto = async (
 
         return res.send(pdf);
     } catch (erro) {
-        console.error(
-            "Erro ao gerar pré-visualização do produto:",
-            erro
-        );
+        logger.error("Erro ao gerar pré-visualização do produto", erro, {
+            idRequisicao: req.idRequisicao
+        });
 
         return res
             .status(

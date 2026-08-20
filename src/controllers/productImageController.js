@@ -54,8 +54,6 @@ function upload(req, res) {
                 imagem
             });
         } catch (erro) {
-            console.error("Erro ao salvar imagem:", erro);
-
             return res
                 .status(HTTP.BAD_REQUEST)
                 .json({
@@ -94,8 +92,6 @@ function excluir(req, res) {
 
         return res.json({ sucesso: true });
     } catch (erro) {
-        console.error("Erro ao excluir imagem:", erro);
-
         return res
             .status(HTTP.BAD_REQUEST)
             .json({
@@ -128,11 +124,6 @@ function limparPendentes(req, res) {
             quantidade
         });
     } catch (erro) {
-        console.error(
-            "Erro ao limpar imagens pendentes:",
-            erro
-        );
-
         return res
             .status(HTTP.BAD_REQUEST)
             .json({
