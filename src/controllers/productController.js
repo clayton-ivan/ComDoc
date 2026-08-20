@@ -3,6 +3,7 @@ const productService = require(
 );
 
 const HTTP = require("../constants/httpStatus");
+const logger = require("../services/loggerService");
 
 function listar(req, res) {
     try {
@@ -10,10 +11,7 @@ function listar(req, res) {
 
         return res.json(produtos);
     } catch (erro) {
-        console.error(
-            "Erro ao listar produtos:",
-            erro
-        );
+        logger.error("Erro ao listar produtos", erro, { idRequisicao: req.idRequisicao });
 
         return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
             sucesso: false,
@@ -39,10 +37,7 @@ function buscarPorCodigo(req, res) {
 
         return res.json(produto);
     } catch (erro) {
-        console.error(
-            "Erro ao buscar produto:",
-            erro
-        );
+        logger.error("Erro ao buscar produto", erro, { idRequisicao: req.idRequisicao });
 
         return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
             sucesso: false,
@@ -62,11 +57,6 @@ function criar(req, res) {
             produto
         });
     } catch (erro) {
-        console.error(
-            "Erro ao criar produto:",
-            erro
-        );
-
         return res.status(HTTP.BAD_REQUEST).json({
             sucesso: false,
             mensagem: erro.message
@@ -94,11 +84,6 @@ function atualizar(req, res) {
             produto
         });
     } catch (erro) {
-        console.error(
-            "Erro ao atualizar produto:",
-            erro
-        );
-
         return res.status(HTTP.BAD_REQUEST).json({
             sucesso: false,
             mensagem: erro.message
@@ -122,10 +107,7 @@ function excluir(req, res) {
 
         return res.status(HTTP.NO_CONTENT).send();
     } catch (erro) {
-        console.error(
-            "Erro ao excluir produto:",
-            erro
-        );
+        logger.error("Erro ao excluir produto", erro, { idRequisicao: req.idRequisicao });
 
         return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
             sucesso: false,
@@ -144,10 +126,7 @@ function obterProximoCodigo(req, res) {
             codigo
         });
     } catch (erro) {
-        console.error(
-            "Erro ao gerar próximo código:",
-            erro
-        );
+        logger.error("Erro ao gerar próximo código", erro, { idRequisicao: req.idRequisicao });
 
         return res.status(HTTP.INTERNAL_SERVER_ERROR).json({
             sucesso: false,

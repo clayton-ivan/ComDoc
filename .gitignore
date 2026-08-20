@@ -13,6 +13,11 @@ output/*
 # Imagens enviadas pelos usuários
 src/uploads/produtos/*
 !src/uploads/produtos/.gitkeep
+src/uploads/empresas/*
+
+# Dados persistentes quando COMDOC_DATA_DIR aponta para a pasta do projeto
+data/
+backups/
 
 # Logs
 *.log

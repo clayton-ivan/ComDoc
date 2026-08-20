@@ -2,6 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const Handlebars = require("handlebars");
 const puppeteer = require("puppeteer");
+const crypto = require("node:crypto");
+const config = require("../config/environment");
 
 const productImageService = require(
     "./productImageService"
@@ -276,24 +278,20 @@ const gerar = async ({
 	
 	const pastaOutput = caminhoDestino
         ? path.dirname(caminhoDestino)
-        : path.join(
-		__dirname,
-		"..",
-		"..",
-		"output"
-	    );
+	    : config.diretorioOutput;
 
 	if (!fs.existsSync(pastaOutput)) {
-		fs.mkdirSync(pastaOutput);
+		fs.mkdirSync(pastaOutput, { recursive: true });
 	}
 
 	const caminhoPdf = caminhoDestino ||
         path.join(
             pastaOutput,
-            "cotacao.pdf"
+            `cotacao-${crypto.randomUUID()}.pdf`
         );
-	
-        await page.pdf({
+
+        try {
+            await page.pdf({
 		path: caminhoPdf,
 
 		width: "210mm",
@@ -309,8 +307,12 @@ const gerar = async ({
 		printBackground: true,
 
 		preferCSSPageSize: true,
-        timeout: 120000
-	    });
+                timeout: 120000
+	        });
+        } catch (erro) {
+            if (!caminhoDestino) fs.rmSync(caminhoPdf, { force: true });
+            throw erro;
+        }
 
         return {
 		    caminhoPdf

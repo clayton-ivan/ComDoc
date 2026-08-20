@@ -3,8 +3,9 @@ const path = require("path");
 const companyRepository = require("../repositories/companyRepository");
 const { obterIdEmpresaAtual, obterCodigoUsuarioAtual } = require("../context/requestContext");
 const systemParameterService = require("./systemParameterService");
+const config = require("../config/environment");
 
-const DIRETORIO_EMPRESAS = path.join(__dirname, "..", "uploads", "empresas");
+const DIRETORIO_EMPRESAS = path.join(config.diretorioUploads, "empresas");
 const FORMATOS = {
     "image/jpeg": {
         extensao: ".jpg",

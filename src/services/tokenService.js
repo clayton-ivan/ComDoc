@@ -1,5 +1,6 @@
 const crypto = require("node:crypto");
 const systemParameterService = require("./systemParameterService");
+const config = require("../config/environment");
 
 const NOME_COOKIE = "comdoc_auth";
 const NOME_COOKIE_EMPRESA = "comdoc_empresa";
@@ -11,13 +12,7 @@ function duracaoSessao(manterConectado) {
 }
 
 function segredo() {
-    const valor = process.env.COMDOC_SESSION_SECRET;
-
-    if (valor) return valor;
-    if (process.env.NODE_ENV === "production") {
-        throw new Error("COMDOC_SESSION_SECRET deve ser configurado em produção.");
-    }
-    return "comdoc-desenvolvimento-altere-este-segredo";
+    return config.segredoSessao;
 }
 
 function assinar(conteudo) {
@@ -61,7 +56,7 @@ function opcoesCookie(persistente, maxAge) {
     return {
         httpOnly: true,
         sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
+        secure: config.producao,
         path: "/",
         ...(persistente ? { maxAge: maxAge * 1000 } : {})
     };

@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
 const systemParameterService = require("./systemParameterService");
+const config = require("../config/environment");
 
 const productBlockRepository = require(
     "../repositories/productBlockRepository"
@@ -11,12 +12,7 @@ const {
     ID_EMPRESA_PADRAO
 } = require("../constants/application");
 
-const DIRETORIO_UPLOADS = path.join(
-    __dirname,
-    "..",
-    "uploads",
-    "produtos"
-);
+const DIRETORIO_UPLOADS = path.join(config.diretorioUploads, "produtos");
 
 const FORMATOS = {
     "image/jpeg": {
@@ -333,5 +329,6 @@ module.exports = {
     excluirPendentes,
     excluirTodasPorProduto,
     caminhoPertenceAoProduto,
+    obterIdentificadorProduto,
     obterDataUrl
 };

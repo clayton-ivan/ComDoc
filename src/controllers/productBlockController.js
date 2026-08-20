@@ -5,6 +5,7 @@ const productBlockService = require(
 const HTTP = require(
     "../constants/httpStatus"
 );
+const logger = require("../services/loggerService");
 
 function listarTipos(req, res) {
     try {
@@ -14,10 +15,7 @@ function listarTipos(req, res) {
 
         return res.json(tipos);
     } catch (erro) {
-        console.error(
-            "Erro ao listar tipos de bloco:",
-            erro
-        );
+        logger.error("Erro ao listar tipos de bloco", erro, { idRequisicao: req.idRequisicao });
 
         return res
             .status(
@@ -51,10 +49,7 @@ function listarPorProduto(req, res) {
 
         return res.json(blocos);
     } catch (erro) {
-        console.error(
-            "Erro ao listar blocos do produto:",
-            erro
-        );
+        logger.error("Erro ao listar blocos do produto", erro, { idRequisicao: req.idRequisicao });
 
         return res
             .status(
@@ -92,11 +87,6 @@ function substituirPorProduto(req, res) {
             blocos
         });
     } catch (erro) {
-        console.error(
-            "Erro ao salvar blocos do produto:",
-            erro
-        );
-
         return res
             .status(HTTP.BAD_REQUEST)
             .json({
