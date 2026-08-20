@@ -104,4 +104,16 @@ function revogar(ator, id) {
     return publico(userRepository.revogarTodas(existente.idUsuario));
 }
 
-module.exports = { publico, listar, criar, atualizar, redefinirSenha, revogar };
+function removerBloqueio(ator, id) {
+    const existente = userRepository.buscarPorId(Number(id));
+    if (!existente) return null;
+    validarAcesso(ator, existente);
+    return publico(
+        userRepository.removerBloqueio(existente.idUsuario, ator.idUsuario)
+    );
+}
+
+module.exports = {
+    publico, listar, criar, atualizar, redefinirSenha, revogar,
+    removerBloqueio
+};

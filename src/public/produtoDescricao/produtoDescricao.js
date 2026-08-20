@@ -36,6 +36,7 @@ let produtoAtual = null;
 let possuiAlteracoes = false;
 let temporizadorAviso = null;
 let proximoGrupoRadio = 1;
+let limiteUploadMb = 5;
 const imagensPendentes = new Set();
 
 function escaparHtml(valor) {
@@ -720,7 +721,7 @@ function criarEditorImagem(bloco) {
         </div>
 
         <p class="ajuda-imagem">
-            Formatos aceitos: JPEG e PNG. Tamanho máximo: 5 MB.
+            Formatos aceitos: JPEG e PNG. Tamanho máximo: ${limiteUploadMb} MB.
         </p>
 
         <img
@@ -1359,7 +1360,7 @@ async function carregarPagina() {
         );
     }
 
-    const [produto, tipos, blocos] =
+    const [produto, tipos, blocos, configuracoes] =
         await Promise.all([
             buscarJson(
                 `/produtos/${encodeURIComponent(
@@ -1375,9 +1376,12 @@ async function carregarPagina() {
                 `/produtos/${encodeURIComponent(
                     codigoProduto
                 )}/blocos`
-            )
+            ),
+
+            buscarJson("/parametros/publicos")
         ]);
 
+    limiteUploadMb = configuracoes.limiteUploadImagemMb;
     tiposBloco = tipos;
     produtoAtual = produto;
     preencherTipos();

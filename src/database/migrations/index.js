@@ -43,8 +43,9 @@ const migration010CondicoesComerciais =
 const migration011Usuarios = require("./migration011Usuarios");
 const migration012StatusEmpresa = require("./migration012StatusEmpresa");
 const migration013IdentidadePdf = require("./migration013IdentidadePdf");
+const migration014ParametrosSistema = require("./migration014ParametrosSistema");
 
-const VERSAO_ATUAL_DATABASE = 13;
+const VERSAO_ATUAL_DATABASE = 14;
 
 const migrations = [
     {
@@ -98,6 +99,10 @@ const migrations = [
     {
         versao: 13,
         executar: migration013IdentidadePdf
+    },
+    {
+        versao: 14,
+        executar: migration014ParametrosSistema
     }
 ];
 

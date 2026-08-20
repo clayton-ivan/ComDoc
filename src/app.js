@@ -16,6 +16,7 @@ const companyManagementRoutes = require("./routes/companyManagementRoutes");
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const systemParameterRoutes = require("./routes/systemParameterRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 const requestContext = require("./context/requestContext");
 
@@ -174,6 +175,11 @@ app.get("/admin/clientes", authMiddleware.exigirPagina, (req, res) => {
 
 app.get("/minha-conta", authMiddleware.exigirPagina, enviarPagina("auth", "minhaConta.html"));
 app.get("/admin/usuarios", authMiddleware.exigirPagina, authMiddleware.exigirAdminPagina, enviarPagina("usuarioAdmin", "usuarioAdmin.html"));
+app.get(
+    "/admin/parametros",
+    authMiddleware.exigirSuperPagina,
+    enviarPagina("parametroAdmin", "parametroAdmin.html")
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -188,6 +194,7 @@ app.use("/clientes", authMiddleware.exigirApi, clientRoutes);
 app.use("/empresa", authMiddleware.exigirApi, companyRoutes);
 app.use("/empresas", authMiddleware.exigirApi, companyManagementRoutes);
 app.use("/usuarios", authMiddleware.exigirApi, userRoutes);
+app.use("/parametros", authMiddleware.exigirApi, systemParameterRoutes);
 
 /*
 |--------------------------------------------------------------------------

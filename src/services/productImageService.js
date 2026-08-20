@@ -1,6 +1,7 @@
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
+const systemParameterService = require("./systemParameterService");
 
 const productBlockRepository = require(
     "../repositories/productBlockRepository"
@@ -109,6 +110,12 @@ function salvar(idEmpresa, codigoProduto, arquivo) {
 
     if (!arquivo) {
         throw new Error("Selecione uma imagem.");
+    }
+
+    if (arquivo.size > systemParameterService.limiteUploadBytes()) {
+        throw new Error(
+            `A imagem deve possuir no máximo ${systemParameterService.obter("MB_LIMITE_UPLOAD_IMAGEM")} MB.`
+        );
     }
 
     const formato = FORMATOS[arquivo.mimetype];

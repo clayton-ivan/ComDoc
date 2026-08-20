@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Parâmetros - ComDoc</title>
+    <link rel="stylesheet" href="/auth/auth.css">
+    <link rel="stylesheet" href="/shared/adminMenu.css">
+    <link rel="stylesheet" href="/parametroAdmin/parametroAdmin.css">
+</head>
+<body>
+    <header class="topbar">
+        <div>ComDoc</div>
+        <div class="menu-administracao">
+            <button class="botao-menu-admin" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menuParametros">⋮</button>
+            <nav id="menuParametros" class="opcoes-menu-admin" hidden></nav>
+        </div>
+    </header>
+    <main class="parametros-container">
+        <header class="cabecalho">
+            <div>
+                <h1>Parâmetros do sistema</h1>
+                <p>Configure regras globais aplicadas a todas as empresas.</p>
+            </div>
+            <button id="salvarSuperior" type="button">Salvar</button>
+        </header>
+        <form id="formParametros">
+            <div id="grupos"></div>
+            <div class="acoes-finais">
+                <button id="salvarInferior" type="submit">Salvar</button>
+            </div>
+        </form>
+    </main>
+    <div id="toastGlobal" class="toast" role="status" aria-live="polite"></div>
+    <script src="/shared/adminMenu.js"></script>
+    <script type="module" src="/parametroAdmin/parametroAdmin.js"></script>
+</body>
+</html>

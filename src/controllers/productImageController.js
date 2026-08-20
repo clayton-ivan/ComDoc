@@ -5,13 +5,14 @@ const productImageService = require(
 );
 
 const HTTP = require("../constants/httpStatus");
+const systemParameterService = require("../services/systemParameterService");
 
 const { obterIdEmpresaAtual } = require("../context/requestContext");
 
 const receberImagem = multer({
     storage: multer.memoryStorage(),
     limits: {
-        fileSize: 5 * 1024 * 1024,
+        fileSize: 20 * 1024 * 1024,
         files: 1
     }
 }).single("imagem");
@@ -27,7 +28,7 @@ function upload(req, res) {
                 .json({
                     sucesso: false,
                     mensagem: tamanhoExcedido
-                        ? "A imagem deve possuir no máximo 5 MB."
+                        ? `A imagem deve possuir no máximo ${systemParameterService.obter("MB_LIMITE_UPLOAD_IMAGEM")} MB.`
                         : "Não foi possível receber a imagem."
                 });
         }

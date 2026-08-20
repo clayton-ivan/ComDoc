@@ -21,7 +21,9 @@ function enviarErro(
     erro,
     status = HTTP.BAD_REQUEST
 ) {
-    console.error(erro);
+    if (status >= HTTP.INTERNAL_SERVER_ERROR) {
+        console.error(erro);
+    }
 
     return res
         .status(status)
