@@ -16,7 +16,7 @@ async function login(req, res) {
                 ? "/trocar-senha"
                 : resultado.usuario.perfil === "SUPER"
                     ? "/selecionar-empresa"
-                    : "/"
+                    : "/app"
         });
     } catch (erro) {
         return res.status(401).json({ sucesso: false, mensagem: erro.message });
@@ -53,7 +53,7 @@ async function alterarSenha(req, res) {
         tokenService.definirSessao(res, usuario, req.manterConectado);
         return res.json({
             sucesso: true,
-            destino: usuario.perfil === "SUPER" ? "/selecionar-empresa" : "/"
+            destino: usuario.perfil === "SUPER" ? "/selecionar-empresa" : "/app"
         });
     } catch (erro) {
         return res.status(400).json({ sucesso: false, mensagem: erro.message });

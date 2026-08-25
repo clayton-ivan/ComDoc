@@ -1,0 +1,10 @@
+const express = require('express');
+const controller = require('../controllers/legalDocumentController');
+const { exigirSuper } = require('../middleware/authMiddleware');
+const router = express.Router();
+router.use(exigirSuper);
+router.get('/', controller.listar);
+router.post('/', controller.criar);
+router.put('/:id', controller.atualizar);
+router.post('/:id/publicar', controller.publicar);
+module.exports = router;

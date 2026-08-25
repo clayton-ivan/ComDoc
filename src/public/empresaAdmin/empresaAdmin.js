@@ -507,7 +507,7 @@ async function salvarAdministrador() {
 async function carregarCadastroInicial() {
     sessaoAtual = await requisitar("/auth/sessao");
     if (sessaoAtual.usuario.perfil !== "SUPER") {
-        location.href = "/";
+        location.href = "/app";
         return;
     }
     mensagemPagina.hidden = true;

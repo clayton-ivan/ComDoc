@@ -15,7 +15,9 @@ function mapear(registro) {
         bloqueadoAte: registro.dt_bloqueado_ate,
         versaoSessao: registro.num_versao_sessao,
         senhaAlteradaEm: registro.dt_senha_alterada,
-        ultimoLogin: registro.dt_ultimo_login
+        ultimoLogin: registro.dt_ultimo_login,
+        emailConfirmado: Boolean(registro.fg_email_confirmado),
+        emailConfirmadoEm: registro.dt_email_confirmado
     };
 }
 
@@ -54,14 +56,26 @@ function criar(usuario, idUsuarioCriacao = null) {
     const resultado = obterDatabase().prepare(`
         INSERT INTO usuario (
             id_empresa, nom_usuario, end_email, cod_senha_hash,
-            sg_perfil, fg_status, fg_trocar_senha, id_usu_criacao
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            sg_perfil, fg_status, fg_trocar_senha, fg_email_confirmado,
+            dt_email_confirmado, id_usu_criacao
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
         usuario.idEmpresa, usuario.nome, usuario.email, usuario.senhaHash,
         usuario.perfil, usuario.ativo ? 1 : 0, usuario.trocarSenha ? 1 : 0,
+        usuario.emailConfirmado === false ? 0 : 1,
+        usuario.emailConfirmado === false ? null : new Date().toISOString(),
         idUsuarioCriacao
     );
     return buscarPorId(Number(resultado.lastInsertRowid));
+}
+
+function confirmarEmailEAtivar(idUsuario) {
+    obterDatabase().prepare(`
+        UPDATE usuario SET fg_email_confirmado = 1, fg_status = 1,
+            dt_email_confirmado = COALESCE(dt_email_confirmado, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+        WHERE id_usuario = ?
+    `).run(idUsuario);
+    return buscarPorId(idUsuario);
 }
 
 function atualizar(idUsuario, usuario, idUsuarioEdicao) {
@@ -140,5 +154,5 @@ function removerBloqueio(idUsuario, idUsuarioEdicao) {
 module.exports = {
     buscarPorEmail, buscarPorId, buscarAdminEmpresa, listar, criar, atualizar,
     atualizarSenha, registrarFalha, registrarLogin, revogarTodas,
-    revogarEmpresa, removerBloqueio
+    revogarEmpresa, removerBloqueio, confirmarEmailEAtivar
 };

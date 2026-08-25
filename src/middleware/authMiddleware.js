@@ -65,7 +65,7 @@ function exigirAdmin(req, res, next) {
 
 function exigirAdminPagina(req, res, next) {
     if (!req.usuario || !["SUPER", "ADMIN"].includes(req.usuario.perfil)) {
-        return res.redirect("/");
+        return res.redirect("/app");
     }
     next();
 }
@@ -80,7 +80,7 @@ function exigirSuper(req, res, next) {
 function exigirSuperPagina(req, res, next) {
     if (!req.usuario) return res.redirect("/login");
     if (req.senhaExpirada) return res.redirect("/trocar-senha");
-    if (req.usuario.perfil !== "SUPER") return res.redirect("/");
+    if (req.usuario.perfil !== "SUPER") return res.redirect("/app");
     next();
 }
 

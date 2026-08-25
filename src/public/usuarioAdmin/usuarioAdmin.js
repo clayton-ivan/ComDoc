@@ -161,7 +161,7 @@ async function carregar() {
     sessao = await requisitar("/auth/sessao");
 
     if (!["SUPER", "ADMIN"].includes(sessao.usuario.perfil)) {
-        location.href = "/";
+        location.href = "/app";
         return;
     }
 
@@ -211,7 +211,7 @@ document.getElementById("removerBloqueio").addEventListener("click", async (even
     }
 });
 document.getElementById("voltar").addEventListener("click", () => {
-    location.href = "/";
+    location.href = "/app";
 });
 
 form.addEventListener("submit", async (evento) => {

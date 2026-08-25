@@ -73,6 +73,15 @@ const PARAMETROS_SISTEMA = [
         tipo: "BOOLEANO",
         valorPadrao: false,
         ordem: 70
+    },
+    {
+        codigo: "FG_EXIGIR_ATIVACAO_EMAIL_NOVOS_CADASTROS",
+        nome: "Exigir ativação por e-mail em novos cadastros",
+        descricao: "Mantém a nova empresa pendente até a confirmação do e-mail do administrador.",
+        grupo: "CADASTRO_PUBLICO",
+        tipo: "BOOLEANO",
+        valorPadrao: false,
+        ordem: 80
     }
 ];
 

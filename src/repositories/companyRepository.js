@@ -69,6 +69,8 @@ function mapear(registro) {
         usarCapaPropria: Boolean(registro.fg_usar_capa_propria),
         logoMarcaDagua: Boolean(registro.fg_logo_marca_dagua),
         ativo: Boolean(registro.fg_status),
+        origemCadastro: registro.sg_origem_cadastro || "INTERNO",
+        ativadaEm: registro.dt_ativacao || null,
         quantidadeUsuariosAtivos:
             registro.qtd_usuarios_ativos === undefined
                 ? undefined
@@ -89,6 +91,18 @@ function buscarPorId(idEmpresa) {
             [idEmpresa]
         )
     );
+}
+
+function buscarPorCnpj(cnpj) {
+    return mapear(databaseRepository.buscarUm(`SELECT * FROM empresa WHERE num_cnpj = ?`, [cnpj]));
+}
+
+function buscarPorEmail(email) {
+    return mapear(databaseRepository.buscarUm(`
+        SELECT * FROM empresa
+        WHERE lower(trim(end_email)) = lower(trim(?))
+        LIMIT 1
+    `, [email]));
 }
 
 function listar() {
@@ -119,8 +133,9 @@ function criar(empresa) {
             num_telefone, num_whatsapp, nom_logradouro, num_endereco,
             nom_complem, nom_bairro, nom_cidade, sg_uf, num_cep,
             end_site, nom_instagram, dsc_slogan, cod_cor_primaria,
-            cod_cor_secundaria, fg_status, cod_usu_edicao
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            cod_cor_secundaria, fg_status, sg_origem_cadastro, dt_ativacao,
+            cod_usu_edicao
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
         empresa.nome, empresa.nomeFantasia, empresa.cnpj || null,
         empresa.email, empresa.telefone, empresa.whatsapp,
@@ -128,9 +143,19 @@ function criar(empresa) {
         empresa.bairro, empresa.cidade, empresa.uf, empresa.cep,
         empresa.site, empresa.instagram, empresa.slogan,
         empresa.corPrimaria, empresa.corSecundaria,
-        empresa.ativo ? 1 : 0, empresa.usuarioEdicao
+        empresa.ativo ? 1 : 0, empresa.origemCadastro || "INTERNO",
+        empresa.ativo ? new Date().toISOString() : null, empresa.usuarioEdicao
     ]);
     return buscarPorId(Number(resultado.lastInsertRowid));
+}
+
+function ativar(idEmpresa) {
+    databaseRepository.executar(`
+        UPDATE empresa SET fg_status = 1,
+            dt_ativacao = COALESCE(dt_ativacao, strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+        WHERE id_empresa = ?
+    `, [idEmpresa]);
+    return buscarPorId(idEmpresa);
 }
 
 function atualizar(idEmpresa, empresa) {
@@ -235,11 +260,14 @@ function atualizarIdentidadePdf(idEmpresa, usarCapaPropria, logoMarcaDagua, usua
 
 module.exports = {
     buscarPorId,
+    buscarPorCnpj,
+    buscarPorEmail,
     listar,
     listarComResumo,
     criar,
     atualizar,
     atualizarLogo,
     atualizarCapa,
-    atualizarIdentidadePdf
+    atualizarIdentidadePdf,
+    ativar
 };

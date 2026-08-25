@@ -102,6 +102,9 @@ async function criar(dados = {}, ator) {
     if (ator.perfil !== "SUPER") throw new Error("Acesso não autorizado.");
     const empresa = normalizarEmpresa(dados.empresa, null, ator);
     const administrador = validarAdministrador(dados.administrador);
+    if (companyRepository.buscarPorEmail(empresa.email)) {
+        throw new Error("Já existe uma empresa com este e-mail.");
+    }
     if (userRepository.buscarPorEmail(administrador.email)) {
         throw new Error("Já existe um usuário com este e-mail.");
     }
@@ -126,6 +129,10 @@ function atualizarAtual(dados = {}, ator) {
     const existente = companyRepository.buscarPorId(obterIdEmpresaAtual());
     if (!existente) return null;
     const empresa = normalizarEmpresa(dados, existente, ator);
+    const empresaMesmoEmail = companyRepository.buscarPorEmail(empresa.email);
+    if (empresaMesmoEmail && empresaMesmoEmail.id !== existente.id) {
+        throw new Error("Já existe uma empresa com este e-mail.");
+    }
     const atualizada = companyRepository.atualizar(existente.id, empresa);
     if (existente.ativo && !atualizada.ativo) {
         userRepository.revogarEmpresa(existente.id);

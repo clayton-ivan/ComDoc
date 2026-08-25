@@ -4,7 +4,8 @@ const NOMES_GRUPOS = {
     SEGURANCA: "Segurança e login",
     SESSOES: "Sessões",
     CADASTROS: "Validação de cadastros",
-    UPLOADS: "Uploads"
+    UPLOADS: "Uploads",
+    CADASTRO_PUBLICO: "Cadastro público"
 };
 
 const form = document.getElementById("formParametros");

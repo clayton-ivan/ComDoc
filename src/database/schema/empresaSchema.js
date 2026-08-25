@@ -97,6 +97,13 @@ function criarTabelaEmpresa(database) {
                 DEFAULT 1
                 CHECK (fg_status IN (0, 1)),
 
+            sg_origem_cadastro TEXT
+                NOT NULL
+                DEFAULT 'INTERNO'
+                CHECK (sg_origem_cadastro IN ('INTERNO', 'PUBLICO')),
+
+            dt_ativacao TEXT,
+
             dt_criacao TEXT
                 NOT NULL
                 DEFAULT (
@@ -175,7 +182,27 @@ function criarEmpresaPadrao(database) {
         );
 }
 
+function criarIndicesEmpresa(database) {
+    const emailDuplicado = database.prepare(`
+        SELECT lower(trim(end_email)) AS email
+        FROM empresa
+        WHERE trim(end_email) <> ''
+        GROUP BY lower(trim(end_email))
+        HAVING COUNT(*) > 1
+        LIMIT 1
+    `).get();
+
+    if (!emailDuplicado) {
+        database.exec(`
+            CREATE UNIQUE INDEX IF NOT EXISTS uq_empresa_email
+            ON empresa (lower(trim(end_email)))
+            WHERE trim(end_email) <> '';
+        `);
+    }
+}
+
 module.exports = {
     criarTabelaEmpresa,
-    criarEmpresaPadrao
+    criarEmpresaPadrao,
+    criarIndicesEmpresa
 };

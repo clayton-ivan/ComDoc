@@ -13,7 +13,8 @@ const {
 
 const {
     criarTabelaEmpresa,
-    criarEmpresaPadrao
+    criarEmpresaPadrao,
+    criarIndicesEmpresa
 } = require("./empresaSchema");
 
 const {
@@ -34,6 +35,8 @@ const {
 
 const { criarTabelaUsuario } = require("./usuarioSchema");
 const { criarTabelaParametroSistema } = require("./parametroSistemaSchema");
+const { criarTabelasDocumentoLegal } = require("./documentoLegalSchema");
+const { criarTabelasCadastroPublico } = require("./cadastroPublicoSchema");
 
 function criarEstruturaAtual(database) {
     criarTabelaProduto(database);
@@ -46,8 +49,11 @@ function criarEstruturaAtual(database) {
     criarTabelaProdutoBlocoItem(database);
 
     criarTabelaEmpresa(database);
+    criarIndicesEmpresa(database);
     criarTabelaUsuario(database);
     criarTabelaParametroSistema(database);
+    criarTabelasDocumentoLegal(database);
+    criarTabelasCadastroPublico(database);
 
     criarTabelaPrazoEntrega(database);
     criarTabelaFormaPagamento(database);
@@ -71,10 +77,13 @@ module.exports = {
     criarTabelaProdutoBlocoItem,
     criarTabelaEmpresa,
     criarEmpresaPadrao,
+    criarIndicesEmpresa,
     criarTabelaPrazoEntrega,
     criarTabelaFormaPagamento,
     criarTabelaUsuario,
     criarTabelaParametroSistema,
+    criarTabelasDocumentoLegal,
+    criarTabelasCadastroPublico,
     criarTabelaCliente,
     criarIndicesCliente,
     criarTabelaCotacao,

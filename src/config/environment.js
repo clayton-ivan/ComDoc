@@ -63,6 +63,14 @@ if (!["debug", "info", "warn", "error"].includes(nivelLog)) {
     throw new Error("COMDOC_LOG_LEVEL deve ser debug, info, warn ou error.");
 }
 
+const modoEmail = texto("COMDOC_EMAIL_MODE", "console").toLowerCase();
+if (!["console", "smtp"].includes(modoEmail)) {
+    throw new Error("COMDOC_EMAIL_MODE deve ser console ou smtp.");
+}
+if (modoEmail === "smtp" && !texto("COMDOC_SMTP_HOST")) {
+    throw new Error("COMDOC_SMTP_HOST deve ser configurado quando o modo de e-mail for smtp.");
+}
+
 const basePersistente = diretorioDadosInformado
     ? diretorioDados
     : null;
@@ -78,6 +86,16 @@ const config = Object.freeze({
     forcarHttps: booleano("COMDOC_FORCE_HTTPS", producao),
     limiteJson: texto("COMDOC_JSON_LIMIT", "1mb"),
     nivelLog,
+    email: Object.freeze({
+        modo: modoEmail,
+        host: texto("COMDOC_SMTP_HOST", "smtp-relay.brevo.com"),
+        porta: inteiro("COMDOC_SMTP_PORT", 587, 1, 65535),
+        seguro: booleano("COMDOC_SMTP_SECURE", false),
+        usuario: texto("COMDOC_SMTP_USER"),
+        senha: texto("COMDOC_SMTP_PASSWORD"),
+        remetente: texto("COMDOC_EMAIL_FROM", "ComDoc <nao-responda@localhost>"),
+        responderPara: texto("COMDOC_EMAIL_REPLY_TO")
+    }),
     janelaLoginMs: inteiro("COMDOC_LOGIN_RATE_WINDOW_MIN", 15, 1, 1440) * 60 * 1000,
     maximoLoginPorIp: inteiro("COMDOC_LOGIN_RATE_MAX_PER_IP", 30, 1, 1000),
     tempoEncerramentoMs: inteiro("COMDOC_SHUTDOWN_TIMEOUT_SECONDS", 15, 1, 120) * 1000,
