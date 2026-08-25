@@ -14,6 +14,8 @@ function criarTabelaUsuario(database) {
             num_versao_sessao INTEGER NOT NULL DEFAULT 1,
             dt_senha_alterada TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
             dt_ultimo_login TEXT,
+            fg_email_confirmado INTEGER NOT NULL DEFAULT 1 CHECK (fg_email_confirmado IN (0, 1)),
+            dt_email_confirmado TEXT,
             dt_criacao TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
             id_usu_criacao INTEGER,
             dt_edicao TEXT,

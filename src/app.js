@@ -22,8 +22,11 @@ const companyManagementRoutes = require("./routes/companyManagementRoutes");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const systemParameterRoutes = require("./routes/systemParameterRoutes");
+const legalDocumentRoutes = require("./routes/legalDocumentRoutes");
+const publicRoutes = require("./routes/publicRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 const requestContext = require("./context/requestContext");
+const publicRegistrationRepository = require("./repositories/publicRegistrationRepository");
 
 const {
     inicializarDatabase,
@@ -104,10 +107,16 @@ function enviarPagina(pasta, arquivo) {
 }
 
 app.get("/login", enviarPagina("auth", "login.html"));
+app.get("/criar-conta", enviarPagina("publico", "cadastro.html"));
+app.get("/confirmar-email", enviarPagina("publico", "confirmarEmail.html"));
+app.get("/termos-de-uso", enviarPagina("publico", "documentoLegal.html"));
+app.get("/politica-de-privacidade", enviarPagina("publico", "documentoLegal.html"));
 app.get("/trocar-senha", enviarPagina("auth", "trocarSenha.html"));
 app.get("/selecionar-empresa", enviarPagina("auth", "selecionarEmpresa.html"));
 
-app.get("/", authMiddleware.exigirPagina, (req, res) => {
+app.get("/", enviarPagina("publico", "inicio.html"));
+
+app.get("/app", authMiddleware.exigirPagina, (req, res) => {
     res.sendFile(
         path.join(
             __dirname,
@@ -217,6 +226,11 @@ app.get(
     authMiddleware.exigirSuperPagina,
     enviarPagina("parametroAdmin", "parametroAdmin.html")
 );
+app.get(
+    "/admin/documentos-legais",
+    authMiddleware.exigirSuperPagina,
+    enviarPagina("documentoLegalAdmin", "documentoLegalAdmin.html")
+);
 
 /*
 |--------------------------------------------------------------------------
@@ -225,6 +239,7 @@ app.get(
 */
 
 app.use("/auth/login", onlineSecurity.limitarLogin);
+app.use("/publico", publicRoutes);
 app.use("/auth", authRoutes);
 app.use("/documentos", authMiddleware.exigirApi, documentRoutes);
 app.use("/produtos", authMiddleware.exigirApi, productRoutes);
@@ -233,6 +248,7 @@ app.use("/empresa", authMiddleware.exigirApi, companyRoutes);
 app.use("/empresas", authMiddleware.exigirApi, companyManagementRoutes);
 app.use("/usuarios", authMiddleware.exigirApi, userRoutes);
 app.use("/parametros", authMiddleware.exigirApi, systemParameterRoutes);
+app.use("/documentos-legais", authMiddleware.exigirApi, legalDocumentRoutes);
 
 app.use((erro, req, res, next) => {
     if (res.headersSent) return next(erro);
@@ -272,6 +288,7 @@ app.use((erro, req, res, next) => {
 let servidor = null;
 let encerrando = false;
 let limpezaRateLimit = null;
+let limpezaCadastrosPendentes = null;
 
 function iniciarServidor() {
     if (servidor) return servidor;
@@ -287,6 +304,17 @@ function iniciarServidor() {
         Math.min(config.janelaLoginMs, 15 * 60 * 1000)
     );
     limpezaRateLimit.unref();
+    try {
+        const removidos = publicRegistrationRepository.excluirPendentesAntigos();
+        if (removidos) logger.info("Cadastros públicos pendentes removidos", { quantidade: removidos });
+    } catch (erro) {
+        logger.error("Falha ao limpar cadastros públicos pendentes", erro);
+    }
+    limpezaCadastrosPendentes = setInterval(() => {
+        try { publicRegistrationRepository.excluirPendentesAntigos(); }
+        catch (erro) { logger.error("Falha ao limpar cadastros públicos pendentes", erro); }
+    }, 24 * 60 * 60 * 1000);
+    limpezaCadastrosPendentes.unref();
     return servidor;
 }
 
@@ -304,6 +332,7 @@ function encerrar(sinal) {
     const finalizar = () => {
         try {
             if (limpezaRateLimit) clearInterval(limpezaRateLimit);
+            if (limpezaCadastrosPendentes) clearInterval(limpezaCadastrosPendentes);
             encerrarDatabase();
             logger.info("ComDoc encerrado");
             process.exit(0);

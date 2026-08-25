@@ -85,10 +85,11 @@ fetch("/auth/sessao")
             }
 
             menu.replaceChildren();
-            adicionarLink("Nova cotação", "/");
+            adicionarLink("Nova cotação", "/app");
             if (sessao.usuario.perfil === "SUPER") {
                 adicionarLink("Gerenciar empresas", "/admin/empresas");
                 adicionarLink("Parâmetros", "/admin/parametros");
+                adicionarLink("Documentos legais", "/admin/documentos-legais");
             }
             adicionarSeparador();
             adicionarLink("Clientes", "/admin/clientes");

@@ -123,4 +123,9 @@ Antes de liberar acesso externo, confirme:
 7. política de privacidade e termos de uso revisados;
 8. testes de upload e geração de PDF no ambiente escolhido.
 
-A página pública, o cadastro autônomo de empresas, a confirmação de e-mail e a cobrança pertencem às próximas etapas do roadmap.
+## Cadastro público e e-mail
+
+A página inicial pública fica em `/`, o login em `/login` e a aplicação autenticada em `/app`.
+O cadastro autônomo somente é liberado depois que o SUPER publica versões vigentes dos Termos de Uso e da Política de Privacidade em `/admin/documentos-legais`.
+
+Em desenvolvimento, mantenha `COMDOC_EMAIL_MODE=console`. Para ativar o SMTP, configure as variáveis `COMDOC_SMTP_*`, `COMDOC_EMAIL_FROM` e `COMDOC_EMAIL_REPLY_TO`, e então habilite o parâmetro **Exigir ativação por e-mail em novos cadastros**. Nunca armazene a senha SMTP no Git.
