@@ -46,6 +46,16 @@ button,
     margin: 32px auto 80px;
 }
 
+.aviso-uso-computador {
+    margin-bottom: 22px;
+    padding: 14px 16px;
+    border: 1px solid #93c5fd;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #1e3a8a;
+    line-height: 1.45;
+}
+
 .cabecalho-pagina {
     display: flex;
     justify-content: space-between;
@@ -477,6 +487,16 @@ select:disabled {
     .container {
         width: min(100% - 24px, 1240px);
         margin-top: 20px;
+    }
+
+    .aviso-salvamento {
+        top: 76px;
+        right: 12px;
+        bottom: auto;
+        left: 12px;
+        z-index: 300;
+        max-width: none;
+        text-align: center;
     }
 
     .cabecalho-pagina,

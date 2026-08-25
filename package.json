@@ -1,6 +1,6 @@
 {
     "name": "comdoc",
-    "version": "1.5.0",
+    "version": "1.5.1",
     "description": "Plataforma para geração de documentos comerciais em PDF baseada em templates HTML.",
     "main": "src/app.js",
     "scripts": {

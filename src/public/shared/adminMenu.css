@@ -1,3 +1,10 @@
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 16%);
+}
+
 .menu-administracao {
     position: relative;
     flex: 0 0 auto;
